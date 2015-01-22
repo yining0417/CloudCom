@@ -55,7 +55,7 @@ heavily carving the analysis tool as well as the transfered execution states.
 For example, a recent framework~\cite{wester:parallelizing:asplos13} for race
 detection tools leverages the record-replay
 technique~\cite{scribe:sigmetrics2010, respec:asplos10, racepro:sosp11} to
-largely reduce analysis work in the actual execution, but this framework
+reduce analysis work in the actual execution, but this framework
 requires significantly carving race detection tools into several phases to adapt
 to record-replay, which makes the tools largely different from typical ones
 (Note that an analysis tool itself is already quite difficult to implement and
@@ -79,7 +79,7 @@ which are hard to reuse for different types of analysis tools.
 In sum, a fundamental reason for the three problems in existing analysis 
 frameworks is that they run only one actual execution, so an analysis tool has
 to be fully or partially coupled with the execution in order to inspect
-execution states. Well, what if one can construct multiple equavalent
+execution states. Well, what if one can construct multiple equivalent
 executions efficiently and transparently?
 
 
@@ -117,13 +117,13 @@ application on multiple machines (or replicas), and enforces a consistent
 sequence of inputs for the application across replicas as long as a majority of 
 replicas reach consensus on each input. Leveraging \smr, all replicas
 consistently transform the same execution states, then minor replicas can just
-transparently run multiple analysis tools as ``analysis replicas" and majority
-replicas run actual executions and process inputs fast.
+transparently run an analysis tool on each and majority
+replicas run actual executions to process inputs fast.
 
 
 However, \smr alone is not sufficient to construct multiple equivalent 
 executions because today's applications widely use threads and thus are 
-nondeterministic. At runtime, replicas can run into different thread
+nondeterministic. At runtime, replicas may run into different thread
 interleavings (or \emph{schedules}), easily leading to divergent execution
 states. To address this problem, \xxx also leverages \emph{deterministic
 multithreading (or \dmt)}, a recent advanced threading technique that
@@ -132,10 +132,10 @@ order, then different replicas run the same schedules on the same input and
 transform the same execution states.
 
 
-A practical challenge for \xxx is that even asynchronous analyses sometimes
-need to roll back to previous execution states when they detect malicious
-events (\eg, a NULL pointer deference). To address this challenge, \xxx has
-incorporated a transparent application-level checkpoint mechanism.
+A practical challenge for \xxx is that even asynchronous analysis tools
+sometimes would prefer to roll back to previous execution states when they
+detect harmful events. To address this challenge, \xxx has incorporated a
+transparent application-level checkpoint mechanism (\S\ref{sec:checkpoint}).
 
 
 We have implemented a \xxx system prototype in Linux. Evaluation on a widely 
@@ -147,9 +147,9 @@ framework.
 
 % P6: Benefits. This paragraph can be removed.
 The main contribution of \xxx is the idea of constructing multiple equivalent
-executions to fully decoupe an application's actual execution and analysis
+executions to fully decouple an application's actual execution and analysis
 tools, which benefits applications, analysis tools, and frameworks. \xxx can
-greatly improve an application's quality by runnning multiple analysis tools in
+greatly improve an application's quality by running multiple analysis tools in
 production runs efficiently. \xxx is transparent to analysis tools and has the
 potential to strengthen these tools (\S\ref{sec:discuss}). \xxx compensates
 traditional ``fully-coupled" frameworks because it can easily run them on the
