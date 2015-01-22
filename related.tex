@@ -4,15 +4,17 @@ Existing analysis frameworks can be classified into two approaches depending
 on how a framework exposes an application's actual execution states to an 
 analysis tool. The first approach in-lines an analysis within an 
 actual execution~\cite{dynamorio, pin:pldi05, 
-valgrind:pldi, lift:micro06, tsan}, which may cause prohibitive slowdown in the executions when 
-an analysis does heavyweight work. Recently, researchers have proposed to 
+valgrind:pldi, lift:micro06, tsan}, which may cause prohibitive slowdown in the
+executions when an analysis does heavyweight work. Recently, researchers have
+proposed to 
 decouple analysis from execution~\cite{decouple:usenix08, speck:asplos08, 
 shadowreplica:ccs13, wester:parallelizing:asplos13, superpin, jungwoo:oopsla09} 
-via parallely executing analysis and record-replay. We classify these frameworks 
-into ``partially-decoupled" approach because they still need to frequently 
+via parallely executing analysis, record-replay, and so on. We classify these
+frameworks into ``partially-decoupled" approach because they still need to
+frequently 
 transfer execution states from the execution (\eg, effective memory addresses 
 and thread interleavings) to analysis. These ``partially-decoupled" frameworks 
-have shown up to 4X speedup over the traditional frameworks on the same 
+have shown 4X$\sim$8X speedup over the traditional frameworks on the same 
 analysis, which shows that decoupling analysis from execution is a promising 
 direction. \xxx fully decouples analysis from execution via replicating 
 equivalent executions.
