@@ -1,17 +1,15 @@
 
-Dynamic program analysis frameworks have become increasingly pervasive and 
-critical because they enable a wide range of powerful analysis tools (\eg, 
-reliability, profiling, and logging) at runtime to improve the quality of 
-software applications. However, since existing frameworks have only one actual 
-execution for an application, they have to fully or partially couple the 
-analysis with the execution, which frequently transferring execution states 
-(\eg, accessed memory and thread interleavings) between the actual execution 
-and the analysis and causes prohibitive slowdown in the actual execution. 
-Worse, to reduce the portions of execution states that require transfer, many 
-frameworks require significantly carving analysis tools as well as the 
-frameworks themselves, which heavily trades off transparency between the 
-analysis and the framework and allows only one type of analyses to be run at 
-the same time.
+Dynamic program analysis frameworks greatly improve software quality as
+they enable a wide range of powerful analysis tools (\eg, reliability,
+profiling, and logging) at runtime. However, because existing frameworks run
+only one actual execution for each software application, the execution is fully
+or partially coupled with an analysis tool in order to transfer execution states
+(\eg, accessed memory and thread interleavings) to the analysis tool, easily
+causing a prohibitive slowdown for the execution. To reduce the portions of
+execution states that require transfer, many frameworks require significantly
+carving analysis tools as well as the frameworks themselves. Thus, these
+frameworks significantly trade off transparency with analysis tools and allow
+only one type of tools to run within one execution.
 
 
 This paper presents \xxx, an efficient and transparent framework that fully 
@@ -19,8 +17,8 @@ decouples execution and analysis by constructing multiple equivalent
 executions. To do so, \xxx leverages two techniques: state machine replication 
 (or SMR) and deterministic multithreading (or DMT). SMR ensures that replicas 
 running the same application always see the same sequence of inputs, then 
-multiple analyses can run within some replicas transparently. DMT efficiently 
-enforces the same thread interleavings across replicas and eliminates the need 
-of transferring thread interleavings from the actual execution to analysis. 
-Evaluation shows that \xxx is easy to run asynchronous analysis tools and has 
+multiple analyses can run within some replicas transparently. DMT efficiently
+enforces the same thread interleavings across replicas and eliminates the need
+of transferring thread interleavings from the actual execution to analysis.
+Evaluation shows that \xxx is easy to run asynchronous analysis tools and has
 reasonable overhead.

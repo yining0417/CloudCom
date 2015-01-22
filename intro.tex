@@ -4,25 +4,25 @@
 
 % P1: dynamic program analysis framework is good. Traditional ones are 
 % fully-coupled, but slow.
-Dynamic program analysis frameworks have become increasingly pervasive and 
-critical because they enable a wide range of powerful analysis tools at 
-runtime. Existing analysis frameworks can be classified into two approaches 
-depending on how a framework exposes an application's actual execution states 
-to an analysis tool. Traditional analysis frameworks~\cite{dynamorio, 
-pin:pldi05, valgrind:pldi, lift:micro06, tsan} take a ``fully-coupled" 
-approach: a framework in-lines an analysis with the execution, then the 
-analysis can inspect all or most execution states. However, this approach can 
-easily let the analysis slow down the actual execution. To improve performance, 
-leveraging a fact that many analyses can be done asynchronously with the actual 
-execution, some recent frameworks~\cite{decouple:usenix08, speck:asplos08, 
-shadowreplica:ccs13, 
-wester:parallelizing:asplos13, superpin, jungwoo:oopsla09} take a second 
-``partially-decoupled" approach: only the execution states critical to the 
-analysis (\eg, effective memory addresses and thread interleavings) are exposed 
-to the analysis, then the actual execution can be less perturbed by the 
-analysis. Existing analysis frameworks have embraced numerous analysis tools 
-and have greatly improved software quality (\eg, detecting data races in 
-multithreaded programs).
+Dynamic program analysis frameworks greatly improve software quality as they
+enable a wide range of powerful analysis tools (\eg, data race
+detectors~\cite{tsan, valgrind:pldi, wester:parallelizing:asplos13} for
+multithreaded applications) at runtime. Existing analysis frameworks can be
+classified into two approaches depending on how a framework transfers an
+application's execution states to an analysis tool. Traditional analysis
+frameworks~\cite{dynamorio, pin:pldi05, valgrind:pldi, lift:micro06, tsan} take
+a ``fully-coupled" approach: a framework in-lines an analysis with the
+execution, then the analysis can inspect all or most execution states. However,
+this approach can easily let the analysis slow down the actual execution. To
+improve performance, leveraging a fact that many analyses can be done
+asynchronously with the actual execution, some recent
+frameworks~\cite{decouple:usenix08, speck:asplos08, 
+shadowreplica:ccs13, wester:parallelizing:asplos13, superpin, jungwoo:oopsla09}
+take a second ``partially-decoupled" approach: only analysis-critical execution
+states (\eg, effective memory addresses and thread interleavings) are
+transfered to the analysis running on other CPU cores, then the actual execution
+can be less perturbed by the analysis.
+
 
 % The second approach 
 % is ``partially-decoupled" approach: to  improve performance, only a subset of 
@@ -30,52 +30,57 @@ multithreaded programs).
 % prohibitively % slow down the execution.
 
 
-Unfortunately, despite these great effort, existing analysis frameworks still 
-have three problems. First, existing frameworks are too slow to deploy in 
-production runs. Traditional frameworks fully couples the analysis with the 
-actual execution, so whenever an analysis does some heavyweight work, the 
-execution is slowed down (\eg, 20X+ slow down for many programs in a race 
-detection tool ThreadSanitizer~\cite{tsan}). Recent frameworks that take the 
-``partially-decoupled" approach have shown to run several times 
-faster~\cite{shadowreplica:ccs13, wester:parallelizing:asplos13} than the 
-traditional frameworks with the same analysis because they transfer fewer 
-execution states. However, the overall slowdown of these frameworks are still 
-prohibitive because the amount of execution states (\eg, effective memory 
-addresses and thread interleavings) transfered to analysis tools are still 
-enormous.
+Unfortunately, despite these great effort, existing analysis frameworks are
+still hard to deploy in production runs, mainly due to three problems. The first
+problem is still performance. Traditional frameworks fully couples the analysis
+with the actual execution using the shadow memory approach, so whenever an
+analysis does some heavyweight work, the execution is slowed down (\eg, a
+popular race detection tool ThreadSanitizer~\cite{tsan}, which uses a
+traditional framework, incurs 20X$\sim$100X slowdown for many programs). Recent
+frameworks that take the ``partially-decoupled" approach have shown to run
+4X$\sim$8X times faster~\cite{shadowreplica:ccs13,
+wester:parallelizing:asplos13} than traditional frameworks because they transfer
+fewer 
+execution states. However, the overall slowdown of these recent frameworks are
+still prohibitive in their own evaluation because the amount of execution states
+(\eg, effective memory addresses~\cite{shadowreplica:ccs13} and thread
+interleavings~\cite{wester:parallelizing:asplos13}) transfered to analysis tools
+are still enormous.
 
 
-The second problem is that the frameworks that take the ``partially-decoupled" 
-approach heavily trade off transparency between the framework and analysis 
-tools. To be able to transfer fewer execution states to the analysis tool, 
-these frameworks heavily carve the analysis tools as well as the transfered 
-execution states. For example, a recent framework for race detection tools 
-leverages the record-replay technique~\cite{scribe:sigmetrics2010, 
-respec:asplos10, racepro:sosp11} to off load the analysis from the actual 
-execution, but this framework requires significantly carving race detection 
-tools into several phases to adapt to record-replay, which makes the tools 
-largely different from typical ones (Note that an analysis tool itself is 
-usually extremely difficult to implement and maintain.)
+The second problem is that recent frameworks with the ``partially-decoupled"
+approach heavily trade off transparency with analysis tools. To be able to
+transfer fewer execution states to an analysis tool, these frameworks require
+heavily carving the analysis tool as well as the transfered execution states.
+For example, a recent framework~\cite{wester:parallelizing:asplos13} for race
+detection tools leverages the record-replay
+technique~\cite{scribe:sigmetrics2010, respec:asplos10, racepro:sosp11} to
+largely reduce analysis work in the actual execution, but this framework
+requires significantly carving race detection tools into several phases to adapt
+to record-replay, which makes the tools largely different from typical ones
+(Note that an analysis tool itself is already quite difficult to implement and
+maintain.)
 
 
-The third problem is that existing frameworks have not shown to support 
-multiple types of analysis tools at the same time. An application in 
-production runs often demand the powerful guarantees of multiple analyses. 
-However, traditional ``fully-coupled" frameworks typically take the shadow 
-memory approach to hold analysis results for each memory byte in the actual 
-execution, then different analyses may require different copies of 
-shadow memory. It is not trivial to extend these frameworks to support multiple 
-copies of shadow memory. It is not trivial to extend ``partially-decoupled" 
-frameworks to support multiple types of analysis tools at the same time either, 
-because these frameworks heavily carve the transfered execution states for each 
-type of analysis.
+The third problem is that existing frameworks, including both traditional ones
+and recent ones, have not shown to support multiple types of analysis tools
+within one execution. Multiple analysis tools bring multiple powerful
+guarantees, which is attractive to today's applications. However, the
+traditional ``fully-coupled" frameworks typically take the shadow memory
+approach to hold analysis results for each memory byte in the actual execution,
+then different analyses may require different copies of shadow memory per byte.
+It is not trivial to extend these frameworks to support multiple copies of
+shadow memory. Considering ``partially-decoupled" frameworks, it is not trivial
+to extend them to support multiple types of analysis tools within one execution
+either, because these frameworks heavily carve the transfered execution states,
+which are hard to reuse for different types of analysis tools.
 
 
-In sum, a key common reason for these three problems in existing analysis 
-frameworks is that they have only one actual execution, so they have to either 
-fully couples the analysis with the actual execution, or partially decouples 
-the analysis from the execution and then explicitly transfer a sub portion of 
-execution states to the analysis.
+In sum, a fundamental reason for the three problems in existing analysis 
+frameworks is that they run only one actual execution, so an analysis tool has
+to be fully or partially coupled with the execution in order to inspect
+execution states. Well, what if one can construct multiple equavalent
+executions efficiently and transparently?
 
 
 
@@ -104,42 +109,51 @@ execution states to the analysis.
 
 % P4: Our approach. Replication. DMT. And why we are better than existing 
 % replication systems: avoid shipping schedules, avoid annotations.
-To address the three problems, this paper presents \xxx, an efficient, 
-transparent dynamic program analysis framework. Our key insight is that one can 
-actually construct multiple equivalent executions with a technique called 
+To address this question, this paper presents \xxx, an efficient, 
+transparent dynamic program analysis framework by leveraging a technique called 
 \emph{state machine replication (or \smr)}~\cite{paxos:simple, 
-paxos:practical}. \smr assumes a deterministic application, runs the 
+paxos:practical, paxos}. \smr assumes a deterministic application, runs the 
 application on multiple machines (or replicas), and enforces a consistent 
 sequence of inputs for the application across replicas as long as a majority of 
-replicas reach consensus on each input.
+replicas reach consensus on each input. Leveraging \smr, all replicas
+consistently transform the same execution states, then minor replicas can just
+transparently run multiple analysis tools as ``analysis replicas" and majority
+replicas run actual executions and process inputs fast.
 
 
 However, \smr alone is not sufficient to construct multiple equivalent 
-executions because today's typical applications largely use threads and are 
-nondeterministic. The thread interleavings (or \emph{schedules}) in different 
-replicas can easily lead to divergent execution states and break \smr. To 
-address this problem, \xxx leverages \emph{deterministic multithreading (or 
-\dmt)}, a recent advanced threading technique that can efficiently enforce that 
-inter-thread communications happen in the same total order, then different 
-replicas in \smr run into the same schedules and progress with the same 
-execution states. In sum, by leveraging \smr and \dmt, one can construct 
-equivalent executions in replicas, then \xxx can run multiple analyses in 
-minor replicas transparently, while the majority of the replicas can still 
-reach consensus and process inputs efficiently.
+executions because today's applications widely use threads and thus are 
+nondeterministic. At runtime, replicas can run into different thread
+interleavings (or \emph{schedules}), easily leading to divergent execution
+states. To address this problem, \xxx also leverages \emph{deterministic
+multithreading (or \dmt)}, a recent advanced threading technique that
+efficiently enforce inter-thread communications to happen in the same total
+order, then different replicas run the same schedules on the same input and
+transform the same execution states.
 
 
-A practical challenge for \xxx is that even some asynchronous analyses require 
-rolling back to previous good execution states when they detect malicious 
-events (\eg, a memory checker detects a NULL pointer dereference). To address 
-this challenge, \xxx has incorporated a transparent application checkpoint and 
-restore mechanism for the analysis to decide which checkpoint to roll back.
+A practical challenge for \xxx is that even asynchronous analyses sometimes
+need to roll back to previous execution states when they detect malicious
+events (\eg, a NULL pointer deference). To address this challenge, \xxx has
+incorporated a transparent application-level checkpoint mechanism.
 
 
 We have implemented a \xxx system prototype in Linux. Evaluation on a widely 
-used multimedia server program \mediatomb~\cite{mediatomb} with three replicas 
-shows that \xxx runs efficiently with a race detection tool 
-Helgrind~\cite{valgrind:pldi} with a overhead 1.8\% over the replication 
-execution running without the analysis on 24-core machines.
+used multimedia server program \mediatomb~\cite{mediatomb} with three replicas
+(each has 24 cores) shows that \xxx runs efficiently with a race detection tool 
+Helgrind~\cite{valgrind:pldi} with 1.8\% overhead over \xxx's bare replication 
+framework.
+
+
+% P6: Benefits. This paragraph can be removed.
+The main contribution of \xxx is the idea of constructing multiple equivalent
+executions to fully decoupe an application's actual execution and analysis
+tools, which benefits applications, analysis tools, and frameworks. \xxx can
+greatly improve an application's quality by runnning multiple analysis tools in
+production runs efficiently. \xxx is transparent to analysis tools and has the
+potential to strengthen these tools (\S\ref{sec:discuss}). \xxx compensates
+traditional ``fully-coupled" frameworks because it can easily run them on the
+analysis replicas.
 
 
 % P5: A practical challenge. Transparent checkpoint.
@@ -161,14 +175,7 @@ execution running without the analysis on 24-core machines.
 
 
 
-% P6: Benefits. This paragraph can be removed.
-The main contribution of \xxx is the idea of constructing multiple equivalent 
-executions to fully decouple execution and analysis. Leveraging the replication 
-architecture, majority of replicas running the actual executions can process 
-inputs fast. In addition, multiple analysis tools can run transparently within 
-minor replicas, so that tool developers can now focus on the analysis logic 
-itself, and can even strengthen the guarantees of analysis tools via removing 
-the performance considerations.
+
 
 % In the reamaining of this paper, \ref{sec:background} introduces some 
 % background on \smr and \dmt, \ref{sec:overview} gives an overview of \xxx's 
