@@ -1,0 +1,19 @@
+The fault tolerance and the theoretically proven safety of state machine
+replication (\smr) makes it attractive for implementing a principled
+system for general programs, especially server programs that demand high
+availability.  Unfortunately, existing \smr systems unrealistically assume
+deterministic code execution when most server programs are
+nondeterministic multithreaded programs.  Moreover, existing \smr systems
+typically provide narrow state machine interfaces, and orchestrating a
+sever program into these interfaces can be strenuous and error-prone.
+
+This paper presents \xxx, an \smr system that transparently replicates
+general server programs for high availability.  It interposes on the
+socket and the thread synchronization interfaces to keep replicas in sync
+for transparency, requiring no intrusive modifications to shoehorn a
+program into a narrow interface.  To address nondeterminism, \xxx
+leverages deterministic multithreading to keep replicas in sync.  \xxx
+addresses a difficult network input timing problem via a new technique
+called \emph{time bubbling}. Evaluation on three diverse types of four
+widely used server programs (\eg, \apache and \clamav) show that \xxx is
+easy to use, has reasonable overhead (\overhead in average), and is robust.

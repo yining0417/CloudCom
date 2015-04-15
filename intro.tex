@@ -1,0 +1,14 @@
+\section{Introduction} \label{sec:intro}
+
+\emph{State machine replication (\smr)} is a powerful fault-tolerance
+concept.  It models a program as a deterministic state machine, where
+states are important program data and the transitions are deterministic
+executions of program code under input requests.  \smr runs replicas of
+this state machine on multiple nodes, tolerating many possible node and
+network failures.  To keep the replicas consistent, it invokes a
+distributed consensus protocol (typically \paxos~\cite{paxos}) to ensure
+that a quorum (typically majority) of the replicas agree on the input
+request sequence; under the deterministic execution assumption, this
+quorum of replicas must reach the same exact state.  \smr is proven safe
+in theory, and provides high availability in practice.
+
