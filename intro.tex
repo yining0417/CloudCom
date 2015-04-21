@@ -1,17 +1,15 @@
 \section{Introduction} \label{sec:intro}
 
-\paxos~\cite{paxos} is great.
-
 
 % P1: Analysis framework is good and critical, everywhere.
-Dynamic program analysis frameworks are widely studied because they enable a 
-wide range of powerful runtime analysis tools, including reliability, security, 
-and profliing. We classify existing frameworks into three categories: (1) 
-shadow memory, (2) record-replay, and (3) decoupling execution and 
-analysis. These frameworks take an \emph{synchronous} approach, which 
-frequently exchange an application's execution states with the analysis tools. 
-These frameworks have embraced various analysis tools, which have shown to find 
-harmfule bugs in real-world software and/or prevent serious attacks.
+Dynamic program analysis frameworks are pervasive because they enable a wide 
+range of powerful runtime analysis tools, including reliability, security, and 
+profliing. We classify existing frameworks into three categories: (1) shadow 
+memory, (2) record-replay, and (3) decoupling execution and analysis. These 
+frameworks take an \emph{synchronous} approach, which frequently exchange an 
+application's execution states with the analysis tools. These frameworks have 
+embraced various analysis tools, which have shown to find harmfule bugs in 
+real-world software and/or prevent serious attacks.
 
 
 
@@ -34,28 +32,31 @@ are still extremely difficult to deploy in production runs, mainly due to two
 problems. First, these frameworks prohibitively slow down the actual executions 
 (\eg, up to 40X in Valgrind and 12X in ShadowReplica), because the synchronous 
 approach in these frameworks need to frequently exchange program states between 
-the executions and the analysis tools. Whenever the analysis is slow, the 
-actual execution has to wait for the analysis to be done.
+the executions and the analysis tools. Whenever a piece of analysis work is 
+slow, the actual execution has to wait for the analysis to be done.
 
-Second, each framework can enable only one analysis at the same time; no 
-evaluation in existing frameworks have shown to be able to support multiple 
-analysis tools. This problem leads to a paradox: if an application wants 
-the benefit of one analysis tool, it has to give in all benefits in the other 
+Second, the synchronous approach causes existing frameworks to significantly 
+involve with the program state exchange with the analysis tool, causing these 
+frameworks to support only one analysis tool at the same time. To the best of 
+our knowledge, no evaluation in existing frameworks have shown to be able to 
+support multiple analysis tools. This problem leads to a paradox: if an 
+application wants the benefit of one analysis tool, it has to exclude the other 
 tools.
 
 % P3: Why existing sync approach must fail.
 We argue that the synchronous approach in existing frameworks is not 
 fundamental, and many anlysis tools (\eg, data race detectors and profiling 
-tools) can be ran asynchronously, if these requirements are met: (1) there is a 
-transparent replication framework that can replicate inputs and 
-nondeterministic events such as threads aquiring locks; and (2) there is a 
-mechanism for a analysis tool to notify the framework if bad events such as 
-deferencing a null pointer occurs or the tool detects that a stack overflow 
-occurs; (3) the framework has a transparent application checkpoint and recovery 
-feature if bad events occurs. Even for a security analysis tool, if the 
-security threat does not involve leaking information to the outside world, 
-which application checkpoint can not revert, asynchronous framework could be 
-suitable for this tool.
+tools) can be ran asynchronously, if there is we could meet these 
+requirements: (1) there is a transparent replication framework that can 
+replicate inputs and nondeterministic events such as threads aquiring locks; 
+and (2) there is a mechanism for a analysis tool to notify the framework if bad 
+events such as deferencing a null pointer occurs or the tool detects that a 
+stack overflow occurs; (3) the framework has a transparent application 
+checkpoint and recovery feature if bad events occurs. Even for a security 
+analysis tool, if the security threat does not involve leaking information to 
+the outside world (\eg, using deallocated memory or uninitialized memory), 
+which application checkpoint can not revert, this asynchronous approach could 
+be suitable for this tool.
 
 
 % P4: Our key insight is that many analysis does not have to be synchronous, 
@@ -90,16 +91,16 @@ act as backup nodes, which reach consensus on requests and process requests.
 One or multiple analysis tools run on at most \v{f} nodes, while the other 
 nodes run the application without analysis and process requests fast.
 
-We envision two practical challenges for making asynchronous analysis framework 
-practical. First, depending on machine restarts and network partitions, a 
-node's role may change, not only between primary and backup, but also between 
-normal nodes and analysis nodes, ande even between different analysis nodes. We 
-design a new checkpoint mechanism that matches up checkpoints from different 
-role machines with input total order ID to address this problem. Second, we 
-need a mechanism to roll back all replicas when a bad event (\eg, deferencing 
-a NULL pointer) has occured and detected by the analysis tool. We design a a 
-simple API for analysis tool to invoke so that the replicas can reach consensus 
-on this roll back and act consistently.
+However, two practical challenges must be addressed to make \xxx's asynchronous 
+analysis framework practical. First, depending on machine restarts and network 
+partitions, a node's role may change, not only between primary and backup, but 
+also between normal nodes and analysis nodes, ande even between different 
+analysis nodes. We design a new checkpoint mechanism that matches up 
+checkpoints from different role machines with input total order ID to address 
+this problem. Second, we need a mechanism to roll back all replicas when a bad 
+event (\eg, deferencing a NULL pointer) has occured and detected by the 
+analysis tool. We design a a simple API for analysis tool to invoke so that the 
+replicas can reach consensus on this roll back and act consistently.
 
 To verify that \xxx's asynchronous approach is feasible, we have evaluated 
 \xxx with four diverse types of widely uses server programs. We measured the 
