@@ -90,11 +90,25 @@ act as backup nodes, which reach consensus on requests and process requests.
 One or multiple analysis tools run on at most \v{f} nodes, while the other 
 nodes run the application without analysis and process requests fast.
 
-We envision a couple a few challenges for making asynchronous analysis framwork 
-practical. First, we need a practical checkpoint mechanism for the analysis 
-tools to notify the whole replicas in the system. Second, we need a transprent 
-mechanism between the analysis tool and the framework to perform checkpoints for 
-each node doing analysis.
+We envision two practical challenges for making asynchronous analysis framework 
+practical. First, depending on machine restarts and network partitions, a 
+node's role may change, not only between primary and backup, but also between 
+normal nodes and analysis nodes, ande even between different analysis nodes. We 
+design a new checkpoint mechanism that matches up checkpoints from different 
+role machines with input total order ID to address this problem. Second, we 
+need a mechanism to roll back all replicas when a bad event (\eg, deferencing 
+a NULL pointer) has occured and detected by the analysis tool. We design a a 
+simple API for analysis tool to invoke so that the replicas can reach consensus 
+on this roll back and act consistently.
+
+To verify that \xxx's asynchronous approach is feasible, we have evaluated 
+\xxx with four diverse types of widely uses server programs. We measured the 
+checkpint time cost, run multiple valgrind analysis on different nodes, and 
+collected performance results.
+
+% Problem: for some security attack such as stack overflow, the attacker 
+% may totally replace the LD_PRELOAd library so that our interception layer
+% can never go back, and we can never roll back.
 
 % P6: Key technical challenges. Transparent and timely (to respond to attacks) 
 % checkpoint. Migration of analysis from one machine to another.
