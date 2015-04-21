@@ -1,14 +1,65 @@
 \section{Introduction} \label{sec:intro}
 
-\emph{State machine replication (\smr)} is a powerful fault-tolerance
-concept.  It models a program as a deterministic state machine, where
-states are important program data and the transitions are deterministic
-executions of program code under input requests.  \smr runs replicas of
-this state machine on multiple nodes, tolerating many possible node and
-network failures.  To keep the replicas consistent, it invokes a
-distributed consensus protocol (typically \paxos~\cite{paxos}) to ensure
-that a quorum (typically majority) of the replicas agree on the input
-request sequence; under the deterministic execution assumption, this
-quorum of replicas must reach the same exact state.  \smr is proven safe
-in theory, and provides high availability in practice.
+\paxos~\cite{paxos} is great.
 
+
+% P1: Analysis framework is good and critical, everywhere.
+Dynamic program analysis frameworks are widely studied because they enable a 
+wide range of powerful runtime analysis tools, including reliability, security, 
+and profliing. We classify existing frameworks into three categories: (1) 
+shadow memory, (2) record-replay, and (3) decoupling execution and 
+analysis. These frameworks take an synchronous approach, which frequently 
+exchange an application's execution states with the analysis tools. These 
+frameworks have embraced various analysis tools, which have shown to find 
+harmfule bugs in real-world software and/or prevent serious attacks.
+
+
+
+% P2: Existing analysis frameworks have two problems because they are 
+% synchronous. Reliability, Securityk, and Profling tools.
+% First, slow. Second, can support only one analysis at the same time. Three, 
+% % need to orchest the analysis algorithm as well as the framework to adapt to 
+% the framework.
+% 1: slow.
+
+% 2: can not support mulitple analysis at the same time.
+%   Can valgrind do multiple analysis at the same time?
+%   Can Speck do multiple analysis at the same time?
+
+% 3: need to orchest the analysis significantly, or even sacrifice guarantees.
+%   Peter Chen's: need to separate anaysis to multiple stages.
+%   TaintDroid: sacrifice control flow taint.  
+Unfortunately, despite decades of effort, existing program analysis frameworks 
+are still extremely difficult to deploy in production runs, mainly due to three 
+reasons. First, these frameworks prohibitively slow down the actual executions 
+because they need to frequently exchange program states between the executions 
+and the analysis tools. Second, each framework can enable only one analysis at 
+the same time; no evaluation in existing frameworks have shown to be able to 
+support multiple analysis tools. Third, many frameworks require significantly 
+orchasting the analysis tools to adapt to (\eg, P Chen's), or sacrifice 
+soundness of the analysis (\eg, TaintDroid).
+
+% P3: Why existing sync approach must fail.
+TBD.
+
+% P4: Our key insight is that many analysis does not have to be synchronous, 
+% and % they can be implemented asynchrously. This paper presents asynchronous 
+% analysis % fvalgrind --tool=memcheck ls -lramework. Key weapon, transparent
+% state machine replication.
+
+%% Existing types of analysis frameworks:
+% 1: shadow memory. Valgrind. TaintDroid. YY Zhou's Lift. Pin. DynamoRio.
+% 2: record replay. Peter Chen's Aftersight.
+% 3: decoupling execution and analysis. ShadowReplica. Speck (also have record 
+% replay).
+
+% P5: Application scope. Not for leaking analysis.
+
+% P6: Key technical challenges. Transparent and timely (to respond to attacks) 
+% checkpoint. Migration of analysis from one machine to another.
+% When bad events are detected, how does the analysis involve with the 
+% framework?
+% Notify the framework, involve sync point. Roll back the replicas.
+
+% P7: Our initial results. Checkpoint time. Run with valgrind one analysis. Or 
+% two valgrind analysis, one at each replica.
