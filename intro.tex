@@ -8,9 +8,9 @@ Dynamic program analysis frameworks are widely studied because they enable a
 wide range of powerful runtime analysis tools, including reliability, security, 
 and profliing. We classify existing frameworks into three categories: (1) 
 shadow memory, (2) record-replay, and (3) decoupling execution and 
-analysis. These frameworks take an synchronous approach, which frequently 
-exchange an application's execution states with the analysis tools. These 
-frameworks have embraced various analysis tools, which have shown to find 
+analysis. These frameworks take an \emph{synchronous} approach, which 
+frequently exchange an application's execution states with the analysis tools. 
+These frameworks have embraced various analysis tools, which have shown to find 
 harmfule bugs in real-world software and/or prevent serious attacks.
 
 
@@ -30,17 +30,33 @@ harmfule bugs in real-world software and/or prevent serious attacks.
 %   Peter Chen's: need to separate anaysis to multiple stages.
 %   TaintDroid: sacrifice control flow taint.  
 Unfortunately, despite decades of effort, existing program analysis frameworks 
-are still extremely difficult to deploy in production runs, mainly due to three 
-reasons. First, these frameworks prohibitively slow down the actual executions 
-because they need to frequently exchange program states between the executions 
-and the analysis tools. Second, each framework can enable only one analysis at 
-the same time; no evaluation in existing frameworks have shown to be able to 
-support multiple analysis tools. Third, many frameworks require significantly 
-orchasting the analysis tools to adapt to (\eg, P Chen's), or sacrifice 
-soundness of the analysis (\eg, TaintDroid).
+are still extremely difficult to deploy in production runs, mainly due to two 
+problems. First, these frameworks prohibitively slow down the actual executions 
+(\eg, up to 40X in Valgrind and 12X in ShadowReplica), because the synchronous 
+approach in these frameworks need to frequently exchange program states between 
+the executions and the analysis tools. Whenever the analysis is slow, the 
+actual execution has to wait for the analysis to be done.
+
+Second, each framework can enable only one analysis at the same time; no 
+evaluation in existing frameworks have shown to be able to support multiple 
+analysis tools. This problem leads to a paradox: if an application wants 
+the benefit of one analysis tool, it has to give in all benefits in the other 
+tools.
 
 % P3: Why existing sync approach must fail.
-TBD.
+We argue that the synchronous approach in existing frameworks is not 
+fundamental, and many anlysis tools (\eg, data race detectors and profiling 
+tools) can be ran asynchronously, if these requirements are met: (1) there is a 
+transparent replication framework that can replicate inputs and 
+nondeterministic events such as threads aquiring locks; and (2) there is a 
+mechanism for a analysis tool to notify the framework if bad events such as 
+deferencing a null pointer occurs or the tool detects that a stack overflow 
+occurs; (3) the framework has a transparent application checkpoint and recovery 
+feature if bad events occurs. Even for a security analysis tool, if the 
+security threat does not involve leaking information to the outside world, 
+which application checkpoint can not revert, asynchronous framework could be 
+suitable for this tool.
+
 
 % P4: Our key insight is that many analysis does not have to be synchronous, 
 % and % they can be implemented asynchrously. This paper presents asynchronous 
@@ -54,6 +70,31 @@ TBD.
 % replay).
 
 % P5: Application scope. Not for leaking analysis.
+To meet these requiremnts, this paper presents \xxx, a program analysis 
+framework that supports asynchronous and transparent program anlysis tools. The 
+core of \xxx is \repbox, a state machine replication (or \smr) system that can 
+transparently replicate today's general multithreaded programs for high 
+availability. \smr runs replicas of an application on multiple machines 
+(nodes), tolerating many possible node and network failures.  To keep the 
+replicas consistent, it invokes a distributed consensus protocol 
+\paxos~\cite{paxos}) to ensure that a majority of the replicas agree on the 
+input request sequence. \repbox incorporates an efficient Deterministic 
+Multithreading (or \dmt) engine, which practically enforces the same thread 
+interleavings for the application running across replicas.
+
+\xxx addresses both the two problems in today's analysis frameworks. A typical 
+setting of a \xxx deployment contains 2\v{f}+1 nodes. A node acts as the 
+primary node, which accepts client requests, invokes \paxos consensus on the 
+order of these requests, and sends back responses to clients. The other nodes 
+act as backup nodes, which reach consensus on requests and process requests. 
+One or multiple analysis tools run on at most \v{f} nodes, while the other 
+nodes run the application without analysis and process requests fast.
+
+We envision a couple a few challenges for making asynchronous analysis framwork 
+practical. First, we need a practical checkpoint mechanism for the analysis 
+tools to notify the whole replicas in the system. Second, we need a transprent 
+mechanism between the analysis tool and the framework to perform checkpoints for 
+each node doing analysis.
 
 % P6: Key technical challenges. Transparent and timely (to respond to attacks) 
 % checkpoint. Migration of analysis from one machine to another.
