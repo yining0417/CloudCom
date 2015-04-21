@@ -91,11 +91,11 @@ act as backup nodes, which reach consensus on requests and process requests.
 One or multiple analysis tools run on at most \v{f} nodes, while the other 
 nodes run the application without analysis and process requests fast.
 
-However, two practical challenges must be addressed to make \xxx's asynchronous 
-analysis framework practical. First, depending on machine restarts and network 
-partitions, a node's role may change, not only between primary and backup, but 
-also between normal nodes and analysis nodes, ande even between different 
-analysis nodes. We design a new checkpoint mechanism that matches up 
+However, to make \xxx's asynchronous analysis framework practical, two 
+practical challenges must be addressed. First, depending on machine restarts 
+and network partitions, a node's role may change, not only between primary and 
+backup, but also between normal nodes and analysis nodes, ande even between 
+different analysis nodes. We design a new checkpoint mechanism that matches up 
 checkpoints from different role machines with input total order ID to address 
 this problem. Second, we need a mechanism to roll back all replicas when a bad 
 event (\eg, deferencing a NULL pointer) has occured and detected by the 
@@ -105,7 +105,8 @@ replicas can reach consensus on this roll back and act consistently.
 To verify that \xxx's asynchronous approach is feasible, we have evaluated 
 \xxx with four diverse types of widely uses server programs. We measured the 
 checkpint time cost, run multiple valgrind analysis on different nodes, and 
-collected performance results.
+collected performance results. These results also show that \xxx is 
+complementary to existing analysis frameworks.
 
 % Problem: for some security attack such as stack overflow, the attacker 
 % may totally replace the LD_PRELOAd library so that our interception layer
