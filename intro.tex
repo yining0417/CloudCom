@@ -42,9 +42,14 @@ online (cite Respec) which frequently synchronize thread interleavings (or
 schedules and easily leading to divergent execution states. Despite a variety 
 of notable approaches are proposed (cite Respec, DoublePlay, and ASPLOS 2013), 
 efficient and scalable online record-replay is still an open problem. For 
-instance, although a recent work (ASPLOS2013) shows that they can parallize 
-data race detection by 4X after applying some smart optimizations, they admits 
-that the detection still has a 5X to 15X slowdown with their benchmarks.
+instance, two notable systems incur 28\% to 55\% overhead in record phase 
+with four threads.
+
+% For 
+% instance, although a recent work (ASPLOS2013) shows that they can parallize 
+% data race detection by 4X after applying some smart optimizations, they 
+% admits 
+% that the detection still has a 5X to 15X slowdown with their benchmarks.
 
 
 Worse, existing asynchronous frameworks significantly trade off transparency 
@@ -74,7 +79,7 @@ called Deterministic Multithreading (or \dmt). Recent
 study~\cite{parrot:sosp13} has shown that \dmt runs fast on a wide range of 108 
 popular multithreaded programs on 24-core machines. In sum, the \smr 
 replication enables the actual executions proceed efficiently, and \dmt 
-eliminates the burden of synchronizing schedules across replicas as in 
+eliminates the burden of synchronizing schedules across replicas as in online
 record-replay.
 
 
