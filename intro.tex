@@ -16,23 +16,25 @@ greatly improved software quality (\eg, detecting harmful data races in
 multithreaded programs).
 
 
-% P2: But performance is bad. Async approach with record-replay.
-An open problem for these frameworks is performance: powerfuly analyses are 
-usually heavyweight and prohibitively slow down the actual execution that 
-runs synchronously. This problem has restricted most of existing frameworks as 
-well as the analysis tools to deploy only in testing labs without being able 
-to exercise real-world workloads. In fact, many analyses can be done 
-asynchronously (\eg, data race detection and profling tools), so recently 
-researchers have proposed asynchronous frameworks (\eg, Aftersight, Spec, 
-ASPLOS13) via an advanced technique called ``record-replay": the record 
-phase runs the actual execution and records nondeterministic sources such as 
-inputs, while the replay phase runs (typically offline) the actual execution 
-with an analysis tool on the recorded inputs. This asynchronous approach 
-decouples the analysis from the execution and lets the actual execution run 
-efficiently.
+% P2: Three problems. Performance. Transparency. Only one analysis.
+An open problem for existing program analysis frameworks is performance.
+Powerfuly analyses are usually heavyweight and prohibitively slow down the 
+actual execution that runs synchronously. This problem has restricted most of 
+existing frameworks as well as the analysis tools to deploy only in testing 
+labs without being able to exercise real-world workloads. In fact, many 
+analyses can be done asynchronously (\eg, data race detection and profling 
+tools), so recently researchers have proposed asynchronous frameworks (\eg, 
+Aftersight, Spec, ASPLOS13) via an advanced technique called ``record-replay": 
+the record phase runs the actual execution and records nondeterministic sources 
+such as inputs, while the replay phase runs (typically offline) the actual 
+execution with an analysis tool on the recorded inputs. This asynchronous 
+approach decouples the analysis from the execution and lets the actual 
+execution run efficiently.
 
 
-% P3: Multithreading makes record-replay bad.
+% P3: Some recent work tried to avoid the synchronizing execution states with
+% an approach called record-replay. But thread interleabings still need to sync.
+% and not transparent as well.
 Unfortunately, the emerging multithreading trend, which is driven by the rise 
 of the multi-core hardware, poses a significant challenge on existing 
 asynchronous frameworks. For instance, today's popular server applications 
@@ -97,7 +99,7 @@ analysis tool. We design a a simple API for analysis tool to invoke so that the
 replicas can reach consensus on this roll back and act consistently.
 
 
-% P6: Benefits.
+% P6: Benefits. This paragraph can be removed.
 \xxx has three major benefits compared to existing frameworks. First, \xxx's 
 replication architecture provides an efficient framework for many asynchronous 
 analysis tools, ranging from reliability tools, to profiling tools, and to 
