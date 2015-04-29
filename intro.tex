@@ -6,13 +6,14 @@
 % synchronous.
 Dynamic program analysis frameworks have become increasingly pervasive and 
 critical because they enable a wide range of powerful analysis tools at 
-runtime, including reliability, profliing and logging tools. 
-Traditional program analysis frameworks either perform inline analysis with an 
+runtime, including reliability, profliing and logging tools. Traditional 
+program analysis frameworks either perform inline analysis with an 
 application's actual execution (\eg, Valgrind, DynamoRio, Pin, LIFT), or 
-frequently synchronize an application's execution states between the actual 
-execution and the analysis (\eg, ShadowReplica), thus we call these frameworks 
-\emph{synchronous} frameworks. These frameworks have embraced numerous analysis 
-tools and have greatly improved software quality (\eg, detecting harmful bugs).
+explicitly synchronize an application's execution states between the actual 
+execution and the analysis running asynchronously (\eg, ShadowReplica, 
+ASPLOS13). These frameworks have embraced numerous analysis tools and have 
+greatly improved software quality (\eg, detecting harmful data races in 
+multithreaded programs).
 
 
 % P2: But performance is bad. Async approach with record-replay.
