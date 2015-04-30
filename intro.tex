@@ -9,44 +9,75 @@ critical because they enable a wide range of powerful analysis tools at
 runtime, including reliability, profliing and logging tools. Traditional 
 program analysis frameworks either perform inline analysis with an 
 application's actual execution (\eg, Valgrind, DynamoRio, Pin, LIFT), or 
-explicitly synchronize an application's execution states between the actual 
-execution and the analysis running asynchronously (\eg, ShadowReplica, 
-ASPLOS13). These frameworks have embraced numerous analysis tools and have 
-greatly improved software quality (\eg, detecting harmful data races in 
-multithreaded programs).
+explicitly trasfer a necessary subset of an application's execution states 
+between the actual execution and the analysis running asynchronously (\eg, 
+ShadowReplica, ASPLOS13). These frameworks have embraced numerous analysis 
+tools and have greatly improved software quality (\eg, detecting new harmful 
+data races in multithreaded programs).
 
 
 % P2: Three problems. Performance. Transparency. Only one analysis.
-An open problem for existing program analysis frameworks is performance.
-Powerfuly analyses are usually heavyweight and prohibitively slow down the 
-actual execution that runs synchronously. This problem has restricted most of 
-existing frameworks as well as the analysis tools to deploy only in testing 
-labs without being able to exercise real-world workloads. In fact, many 
-analyses can be done asynchronously (\eg, data race detection and profling 
-tools), so recently researchers have proposed asynchronous frameworks (\eg, 
-Aftersight, Spec, ASPLOS13) via an advanced technique called ``record-replay": 
-the record phase runs the actual execution and records nondeterministic sources 
-such as inputs, while the replay phase runs (typically offline) the actual 
-execution with an analysis tool on the recorded inputs. This asynchronous 
-approach decouples the analysis from the execution and lets the actual 
-execution run efficiently.
+An open problem for existing program analysis frameworks is performance. 
+Inlining an analysis with the actual execution makes the analysis aware all 
+execution states so that the analysis can be easy to implement, but this 
+approach unavoidably slows down the actual execution because a powerful 
+analysis is usually heavyweight.
+
+Leveraging a fact that many analyses can be done asynchronously with the 
+executions, recent frameworks take the ``decoupled-analysis" approach: they 
+only transfert a necessary subset of application execution states (\eg, 
+effective memory addresses, thread interleavings). These frameworks have shown 
+promissing results to speedup the frameworks, however, since the execution and 
+the analysis is still partially coupled, the resultant overhead of these 
+frameworks is still prohibitive.
+
+Worse, to maximize speedup, existing decoupled-analysis frameworks heavily tune 
+execution states exchanged between the execution and the analysis, which 
+require significantly reconstructing analysis tools as well as the frameworks 
+themselves. For example, a recent data flow tracking framework carefully 
+selects only effective computed memory addresses and branches as the execution 
+states, and a recent data race detection framework selects the vector clocks of 
+synchronizations, between the execution and the analysis. These tunings not 
+only heavily trades off transparency between the analysis, but also resticts 
+the framework to run only one analysis at the same time. Existing in-line 
+analysis frameworks can also only support one analysis at the same time because 
+they typically use the shadow memory approach.
+
+We believe that many analyses can be completely decoupled from the executions if 
+we have a framework meet these requirements. First, inputs. Second, thread 
+interleavings. Third, checkpoints.
+
+% Powerfuly analyses are usually heavyweight and prohibitively slow down the 
+% actual execution that runs synchronously. This problem has restricted most of 
+% existing frameworks as well as the analysis tools to deploy only in testing 
+% labs without being able to exercise real-world workloads. In fact, many 
+% analyses can be done asynchronously (\eg, data race detection and profling 
+% tools), so recently researchers have proposed asynchronous frameworks (\eg, 
+% Aftersight, Spec, ASPLOS13) via an advanced technique called 
+% ``record-replay": % the record phase runs the actual execution and records 
+% nondeterministic sources % such as inputs, while the replay phase runs 
+% (typically offline) the actual % execution with an analysis tool on the 
+% recorded inputs. This asynchronous % approach decouples the analysis from the 
+% execution and lets the actual % execution run efficiently.
 
 
 % P3: Some recent work tried to avoid the synchronizing execution states with
 % an approach called record-replay. But thread interleabings still need to sync.
 % and not transparent as well.
-Unfortunately, the emerging multithreading trend, which is driven by the rise 
-of the multi-core hardware, poses a significant challenge on existing 
-asynchronous frameworks. For instance, today's popular server applications 
-(\eg, \apache) use multiple threads to server requests parallelly. These 
-parallel and continuously running applications require record-replay to run 
-online (cite Respec) which frequently synchronize thread interleavings (or 
-\emph{schedules}), otherwise the record and replay may run into different 
-schedules and easily leading to divergent execution states. Despite a variety 
-of notable approaches are proposed (cite Respec, DoublePlay, and ASPLOS 2013), 
-efficient and scalable online record-replay is still an open problem. For 
-instance, two notable systems incur 28\% to 55\% overhead with four threads in 
-record phase.
+% Unfortunately, the emerging multithreading trend, which is driven by the rise 
+% of the multi-core hardware, poses a significant challenge on existing 
+% asynchronous frameworks. For instance, today's popular server applications 
+% (\eg, \apache) use multiple threads to server requests parallelly. These 
+% parallel and continuously running applications require record-replay to run 
+% online (cite Respec) which frequently synchronize thread interleavings (or 
+% \emph{schedules}), otherwise the record and replay may run into different 
+% schedules and easily leading to divergent execution states. Despite a variety 
+% of notable approaches are proposed (cite Respec, DoublePlay, and ASPLOS 
+% 2013), 
+% efficient and scalable online record-replay is still an open problem. For 
+% instance, two notable systems incur 28\% to 55\% overhead with four threads 
+% in 
+% record phase.
 
 % For 
 % instance, although a recent work (ASPLOS2013) shows that they can parallize 
@@ -55,14 +86,14 @@ record phase.
 % that the detection still has a 5X to 15X slowdown with their benchmarks.
 
 
-Worse, existing asynchronous frameworks significantly trade off transparency 
-between the analyses and the frameworks. For better performance, they 
-significantly orchest the frameworks with specific type of analysis, which 
-requires reconstruct from the analysis (two race detection algorithms) into 
-three phases in their framworks, although the analysis algorithms themselves 
-are already notouriously complicated and subtle. Multithreading poses 
-significant performance and transparency issues to existing synchronous 
-frameworks, too (\eg, ShadowReplica, LIFT).
+% Worse, existing asynchronous frameworks significantly trade off transparency 
+% between the analyses and the frameworks. For better performance, they 
+% significantly orchest the frameworks with specific type of analysis, which 
+% requires reconstruct from the analysis (two race detection algorithms) into 
+% three phases in their framworks, although the analysis algorithms themselves 
+% are already notouriously complicated and subtle. Multithreading poses 
+% significant performance and transparency issues to existing synchronous 
+% frameworks, too (\eg, ShadowReplica, LIFT).
 
 
 % P4: Our approach. Replication. DMT. And why we are better than existing 
