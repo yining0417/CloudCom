@@ -1,41 +1,25 @@
-% The fault tolerance and the theoretically proven safety of state machine
-% replication (\smr) makes it attractive for implementing a principled
-% system for general programs, especially server programs that demand high
-% availability.  Unfortunately, existing \smr systems unrealistically assume
-% deterministic code execution when most server programs are
-% nondeterministic multithreaded programs.  Moreover, existing \smr systems
-% typically provide narrow state machine interfaces, and orchestrating a
-% sever program into these interfaces can be strenuous and error-prone.
-% 
-% This paper presents \xxx, an \smr system that transparently replicates
-% general server programs for high availability.  It interposes on the
-% socket and the thread synchronization interfaces to keep replicas in sync
-% for transparency, requiring no intrusive modifications to shoehorn a
-% program into a narrow interface.  To address nondeterminism, \xxx
-% leverages deterministic multithreading to keep replicas in sync.  \xxx
-% addresses a difficult network input timing problem via a new technique
-% called \emph{time bubbling}. Evaluation on three diverse types of four
-% widely used server programs (\eg, \apache and \clamav) show that \xxx is
-% easy to use, has reasonable overhead (\overhead in average), and is robust.
 
 Dynamic program analysis frameworks have become increasingly pervasive and 
 critical because they enable a wide range of powerful analysis tools (\eg, 
 reliability, profling, and logging) at runtime to improve the quality of 
 software applications. An open problem for existing frameworks is 
-performance: to analyze an application's execution, these frameworks frequently 
-synchronize execution states (\eg, accessed memory and thread interleavings) 
-between the actual execution and the analysis, causing prohibitive slowdown in 
-the execution. To reduce synchronizaing execution states, many frameworks 
-require significantly reconstructing analysis tools as well as the frameworks 
-themselves, which heavily trades off transparency between the analysis and the 
-framework and allows only one analysis to be run at the same time.
+performance: to inspect an application's execution, existing frameworks 
+fully or partiall couple the execution and analysis, which frequently 
+synchronizes execution states (\eg, accessed memory and thread interleavings) 
+between the actual execution and the analysis and causes prohibitive slowdown 
+in the execution. To reduce the portions of execution states that require 
+synchronization, many frameworks significantly orchest analysis tools as well 
+as the frameworks themselves, which heavily trades off transparency between the 
+analysis and the framework and causes only one type of analyses to be run at 
+the same time.
 
 
-This paper presents \xxx, an efficient and transparent framework by leveraging 
-two techniques: state machine replication (SMR) and deterministic 
-multithreading (DMT). SMR ensures that replicas running the same application 
-always see the same sequence of inputs, then multiple analyses can run within 
-some replicas transparently. DMT efficiently enforces the same thread 
-interleavings across replicas and eliminates the need of synchronizing 
-schedules between execution and analysis. Evaluation shows that \xxx is easy to 
-plug in analysis tools and has reasonable overhead.
+This paper presents \xxx, an efficient and transparent framework that fully 
+decouples execution and analysis by leveraging two techniques: state machine 
+replication (SMR) and deterministic multithreading (DMT). SMR ensures that 
+replicas running the same application always see the same sequence of inputs, 
+then multiple analyses can run within some replicas transparently. DMT 
+efficiently enforces the same thread interleavings across replicas and 
+eliminates the need of synchronizing schedules between execution and analysis. 
+Evaluation shows that \xxx is easy to plug in analysis tools and has reasonable 
+overhead.

@@ -2,50 +2,121 @@
 
 
 
-% P1: dynamic program analysis framework is good, and traditional ones are 
-% synchronous.
+% P1: dynamic program analysis framework is good. Traditional ones are 
+% fully-coupled, but slow.
 Dynamic program analysis frameworks have become increasingly pervasive and 
 critical because they enable a wide range of powerful analysis tools at 
-runtime, including reliability, profliing and logging tools. Traditional 
-program analysis frameworks either perform inline analysis with an 
-application's actual execution (\eg, Valgrind, DynamoRio, Pin, LIFT), or 
-explicitly trasfer a necessary subset of an application's execution states 
-between the actual execution and the analysis running asynchronously (\eg, 
-ShadowReplica, ASPLOS13). These frameworks have embraced numerous analysis 
-tools and have greatly improved software quality (\eg, detecting new harmful 
-data races in multithreaded programs).
+runtime, including reliability, profliing and logging tools. To let analysis 
+fully inspect an application's actual execution, traditional program analysis 
+frameworks inlines the execution with analysis (\eg, Valgrind, DynamoRio, Pin, 
+LIFT), so we call these frameworks's approach the ``fully-coupled 
+approach". Performance is a major problem for these frameworks because 
+powerfuly analysis tend to be heavyweight and prohibitively slow down the 
+execution.
 
-
-% P2: Three problems. Performance. Transparency. Only one analysis.
-An open problem for existing program analysis frameworks is performance. 
-Inlining an analysis with the actual execution makes the analysis aware all 
-execution states so that the analysis can be easy to implement, but this 
-approach unavoidably slows down the actual execution because a powerful 
-analysis is usually heavyweight.
 
 Leveraging a fact that many analyses can be done asynchronously with the 
-executions, recent frameworks take the ``decoupled-analysis" approach: they 
-only transfert a necessary subset of application execution states (\eg, 
-effective memory addresses, thread interleavings). These frameworks have shown 
-promissing results to speedup the frameworks, however, since the execution and 
-the analysis is still partially coupled, the resultant overhead of these 
-frameworks is still prohibitive.
+executions, some recent frameworks only transfert a subset of application 
+execution states (\eg, effective memory addresses, thread interleavings) 
+between the execution and the analysis. We call this approach the 
+``partially-decoupled approach". Because these frameworks transfer fewer 
+states, they can significantly speedup the actual executions (\eg, 
+ShadowReplica and ASPLOS2013). However, since the execution and the analysis 
+are still partially coupled, the resultant overhead of these frameworks is 
+still high (\eg, XX for ShadowReplica and YY for ASPLOS2013).
 
-Worse, to maximize speedup, existing decoupled-analysis frameworks heavily tune 
-execution states exchanged between the execution and the analysis, which 
-require significantly reconstructing analysis tools as well as the frameworks 
-themselves. For example, a recent data flow tracking framework carefully 
-selects only effective computed memory addresses and branches as the execution 
-states, and a recent data race detection framework selects the vector clocks of 
-synchronizations, between the execution and the analysis. These tunings not 
-only heavily trades off transparency between the analysis, but also resticts 
-the framework to run only one analysis at the same time. Existing in-line 
-analysis frameworks can also only support one analysis at the same time because 
-they typically use the shadow memory approach.
 
-We believe that many analyses can be completely decoupled from the executions if 
-we have a framework meet these requirements. First, inputs. Second, thread 
-interleavings. Third, checkpoints.
+Worse, to maximize speedup, existing frameworks that take the 
+partially-decoupled approach heavily tune execution states exchanged between 
+the execution and the analysis, which requires significantly reconstructing 
+analysis tools as well as the frameworks themselves. For example, regarding the 
+execution states between the execution and the analysis, a recent data flow 
+tracking framework carefully selects only effective computed memory addresses 
+and branches as the execution states, and a recent data race detection 
+framework selects the vector clocks of synchronizations. These tunings not only 
+heavily trade off transparency between the analysis and the framework (note an 
+analysis itself is often already extremely complicated to maintain), but also 
+resticts the framework to run only one analysis at the same time.
+
+% Existing in-line 
+% analysis frameworks also only supports one analysis at the same time because 
+% a % typical such frameworks typically maintain analysis results with shadow 
+% memory, 
+% which can only support one analysis in one execution.
+
+
+We argue that many analyses can be fully decoupled from the executions if 
+we could have such a framework that can meet three requirements. First (R1), 
+the framework must consistently replicate the same inputs for the execution and 
+the analysis even for server applications (\eg, \apache) that continuously 
+accept inputs. Second (R2), given the same input, the framework must 
+efficiently enforce the same thread interleavings (or \emph{schedules}) for 
+execution and analysis without the need of frequently transfering schedules 
+between them. Third (R3), when bad events occur in the execution or the 
+analysis (\eg, a NULL pinter dereference), the framework must provide a 
+transparent checkpoint and restore mechanism to recover both the execution and 
+the analysis back to an equavalent good state.
+
+
+% P4: Our approach. Replication. DMT. And why we are better than existing 
+% replication systems: avoid shipping schedules, avoid annotations.
+To meet these three requirments, this paper presents \xxx, an efficient, 
+transparent program analysis framework that can fully decouple execution and 
+analysis by leveraging two techniques: state machine replication (or \smr) and 
+deterministic multithreading (or \dmt). \xxx runs a total number of 2\v{f}+1 
+nodes, while \v{f}+1 nodes run the actual executions, and \v{f} nodes run one 
+analysis on each. To meet R1, as a typical \smr setting to keep the replicas 
+processing the same sequence of input requests, \xxx incorporates a distributed 
+consensus protocol \paxos~\cite{paxos} so that as long as a majority of nodes 
+agree on a new request, all replicas comply with this agreement. To meet R2, 
+\dmt runs in each replica and enforces that all inter-thread communications 
+happen in the same order across replicas without synchronizing schedules across 
+replicas. Recent study~\cite{parrot:sosp13} has shown that \dmt runs fast on a 
+wide range of 108 popular multithreaded programs on 24-core machines. To meet 
+R3, we design a checkpoint mechanism that matches up checkpoints from different 
+role machines with input total order ID.
+
+
+% P5: A practical challenge. Transparent checkpoint.
+% However, to make \xxx's asynchronous analysis framework practical, two 
+% challenges should be addressed. First, depending on machine restarts and 
+% network partitions, a node's role may change, not only between a \paxos 
+% primary 
+% and backup, but also between normal nodes and analysis nodes, ande even 
+% between 
+% different analysis nodes. We design a checkpoint mechanism that matches up 
+% checkpoints from different role machines with input total order ID to address 
+% this challenge. Second, we need a mechanism to roll back all replicas when a 
+% bad event (\eg, deferencing a NULL pointer) has occured and detected by the 
+% analysis tool. We design a a simple API for analysis tool to invoke so that 
+% the 
+% replicas can reach consensus on this roll back and act consistently.
+
+
+We have implemented a \xxx system propotype in Linux. Evaluation on four widely 
+used server programs show that our system runs efficiently with two heavyweight 
+Valgrind analyses running on one replica with reasonable overhead XXX\%, and 
+our checkpoint mechanism brings negligible overhead to the overall system, 
+transparent to the analysis, and is robust to replica restarts.
+
+
+% P6: Benefits. This paragraph can be removed.
+The key contribution of \xxx is the idea of fully decoupling execution 
+and analysis, which introduces three major benefits. First, \xxx's replication 
+architecture provides an efficient framework for many asynchronous 
+analysis tools, ranging from reliability tools, to profiling tools, and to 
+logging tools. Second, unlike many previous work which tightly orchest the 
+framework with the analysis for better performance (\eg, ShadowReplica and 
+ASPLOS13), our framework is transparent to analysis logic, so it is 
+complementary to existing analyses as well as frameworks and can easily 
+deploy existing frameworks in our replicas (\eg, Valgrind). Third, the 
+flexibility on the number of replicas enable multiple analyses (up to \v{f}) in 
+one execution.
+
+
+
+
+
 
 % Powerfuly analyses are usually heavyweight and prohibitively slow down the 
 % actual execution that runs synchronously. This problem has restricted most of 
@@ -94,60 +165,6 @@ interleavings. Third, checkpoints.
 % are already notouriously complicated and subtle. Multithreading poses 
 % significant performance and transparency issues to existing synchronous 
 % frameworks, too (\eg, ShadowReplica, LIFT).
-
-
-% P4: Our approach. Replication. DMT. And why we are better than existing 
-% replication systems: avoid shipping schedules, avoid annotations.
-This paper presents \xxx, an efficient, transparent program 
-analysis framework for asynchronous analyses. The key technique we leverage is 
-state machine replication (or \smr). As a typical \smr setting to keep the 
-replicas processing the same sequence of input requests, \xxx incorporates a 
-distributed consensus protocol \paxos~\cite{paxos} so that as long as a 
-majority of nodes aggree on a new request, all replicas comply with this 
-agrreement. \xxx runs replicas of an application on a number of 2\v{f}+1 
-machines, at least \v{f}+1 machines (majority) run the actual executions, agree 
-on the input requests, and respond to client programs fast; a number of 1 to 
-\v{f} replicas can run one type of analysis on each. To keep 
-schedules across replicas in sync, \repbox leverages an advanced techniqued 
-called Deterministic Multithreading (or \dmt). Recent 
-study~\cite{parrot:sosp13} has shown that \dmt runs fast on a wide range of 108 
-popular multithreaded programs on 24-core machines. In sum, the \smr 
-replication enables the actual executions proceed efficiently, and \dmt 
-eliminates the burden of synchronizing schedules across replicas as in online
-record-replay.
-
-
-% P5: A practical challenge. Transparent checkpoint.
-However, to make \xxx's asynchronous analysis framework practical, two 
-challenges should be addressed. First, depending on machine restarts and 
-network partitions, a node's role may change, not only between a \paxos primary 
-and backup, but also between normal nodes and analysis nodes, ande even between 
-different analysis nodes. We design a checkpoint mechanism that matches up 
-checkpoints from different role machines with input total order ID to address 
-this challenge. Second, we need a mechanism to roll back all replicas when a 
-bad event (\eg, deferencing a NULL pointer) has occured and detected by the 
-analysis tool. We design a a simple API for analysis tool to invoke so that the 
-replicas can reach consensus on this roll back and act consistently.
-
-
-% P6: Benefits. This paragraph can be removed.
-\xxx has three major benefits compared to existing frameworks. First, \xxx's 
-replication architecture provides an efficient framework for many asynchronous 
-analysis tools, ranging from reliability tools, to profiling tools, and to 
-logging tools. Second, the flexibility on the number of replicas enable 
-multiple analyses at the same time. No prior evaluation shows that it can 
-support multiple analyses simultaneously. Third, unlike many previous work 
-which tightly orchest the framework with the analysis for better performance 
-(\eg, ShadowReplica and ASPLOS13), our framework is independent to analysis 
-logic, so it is complementary to existing analyses as well as frameworks, thus 
-\xxx can easily deploy existing frameworks in our replicas (\eg, Valgrind).
-
-
-We have implemented a \xxx system propotype in Linux. Evaluation on four widely 
-used server programs show that our system runs efficiently with a heavyweight 
-Valgrind analysis running on one replica with reasonable overhead XXX\%, and 
-our checkpoint mechanism brings negligible overhead to the overall system, 
-transparent to the analysis, and is robust to replica restarts.
 
 
 
