@@ -54,9 +54,11 @@ continuously accept inputs. Second (R2), given the same input, the framework
 must efficiently enforce the same thread interleavings (or \emph{schedules}) 
 for execution and analysis without the need of frequently transfering schedules 
 between them. Third (R3), when bad events occur in the execution or the 
-analysis (\eg, a NULL pinter dereference), the framework must provide a 
-transparent checkpoint and restore mechanism to recover both the execution and 
-the analysis back to an equavalent good state.
+analysis (\eg, a NULL pinter dereference) caused by some malicious inputs, the 
+framework must provide a transparent checkpoint and restore mechanism to 
+recover both the execution and the analysis back to an equavalent state before 
+the malicious inputs are processed, and then replicas consistently discard the 
+malicious inputs.
 
 
 % P4: Our approach. Replication. DMT. And why we are better than existing 
@@ -71,8 +73,8 @@ processing the same sequence of input requests, \xxx incorporates a distributed
 consensus protocol \paxos~\cite{paxos} so that as long as a majority of nodes 
 agree on a new request, all replicas comply with this agreement. To meet R2, 
 \dmt runs in each replica and enforces that all inter-thread communications 
-happen in the same order across replicas without synchronizing schedules between 
-the exeuctions running with and without analysis. Recent 
+happen in the same order across replicas without synchronizing schedules 
+between the exeuctions running with and without analysis. Recent 
 study~\cite{parrot:sosp13} has shown that \dmt runs fast on a 
 wide range of 108 popular multithreaded programs on 24-core machines. To meet 
 R3, we design a checkpoint mechanism that matches up checkpoints from different 
