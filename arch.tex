@@ -89,10 +89,36 @@ operations have been persisitently logged).
 
 \subsection{Discussion} \label{sec:discuss}
 
-Many analyses can be done asynchronously.
+We envision that an analysis is suitable for \xxx if it can be done loosely 
+coupled with the actual execution. Many reliability analyses, including data 
+race detection, profiling, and logging meet this requirement. Some security 
+analysis such as CFI does not meet this requirement, because the analysis needs 
+to monitor the execution synchronously for each control flow transfer. In 
+addition, some security analysis such as information leakage protection are not 
+suitable for \xxx because the actual execution may probably run faster than the 
+analysis and leak information to clients before the analysis detects the 
+leakage. After all, many security tools such as use-after-free vulnerabilities 
+can be deployed in \xxx.
 
-For instance, race detection. A previous detector sacrifice soundness (may miss 
-bugs) for better performance. With our framework, this analysis can regain 
-soundness, while the application can still run fast.
+\xxx is not only transparent to analyses, but has the potential to improve the 
+strengths of existing analyses by its performance benefit. Previously, although 
+some analyses can run asynchrounously with the actual executions, the analysis 
+developers chose to implement it in an synchronous way probably due to the ease 
+of implementation and inspection. Ironically, because such an implementation is 
+slow, developers sometimes have to sacrifice some strenghths of the analysis 
+for better performance. For instance, ThreadSanitizer is one of the most widely 
+used race detectors, and currently it is implemented with an shadow memory 
+approach, which is synchronous. Because its early version was too slow (200X), 
+developers chose to only record the last few accesses for each memory byte 
+instead of the full access history for better performance, however, this trade 
+off may lose data races. With \xxx, developers can revert back to the full 
+access history so that they can avoid missing bugs.
 
-Extra guarantees. Some nodes fail. Role change.
+\smr provides an extra significant fault-tolerance benefit for \xxx. Existing 
+reliability and security analyses tend to expose or detect harmful defeats in 
+an application, which may crash the application. In addition, the actual 
+executions across different nodes may fail as well due to hardware or OS 
+failures. With \xxx's \smr replication architecture, the sequence of inputs are 
+persistently and consistently enforced across replica nodes, and failing minor 
+nodes (either an analysis or an actual execution node) do not affec the other 
+nodes' executions.
