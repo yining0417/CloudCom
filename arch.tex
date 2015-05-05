@@ -67,9 +67,7 @@ and enforces a well-define, round-robin schedule on these synchronization
 operations for all threads, practically eliminating nondeterminism in thread
 synchronizations. Although \parrot is not designed to resolve data races
 deterministically, \xxx's replication tolerates data races that have
-fail-stop consequences (see \S\ref{sec:limit}), and can further catch the
-other data races by running a race detector on a backup node (see
-\S\ref{sec:discussion}).  \xxx augments the \dmt component to schedule the
+fail-stop consequences.  \xxx augments the \dmt component to schedule the
 return points of socket operations in server replicas, too, to ensure that
 requests are admitted exactly at the same logical time across replicas.
 
