@@ -89,4 +89,10 @@ operations have been persisitently logged).
 
 \subsection{Discussion} \label{sec:discuss}
 
-TBD.
+Many analyses can be done asynchronously.
+
+For instance, race detection. A previous detector sacrifice soundness (may miss 
+bugs) for better performance. With our framework, this analysis can regain 
+soundness, while the application can still run fast.
+
+Extra guarantees. Some nodes fail. Role change.
