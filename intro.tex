@@ -6,10 +6,10 @@
 % fully-coupled, but slow.
 Dynamic program analysis frameworks have become increasingly pervasive and 
 critical because they enable a wide range of powerful analysis tools at 
-runtime, including reliability, profliing and logging tools. To let analysis 
-fully inspect an application's actual execution, traditional program analysis 
+runtime, including reliability, profiling and logging tools. To let analysis 
+easily inspect an application's actual execution, traditional program analysis 
 frameworks inlines the execution with analysis (\eg, Valgrind, DynamoRio, Pin, 
-LIFT), so we call these frameworks's approach the ``fully-coupled 
+LIFT), and we call these frameworks's approach the ``fully-coupled 
 approach". Performance is a major problem for these frameworks because 
 powerfuly analysis tend to be heavyweight and prohibitively slow down the 
 execution.
@@ -33,10 +33,11 @@ analysis tools as well as the frameworks themselves. For example, regarding the
 execution states between the execution and the analysis, a recent data flow 
 tracking framework carefully selects only effective computed memory addresses 
 and branches as the execution states, and a recent data race detection 
-framework selects the vector clocks of synchronizations. These tunings not only 
-heavily trade off transparency between the analysis and the framework (note an 
-analysis itself is often already extremely complicated to maintain), but also 
-resticts the framework to run only one analysis at the same time.
+framework selects the vector clocks of synchronization operationss. These 
+tunings not only heavily trade off transparency between the 
+analysis and the framework (note an analysis itself is often already extremely 
+complicated to maintain), but also resticts the framework to run only one type 
+of analyses at the same time.
 
 % Existing in-line 
 % analysis frameworks also only supports one analysis at the same time because 
@@ -47,11 +48,11 @@ resticts the framework to run only one analysis at the same time.
 
 We argue that many analyses can be fully decoupled from the executions if 
 we could have such a framework that can meet three requirements. First (R1), 
-the framework must consistently replicate the same inputs for the execution and 
-the analysis even for server applications (\eg, \apache) that continuously 
-accept inputs. Second (R2), given the same input, the framework must 
-efficiently enforce the same thread interleavings (or \emph{schedules}) for 
-execution and analysis without the need of frequently transfering schedules 
+the framework must consistently replicate the same inputs for the executions 
+with and without analysis even for server applications (\eg, \apache) that 
+continuously accept inputs. Second (R2), given the same input, the framework 
+must efficiently enforce the same thread interleavings (or \emph{schedules}) 
+for execution and analysis without the need of frequently transfering schedules 
 between them. Third (R3), when bad events occur in the execution or the 
 analysis (\eg, a NULL pinter dereference), the framework must provide a 
 transparent checkpoint and restore mechanism to recover both the execution and 
@@ -70,8 +71,9 @@ processing the same sequence of input requests, \xxx incorporates a distributed
 consensus protocol \paxos~\cite{paxos} so that as long as a majority of nodes 
 agree on a new request, all replicas comply with this agreement. To meet R2, 
 \dmt runs in each replica and enforces that all inter-thread communications 
-happen in the same order across replicas without synchronizing schedules across 
-replicas. Recent study~\cite{parrot:sosp13} has shown that \dmt runs fast on a 
+happen in the same order across replicas without synchronizing schedules between 
+the exeuctions running with and without analysis. Recent 
+study~\cite{parrot:sosp13} has shown that \dmt runs fast on a 
 wide range of 108 popular multithreaded programs on 24-core machines. To meet 
 R3, we design a checkpoint mechanism that matches up checkpoints from different 
 role machines with input total order ID.
