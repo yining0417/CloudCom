@@ -1,23 +1,23 @@
 \section{Background} \label{sec:background}
 
-This section first presents the background of \smr, and then introduces \dmt 
-with the actual \parrot~\cite{parrot:sosp13} runtime that \xxx leverages.
+This section first presents the background of \smr, and then introduces how 
+\dmt works.
 
-\subsection{State Machine Replication} \label{sec:smr}
+\subsection{State Machine Replication (\smr)} \label{sec:smr}
 
 State machine replication (\smr) is a powerful fault-tolerance
-concept.  It models a program as a deterministic state machine, where
-states are important program data and the transitions are deterministic
-executions of program code under input requests.  \smr runs replicas of
-this state machine on multiple nodes, tolerating many possible node and
-network failures.  To keep the replicas consistent, it invokes a
-distributed consensus protocol (typically \paxos~\cite{paxos}) to ensure
-that a quorum (typically majority) of the replicas agree on the input
-request sequence; under the deterministic execution assumption, this
-quorum of replicas must reach the same exact state.  \smr is proven safe
-in theory, and provides high availability in practice.
+concept~\cite{paxos:practical}.  It models a program as a deterministic state 
+machine, where states are important program data and the transitions are 
+deterministic executions of program code under input requests.  \smr runs 
+replicas of this state machine on multiple nodes, tolerating many possible node 
+and network failures.  To keep the replicas consistent, it invokes a
+distributed consensus protocol (typically \paxos~\cite{paxos, paxos:simple, 
+paxos:practical}) to ensurethat a quorum (typically majority) of the replicas 
+agree on the input request sequence; under the deterministic execution 
+assumption, this quorum of replicas must reach the same exact state.  \smr is 
+proven safe in theory, and provides high availability in practice.
 
-\subsection{Deterministic Multithreading} \label{sec:dmt}
+\subsection{Deterministic Multithreading (\dmt)} \label{sec:dmt}
 
 \dmt~\cite{dpj:oopsla09, 
 dmp:asplos09, kendo:asplos09, coredet:asplos10, dos:osdi10, ddos:asplos13, 

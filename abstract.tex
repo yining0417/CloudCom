@@ -3,7 +3,7 @@ Dynamic program analysis frameworks have become increasingly pervasive and
 critical because they enable a wide range of powerful analysis tools (\eg, 
 reliability, profling, and logging) at runtime to improve the quality of 
 software applications. However, since existing frameworks only have one actual 
-execution of an application, they have to fully or partially couple the 
+execution for an application, they have to fully or partially couple the 
 analysis with the execution, which frequently transfering execution states 
 (\eg, accessed memory and thread interleavings) between the actual execution 
 and the analysis and causes prohibitive slowdown in the actual execution. 
@@ -21,6 +21,6 @@ executions. To do so, \xxx leverages two techniques: state machine replication
 the same application always see the same sequence of inputs, then multiple 
 analyses can run within some replicas transparently. DMT efficiently enforces 
 the same thread interleavings across replicas and eliminates the need of 
-synchronizing thread interleavings between the actual execution and analysis. 
-Evaluation shows that \xxx is easy to plug in asynchronous analysis tools and 
+transfering thread interleavings from the actual execution to analysis. 
+Evaluation shows that \xxx is easy to run asynchronous analysis tools and 
 has reasonable overhead.
