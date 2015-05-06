@@ -21,7 +21,8 @@ in theory, and provides high availability in practice.
 
 \dmt~\cite{dpj:oopsla09, 
 dmp:asplos09, kendo:asplos09, coredet:asplos10, dos:osdi10, ddos:asplos13, 
-ics:oopsla13} is an advanced threading technique that enforces the same schedule 
+ics:oopsla13} is an advanced threading technique that enforces the same 
+schedule 
 on the same inputs.  This technique typically maintains a \emph{logical
   time}\footnote{Though related, the logical time in \dmt is not to be
   confused with the logical time in distributed
@@ -122,49 +123,67 @@ operations have been persisitently logged).
 
 \subsection{Discussion} \label{sec:discuss}
 
-TBD.
-
 \subsubsection{What Types of Analyses are Suitable to Run in \xxx?} 
 \label{sec:analysis-types}
 
-We envision that an analysis is suitable for \xxx if it can be done loosely 
-coupled with the actual execution. Many reliability analyses, including data 
-race detection, profiling, and logging meet this requirement. Some security 
-analysis such as CFI does not meet this requirement, because the analysis needs 
-to monitor the execution synchronously for each control flow transfer. In 
-addition, some security analysis such as information leakage protection are not 
+We envision that an analysis is suitable for \xxx if: (1) it can be done 
+loosely coupled with the actual execution, and (2) it does not schedule 
+conflicting order of \pthread synchronizations that \xxx's \dmt runtime 
+enforces. Many reliability analyses, including data race detection, profiling, 
+and logging meet this requirement. Some security analysis such as control flow 
+integrity is not suitable for \xxx because it monitors the execution 
+synchronously for each control flow transfer. In addition, some security 
+analysis such as information leakage protection are not 
 suitable for \xxx because the actual execution may probably run faster than the 
 analysis and leak information to clients before the analysis detects the 
-leakage. After all, many security tools such as use-after-free vulnerabilities 
-can be deployed in \xxx.
+leakage. Nevertheless, many security tools such as use-after-free 
+vulnerabilities can be deployed in \xxx.
 
 \subsubsection{Can \xxx Strengthen Existing Analyses?} 
 \label{sec:strengthen-analysis}
 
-\xxx is not only transparent to analyses, but has the potential to improve the 
-strengths of existing analyses by its performance benefit. Previously, although 
-some analyses can run asynchrounously with the actual executions, the analysis 
-developers chose to implement it in an synchronous way probably due to the ease 
-of implementation and inspection. Ironically, because such an implementation is 
-slow, developers sometimes have to sacrifice some strenghths of the analysis 
-for better performance. For instance, ThreadSanitizer is one of the most widely 
-used race detectors, and currently it is implemented with an shadow memory 
-approach, which is synchronous. Because its early version was too slow (200X), 
-developers chose to only record the last few accesses for each memory byte 
-instead of the full access history for better performance, however, this trade 
-off may lose data races. With \xxx, developers can revert back to the full 
-access history so that they can avoid missing bugs.
+\xxx is not only transparent to analysis tools, but has the potential to 
+improve the strengths of existing analyses by its performance benefit. 
+Previously, to mitigate the huge performance slowdown, some analysis tool 
+developers sometimes have to sacrifice some strenghths of the analysis. For 
+instance, ThreadSanitizer\cite{tsan}, one of the most practical race detectors, 
+only records the last few accesses as the access history for each memory byte 
+instead of the full access history, because analyzing the full access history 
+is extremely heavyweight (\eg, 200X slowdown for some programs they evaluated). 
+However, ignoring part of the access history may miss data races. With \xxx, 
+developers can now analyze the full memory access history.
 
 \smr provides an extra significant fault-tolerance benefit for \xxx. Existing 
 reliability and security analyses tend to expose or detect harmful defeats in 
 an application, which may crash the application. In addition, the actual 
 executions across different nodes may fail as well due to hardware or OS 
-failures. With \xxx's \smr replication architecture, the sequence of inputs are 
-persistently and consistently enforced across replica nodes, and failing minor 
+failures. With \xxx's \smr architecture, the sequence of inputs are 
+persistently and consistently enforced across replicas, and failing minor 
 nodes (either an analysis or an actual execution node) do not affec the other 
-nodes' executions.
+nodes' executions and anlyses.
 
 \subsubsection{Can Existing Analyses Strengthen \xxx?} 
 \label{sec:strengthen-crane}
 
-TBD.
+Interestingly, analyses running in \xxx can benefit \xxx's \dmt runtime and 
+improves its performance. Specifically, a \dmt runtime enforcing the order of 
+shared memory accesses is fully deterministic even with data races, but it 
+incurs prohibitive slowdown (\eg, 5X to 124X slowdown evaluated 
+in~\cite{parrot:sosp13}) because typical applications have intensive amounts of 
+shared memory accesses. A \dmt runtime enforcing the order for synchronizations 
+only can run efficiently (\eg, less than 16\% overhead in~\cite{kendo:asplos09, 
+tern:osdi10, parrot:sosp13}) because synchronizations are rare and the 
+remaining of the code can still run in parallel, but this \dmt is only 
+deterministic when no races occur. Despite much effort~\cite{dthreads:sosp11, 
+peregrine:sosp11, determinator:osdi10}, there is still no a simple and 
+deployable approach to enforce fully Deterministic and efficient \dmt schddules.
+
+Fortunately, \xxx's replication architecture can address this problem with a 
+simple and thorough approach by deploying a race detector in one replica, then 
+the \dmt no longers need to schedule shared memory accesses. If the race 
+detector reports a race, developers can easily diagnose and fix it because 
+synchronization schedules enforced by \dmt already make the race easily 
+reproducable~\cite{pres:sosp09}. By enforcing the same synchronization 
+schedules across replicas, the race detection results consistently hold for all 
+replicas. In sum, \xxx and race detection tools can form a mutual-beneficial 
+eco-system.
