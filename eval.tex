@@ -1,4 +1,14 @@
+% \newpage
 \section{Evaluation} \label{sec:eval}
 
-% Three nodes. Two analysis, one fast one slow. The slow one can be valgrind.
-TBD.
+% We evaluated an anti-virus scanning server that a b c d e f.
+
+We evaluated \xxx on \clamav, an anti-virus scanning server that scans files 
+parallely and deletes malicious ones.
+
+Our evaluation was done on a set of three Linux 3.2.14 machines within a 1Gbps 
+bandwidth LAN, and each machine has 2.80 GHz dual-socket hex-core Intel Xeon 
+with 24 hyper-threading cores and 64GB memory. we used \clamav's own client 
+utility \v{clamdscan} to request the server to parallely scan \clamav's own 
+source code and installation directories. we measured each workload's 
+response time because it has direct impact on users.
