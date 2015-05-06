@@ -3,12 +3,30 @@
 
 % We evaluated an anti-virus scanning server that a b c d e f.
 
-We evaluated \xxx on \clamav, an anti-virus scanning server that scans files 
-parallely and deletes malicious ones.
+\begin{table}[b]
+\footnotesize
+\centering
+\vspace{-.05in}
+\begin{tabular}{lrrr}
+{\bf Approach} & {\bf Resp time (s)} & {\bf Overhead (\%)} \\
+\hline\\[-2.3ex]
+Native execution                       & 1.14  &        \\
+\xxx framework only                       & 3.03   & 0     \\
+\xxx with Helgrind                                   & 20.96 & 0     \\
+\xxx with Helgrind and XX                       & 23.76 & 0       \\
+Helgrind only                       & 23.76 & 0       \\
+\end{tabular}
+\vspace{-.05in}
+\caption{{\em Percentage of inserted time bubbles among all consensus 
+requests.}} 
+\label{tab:bubble-percentage}
+\end{table}
 
-Our evaluation was done on a set of three Linux 3.2.14 machines within a 1Gbps 
-bandwidth LAN, and each machine has 2.80 GHz dual-socket hex-core Intel Xeon 
-with 24 hyper-threading cores and 64GB memory. we used \clamav's own client 
-utility \v{clamdscan} to request the server to parallely scan \clamav's own 
-source code and installation directories. we measured each workload's 
-response time because it has direct impact on users.
+We evaluated \xxx on \clamav, an anti-virus scanning server that scans files 
+parallely and deletes malicious ones. Our evaluation was done on a set of three 
+Linux 3.2.14 machines within a 1Gbps bandwidth LAN, and each machine has 2.80 
+GHz dual-socket hex-core Intel Xeon with 24 hyper-threading cores and 64GB 
+memory. we used \clamav's own client utility \v{clamdscan} to request the server 
+to parallely scan \clamav's own source code and installation directories. we 
+measured each workload's response time because it has direct impact on users.
+
