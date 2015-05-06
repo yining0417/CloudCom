@@ -1,4 +1,39 @@
-\section{Overview} \label{sec:overview}
+\section{Background} \label{sec:background}
+
+This section first presents the background of \smr, and then introduces \dmt 
+with the actual \parrot runtime \xxx leverages.
+
+\subsection{State Machine Replication} \label{sec:smr}
+
+\emph{State machine replication (\smr)} is a powerful fault-tolerance
+concept.  It models a program as a deterministic state machine, where
+states are important program data and the transitions are deterministic
+executions of program code under input requests.  \smr runs replicas of
+this state machine on multiple nodes, tolerating many possible node and
+network failures.  To keep the replicas consistent, it invokes a
+distributed consensus protocol (typically \paxos~\cite{paxos}) to ensure
+that a quorum (typically majority) of the replicas agree on the input
+request sequence; under the deterministic execution assumption, this
+quorum of replicas must reach the same exact state.  \smr is proven safe
+in theory, and provides high availability in practice.
+
+\subsection{Deterministic Multithreading} \label{sec:dmt}
+
+\dmt~\cite{dpj:oopsla09, 
+dmp:asplos09, kendo:asplos09, coredet:asplos10, dos:osdi10, ddos:asplos13, 
+ics:oopsla13} is an advanced threading technique that enforces the same schedule 
+on the same inputs.  This technique typically maintains a \emph{logical
+  time}\footnote{Though related, the logical time in \dmt is not to be
+  confused with the logical time in distributed
+  systems~\cite{lamportclock}.} that advances deterministically based on
+the code run.  It allows a thread to synchronize only at deterministic
+logical times.  By induction, it makes an entire multithreaded execution
+deterministic.  The overhead of \dmt is typically moderate: one recent
+\dmt system, \parrot~\cite{parrot:sosp13}, incurs an average of 12.7\%
+overhead on a wide range of 108 popular multithreaded programs on 24-core
+machines.
+
+\section{\xxx Overview} \label{sec:overview}
 
 This section first introduces \xxx's architecture with its key components, and 
 then discusses which types of anlyses are suitable to run in \xxx. We mainly 
@@ -6,7 +41,7 @@ consider server applications (\eg, \apache and \clamav) because they provide
 online service and thus require significant analyses to guarantee software 
 quality. Utility programs can also be easily run in our \xxx.
 
-\subsection{\xxx Architecture} \label{sec:arch}
+\subsection{Architecture} \label{sec:arch}
 
 \xxx's deployment is similar to a typical \smr's. In a \xxx-replicated
 system, a set of 2\v{f}+1 machines (nodes) are set up within a LAN,
@@ -87,6 +122,11 @@ operations have been persisitently logged).
 
 \subsection{Discussion} \label{sec:discuss}
 
+TBD.
+
+\subsubsection{What Types of Analyses are Suitable to Run in \xxx?} 
+\label{sec:analysis-types}
+
 We envision that an analysis is suitable for \xxx if it can be done loosely 
 coupled with the actual execution. Many reliability analyses, including data 
 race detection, profiling, and logging meet this requirement. Some security 
@@ -97,6 +137,9 @@ suitable for \xxx because the actual execution may probably run faster than the
 analysis and leak information to clients before the analysis detects the 
 leakage. After all, many security tools such as use-after-free vulnerabilities 
 can be deployed in \xxx.
+
+\subsubsection{Can \xxx Strengthen Existing Analyses?} 
+\label{sec:strengthen-analysis}
 
 \xxx is not only transparent to analyses, but has the potential to improve the 
 strengths of existing analyses by its performance benefit. Previously, although 
@@ -120,3 +163,8 @@ failures. With \xxx's \smr replication architecture, the sequence of inputs are
 persistently and consistently enforced across replica nodes, and failing minor 
 nodes (either an analysis or an actual execution node) do not affec the other 
 nodes' executions.
+
+\subsubsection{Can Existing Analyses Strengthen \xxx?} 
+\label{sec:strengthen-crane}
+
+TBD.
