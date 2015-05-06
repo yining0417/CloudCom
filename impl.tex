@@ -1,6 +1,8 @@
 \section{Implementation} \label{sec:impl}
 
-This section first introduces the implementation details 
+% This section first introduces the implementation details of \xxx's \paxos 
+% component, and then presents the implementation choices of the checkpoint 
+% component.
 
 \subsection{\paxos protocol} \label{sec:paxos}
 % SMR. Paxos. Choose it because: (1) fast. (2) transparent to applications.
@@ -22,19 +24,9 @@ identify each checkpoint. Upon consensus on a socket operation, each consensus
 component persistently stores the operation type, arguments, and global index 
 into Berkeley DB storage on local SSD.
 
-\subsection{Enforcing Consistent Logical Times for Socket Operations} 
-\label{sec:timing}
-% DMT.
-% Timing. Go light.
+
 
 \subsection{Checkpoint and Restore} \label{sec:checkpoint}
-
-The goal of transparently supporting analyses requires that the checkpointer 
-must be transparent to the analysis as well as the application. This not only 
-means that a checkpoint operation must be done without modifying the analysis 
-or the application, but also means that the checkpointer must support nodes' 
-role changes (\eg, switching a node between a normal execution with an analysis 
-execution, or between different analysis executions).
 
 % Second, once an anlysis 
 % captures some bad events caued by processing malicious inputs, \xxx must 
@@ -43,20 +35,21 @@ execution, or between different analysis executions).
 % and % allow the % analysis to determine re-executing the inputs or discarding 
 % the % inputs.
 
-To meet the first requirement, \xxx's checkpointer component leverages a 
-popular, open source checkpoint-restore tool called \criu~\cite{criu}. This 
-tool has supported CPU registers, memory, etc. However, one key issue still 
-exists: a server constantly server requests, and checkpointing and restoring 
-TCP stacks on different machines is notorioursly difficult. Our trick to avoid 
-this difficulty is that we have found server pro grams always have some idle 
-moments. For instance, consider \apache, even running with its standard 
-performance-stress benchmark \ab, we have observed that in some moments the 
-server has no alive socket connection. Thus, we performs each checkpoint at the 
-moment the server has finished serving the last batch of requests: once the 
-\paxos consensus component on each node finds that currently no socket 
-connections are alive, and a period has elapsed (10 seconds by default), we do 
-a checkpoint. This mechanism also makes it each to match up the checkpoints' 
-global index from machines with different roles.
+To transparently checkpoint an application, \xxx's checkpointer component 
+leverages a popular, open source checkpoint-restore tool called 
+\criu~\cite{criu}. This tool has supported CPU registers, memory, etc. However, 
+one key issue still exists: a server constantly server requests, and 
+checkpointing and restoring TCP stacks on different machines is notorioursly 
+difficult. Our trick to avoid this difficulty is that we have observed that 
+server programs always have some idle moments. Thus, \xxx performs each 
+checkpoint at the moment the server has finished serving the current batch of 
+socket connections: once the \paxos consensus component on each node finds that 
+currently no socket connections are alive, and a period has elapsed (10 seconds 
+by default), we do a checkpoint. This checkpoint moment is also good for the 
+rollback API because it helps the analysis get rid of the likely malicious socket 
+connection.
+
+
 
 % To meet the second requirement, we create an API that can be called by an 
 % analysis tool to invoke a rollback. The API format is: \v{int} 

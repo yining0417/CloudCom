@@ -55,9 +55,10 @@ proposes the order of requests to execute, and the nodes running actual
 executions become backup nodes which follow the primary's proposals. The nodes 
 running analyses (we call them analysis nodes) also follow the primary's 
 proposals, but their performance do not matter because a majority of nodes 
-running actual executions already reach consensus efficiently. An arbitrary 
-number of clients in LAN or WAN send network requests to the primary and get 
-responses. 
+running actual executions already reach consensus efficiently. Notably, if some 
+analyses are efficient, \xxx can run more than \v{f} analyses as long as a 
+majority of nodes in \xxx run efficiently. An arbitrary number of clients in 
+LAN or WAN send network requests to the primary and get responses. 
 
 
 \begin{figure}[t]
@@ -130,7 +131,7 @@ require checkpoints because we explicitly design it to be stateless (all socket
 operations have been persisitently logged).
 
 If an analysis detects a malicious event and decides to roll back to a 
-execution state associated with a socket operation index, \xxx provides a 
+checkpoint associated with a socket operation index, \xxx provides a 
 \v{void rollback(int} \v{index)} interface. To determine the index, the 
 analysis can also intercept socket operations.
 
