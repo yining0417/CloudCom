@@ -12,7 +12,7 @@ deterministic executions of program code under input requests.  \smr runs
 replicas of this state machine on multiple nodes, tolerating many possible node 
 and network failures.  To keep the replicas consistent, it invokes a
 distributed consensus protocol (typically \paxos~\cite{paxos, paxos:simple, 
-paxos:practical}) to ensurethat a quorum (typically majority) of the replicas 
+paxos:practical}) to ensure that a quorum (typically majority) of the replicas 
 agree on the input request sequence; under the deterministic execution 
 assumption, this quorum of replicas must reach the same exact state.  \smr is 
 proven safe in theory, and provides high availability in practice.
@@ -37,7 +37,7 @@ machines.
 \section{\xxx Overview} \label{sec:overview}
 
 This section first introduces \xxx's architecture with its key components, and 
-then discusses which types of anlyses are suitable to run in \xxx, including 
+then discusses which types of analyses are suitable to run in \xxx, including 
 the how \xxx mutually benefit with analyses. We mainly consider server 
 applications (\eg, \clamav) because they provide online service and thus 
 require powerful analyses to guarantee software quality. Utility programs 
@@ -131,7 +131,7 @@ leverages \criu, a popular, open source process checkpoint tool that supports
 CPU registers, memory, etc. Each checkpoint operation is only performed on the 
 server program and the \dmt scheduler; the \paxos consensus component does not 
 require checkpoints because we explicitly design it to be stateless (all socket 
-operations have been persisitently logged).
+operations have been persistently logged).
 
 If an analysis detects a malicious event and decides to roll back to a 
 checkpoint associated with a socket operation index, the analysis calls a 
@@ -149,7 +149,7 @@ intercept socket operations.
 \label{sec:analysis-types}
 
 We envision that an analysis is suitable for \xxx if: (1) it can run 
-asynchrously with the actual execution, and (2) it does not schedule 
+asynchronously with the actual execution, and (2) it does not schedule 
 conflicting order of \pthread synchronizations that \xxx's \dmt runtime 
 enforces. Many reliability analyses (\eg, data race detection), profiling, 
 and logging tools meet this requirement. Some security analysis such as control 
@@ -183,7 +183,7 @@ executions across different nodes may fail as well due to hardware or OS
 failures. With \xxx's \smr architecture, the sequence of inputs are 
 persistently and consistently enforced across replicas, and failing minor 
 nodes (either an analysis or an actual execution node) do not affect the other 
-nodes' executions and anlyses.
+nodes' executions and analyses.
 
 \subsubsection{Can Existing Analyses Benefit \xxx?} 
 \label{sec:strengthen-crane}
@@ -191,18 +191,18 @@ nodes' executions and anlyses.
 Interestingly, analyses running in \xxx can benefit \xxx's \dmt runtime and 
 improves \xxx's performance. Specifically, a \dmt approach enforcing a total 
 order order for shared memory accesses is fully deterministic even with data 
-races, but this approach incurs prohibitive slowdown (\eg, \dthreads incurs 5X 
-to 124X slowdown for more than half programs evaluated in~\cite{parrot:sosp13}) 
-because typical applications have intensive amounts of shared memory accesses. 
-Another \dmt approach is enforcing a total order for synchronizations only. 
-This approach can run efficiently (\eg, less than 16\% overhead for most 
-programs in~\cite{kendo:asplos09, cui:tern:osdi10, parrot:sosp13}) because 
-synchronizations are often much more rare than shared memory accesses, then the 
-remaining of the code can still run in parallel. However, this \dmt approach is 
-only deterministic when no races occur. Overall, despite much 
-effort~\cite{dthreads:sosp11, peregrine:sosp11, determinator:osdi10}, there is 
-still no a simple and deployable approach to enforce fully deterministic and 
-efficient \dmt schddules.
+races, but this approach incurs prohibitive slowdown (\eg, 
+\dthreads~\cite{dthreads:sosp11} incurs 5X to 124X slowdown for more than half 
+programs evaluated in~\cite{parrot:sosp13}) because typical applications have 
+intensive amounts of shared memory accesses. Another \dmt approach is enforcing 
+a total order for synchronizations only. This approach can run efficiently (\eg, 
+less than 16\% overhead for most programs in~\cite{kendo:asplos09, 
+cui:tern:osdi10, parrot:sosp13}) because synchronizations are often much more 
+rare than shared memory accesses, then the remaining of the code can still run 
+in parallel. However, this \dmt approach is only deterministic when no races 
+occur. Overall, despite much effort~\cite{dthreads:sosp11, peregrine:sosp11, 
+determinator:osdi10}, there is still no a simple and deployable approach to 
+enforce fully deterministic and efficient \dmt schedules.
 
 
 Fortunately, \xxx's replication architecture can address this problem with a 
@@ -210,7 +210,7 @@ simple and deployable approach by running a race detector in one replica, then
 \dmt no longer needs to schedule shared memory accesses. If the race 
 detector reports a race, application developers can easily diagnose and fix it 
 because synchronization schedules enforced by \dmt already make races easily 
-reproducable~\cite{pres:sosp09}. By enforcing the same synchronization 
+reproducible~\cite{pres:sosp09}. By enforcing the same synchronization 
 schedules across replicas, the race detection results consistently hold for all 
 replicas. In sum, \xxx and race detection tools can form a mutually beneficial 
 eco-system.
