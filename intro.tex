@@ -117,13 +117,13 @@ replicas reach consensus on each input.
 However, \smr alone is not sufficient to construct multiple equivalent 
 executions because today's typical applications largely use threads and are 
 nondeterministic. The thread interleavings (or \emph{schedules}) in different 
-replica can easily lead to divergent execution states and break \smr. To 
+replicas can easily lead to divergent execution states and break \smr. To 
 address this problem, \xxx leverages \emph{deterministic multithreading (or 
 \dmt)}, a recent advanced threading technique that can efficiently enforce that 
 inter-thread communications happen in the same total order, then different 
 replicas in \smr run into the same schedules and progress with the same 
 execution states. In sum, by leveraging \smr and \dmt, one can construct 
-equivalent execution in replicas, then \xxx can run multiple analyses in 
+equivalent executions in replicas, then \xxx can run multiple analyses in 
 minor replicas transparently, while the majority of the replicas can still 
 reach consensus and process inputs efficiently.
 

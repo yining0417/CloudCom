@@ -2,7 +2,7 @@
 Dynamic program analysis frameworks have become increasingly pervasive and 
 critical because they enable a wide range of powerful analysis tools (\eg, 
 reliability, profiling, and logging) at runtime to improve the quality of 
-software applications. However, since existing frameworks only have one actual 
+software applications. However, since existing frameworks have only one actual 
 execution for an application, they have to fully or partially couple the 
 analysis with the execution, which frequently transferring execution states 
 (\eg, accessed memory and thread interleavings) between the actual execution 
@@ -10,7 +10,7 @@ and the analysis and causes prohibitive slowdown in the actual execution.
 Worse, to reduce the portions of execution states that require transfer, many 
 frameworks require significantly carving analysis tools as well as the 
 frameworks themselves, which heavily trades off transparency between the 
-analysis and the framework and causes only one type of analyses to be run at 
+analysis and the framework and allows only one type of analyses to be run at 
 the same time.
 
 
