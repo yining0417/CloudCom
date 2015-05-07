@@ -35,7 +35,7 @@ actual execution, so whenever an analysis does some heavyweight work, the
 execution is slowed down (\eg, 20X+ slow down for many programs in a race 
 detection tool~\cite{tsan}). Recent frameworks that take the 
 ``partially-decoupled" approach have shown to run 4X 
-faster~\cite{shadowreplica, pararace} than the traditional frameworks with the 
+faster~\cite{shadowreplica:ccs13, wester:parallelizing:asplos13} than the traditional frameworks with the 
 same analysis because they transfer fewer execution states. However, the 
 overall slowdown of these frameworks are still prohibitive because the amount 
 of execution states (\eg, effective memory addresses and thread interleavings) 
