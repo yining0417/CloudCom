@@ -8,25 +8,48 @@
 \centering
 \vspace{-.05in}
 \begin{tabular}{lrrr}
-{\bf Approach} & {\bf Time (ms)} & {\bf Overhead (\%)} \\
+{\bf Approach} & {\bf Response time (ms)} \\
 \hline\\[-2.3ex]
-Native execution                       & 1270.3  &        \\
-\xxx framework only                       & 1208.4   & 0     \\
-\xxx with Helgrind                                   & XX & 0     \\
-\xxx with Helgrind and Callgrind                       & XX & 0       \\
-Helgrind only                       & XX & 0       \\
+Native execution                       & 1270.3        \\
+\xxx framework only                       & 1208.4        \\
+\xxx with Helgrind                                   & 1230.4     \\
+% \xxx with Helgrind and Callgrind                       & XX        \\
+Helgrind only                       & 21086.8       \\
 \end{tabular}
 \vspace{-.05in}
-\caption{{\em Percentage of inserted time bubbles among all consensus 
-requests.}} 
-\label{tab:bubble-percentage}
+\caption{{\em \xxx performance.}} 
+\label{tab:overhead}
 \end{table}
 
 We evaluated \xxx on \clamav, an anti-virus scanning server that scans files 
 parallely and deletes malicious ones. Our evaluation was done on a set of three 
 Linux 3.2.14 machines within a 1Gbps bandwidth LAN, and each machine has 2.80 
 GHz dual-socket hex-core Intel Xeon with 24 hyper-threading cores and 64GB 
-memory. we used \clamav's own client utility \v{clamdscan} to request the server 
-to parallely scan \clamav's own source code and installation directories. we 
-measured each workload's response time because it has direct impact on users.
+memory. we used \clamav's own client utility \v{clamdscan} to request the 
+server to parallely (by default, 8 threads) scan \clamav's own source code and 
+installation directories. we measured each workload's response time because it 
+has direct impact on users. For the analysis, we select 
+Helgrind~\cite{valgrind:pldi} because it is one of the most popular race 
+detection tool and it suffers from huge slowdown.
 
+Table~\ref{tab:overhead} shows the performance results running \mediatomb in 
+\xxx. When running the bare \xxx replication framework without any analysis, 
+the performance is slightly faster than the native execution, because the 
+\parrot runtime we leverages schedules \pthread synchronizations with its own 
+flag-relay approach, which is highly optimized on multi-core. This approach has 
+much fewer context switches than the traditional \pthread runtime, with 
+detailed performance results and CPU performance counters shown in 
+\parrot~\cite{parrot:sosp13}.
+
+When running Helgrind in one replica, the performance overhead of \xxx over the 
+bare framework is merely \overhead, because the \paxos protocol \xxx leverages 
+serve requests fast as long as the other replicas (the majority) reach 
+consensus. When running Helgrind only with \mediatomb, the performance overhead 
+compared to native execution is 1560.3\%. This result reflects that \xxx's 
+replication architecture masks the huge performance slowdown of Helgrind, so 
+that client programs feel that \mediatomb runs efficiently even with the 
+powerful analysis turned on. Note that Helgrind is already carried in Valgrind, 
+a traditional analysis framework that takes the ``fully-couple" approach. 
+Overall, this result reflects that \xxx is efficient, transprent to the 
+Helgrind analysis, and complmentary to an traditional analysis framework 
+Valgrind.
