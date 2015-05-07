@@ -8,18 +8,19 @@ Dynamic program analysis frameworks have become increasingly pervasive and
 critical because they enable a wide range of powerful analysis tools at 
 runtime. Existing analysis frameworks can be classsified into two approaches 
 depending on how a framework exposes an application's actual execution states 
-to an anlysis tool. Traditional analysis frameworks take a ``fully-coupled" 
-approach: a framework inlines an analysis with the execution, then the 
-analysis can inspect all or most execution states (\eg, Valgrind, DynamoRio, 
-Pin, and LIFT). However, this approach can easily let the analysis slow down 
-the actual execution. To improve performance, leveraging a fact that many 
-analyses can be done asynchronously with the actual execution, some recent 
-frameworks take a second ``partially-decoupled" approach: only the execution 
-states critical to the analysis (\eg, effective memory addresses and thread 
-interleavings) are exposed to the analysis, then the actual execution can be 
-less perturbed by the analysis. Existing analysis frameworks have embraced 
-numerous analysis tools and have greatly improved software quality (\eg, 
-detecting data races in multithreaded programs).
+to an anlysis tool. Traditional analysis frameworks~\cite{dynamorio, pin:pldi05, 
+valgrind:pldi, lift:micro06, tsan} take a ``fully-coupled" approach: a framework inlines an 
+analysis with the execution, then the analysis can inspect all or most execution 
+states. However, this approach can easily let the analysis slow down the actual 
+execution. To improve performance, leveraging a fact that many analyses can be 
+done asynchronously with the actual execution, some recent 
+frameworks~\cite{decouple:usenix08, speck:asplos08, shadowreplica:ccs13, 
+wester:parallelizing:asplos13, superpin, jungwoo:oopsla09} take a second ``partially-decoupled" approach: 
+only the execution states critical to the analysis (\eg, effective memory 
+addresses and thread interleavings) are exposed to the analysis, then the actual 
+execution can be less perturbed by the analysis. Existing analysis frameworks 
+have embraced numerous analysis tools and have greatly improved software quality 
+(\eg, detecting data races in multithreaded programs).
 
 % The second approach 
 % is ``partially-decoupled" approach: to  improve performance, only a subset of 
