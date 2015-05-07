@@ -8,19 +8,21 @@ Dynamic program analysis frameworks have become increasingly pervasive and
 critical because they enable a wide range of powerful analysis tools at 
 runtime. Existing analysis frameworks can be classsified into two approaches 
 depending on how a framework exposes an application's actual execution states 
-to an anlysis tool. Traditional analysis frameworks~\cite{dynamorio, pin:pldi05, 
-valgrind:pldi, lift:micro06, tsan} take a ``fully-coupled" approach: a framework inlines an 
-analysis with the execution, then the analysis can inspect all or most execution 
-states. However, this approach can easily let the analysis slow down the actual 
-execution. To improve performance, leveraging a fact that many analyses can be 
-done asynchronously with the actual execution, some recent 
-frameworks~\cite{decouple:usenix08, speck:asplos08, shadowreplica:ccs13, 
-wester:parallelizing:asplos13, superpin, jungwoo:oopsla09} take a second ``partially-decoupled" approach: 
-only the execution states critical to the analysis (\eg, effective memory 
-addresses and thread interleavings) are exposed to the analysis, then the actual 
-execution can be less perturbed by the analysis. Existing analysis frameworks 
-have embraced numerous analysis tools and have greatly improved software quality 
-(\eg, detecting data races in multithreaded programs).
+to an anlysis tool. Traditional analysis frameworks~\cite{dynamorio, 
+pin:pldi05, valgrind:pldi, lift:micro06, tsan} take a ``fully-coupled" approach: 
+a framework inlines an analysis with the execution, then the analysis can 
+inspect all or most execution states. However, this approach can easily let the 
+analysis slow down the actual execution. To improve performance, leveraging a 
+fact that many analyses can be done asynchronously with the actual execution, 
+some recent frameworks~\cite{decouple:usenix08, speck:asplos08, 
+shadowreplica:ccs13, 
+wester:parallelizing:asplos13, superpin, jungwoo:oopsla09} take a second 
+``partially-decoupled" approach: only the execution states critical to the 
+analysis (\eg, effective memory addresses and thread interleavings) are exposed 
+to the analysis, then the actual execution can be less perturbed by the 
+analysis. Existing analysis frameworks have embraced numerous analysis tools and 
+have greatly improved software quality (\eg, detecting data races in 
+multithreaded programs).
 
 % The second approach 
 % is ``partially-decoupled" approach: to  improve performance, only a subset of 
@@ -35,11 +37,12 @@ actual execution, so whenever an analysis does some heavyweight work, the
 execution is slowed down (\eg, 20X+ slow down for many programs in a race 
 detection tool~\cite{tsan}). Recent frameworks that take the 
 ``partially-decoupled" approach have shown to run 4X 
-faster~\cite{shadowreplica:ccs13, wester:parallelizing:asplos13} than the traditional frameworks with the 
-same analysis because they transfer fewer execution states. However, the 
-overall slowdown of these frameworks are still prohibitive because the amount 
-of execution states (\eg, effective memory addresses and thread interleavings) 
-transfered to analysis tools are still enormous.
+faster~\cite{shadowreplica:ccs13, wester:parallelizing:asplos13} than the 
+traditional frameworks with the same analysis because they transfer fewer 
+execution states. However, the overall slowdown of these frameworks are still 
+prohibitive because the amount of execution states (\eg, effective memory 
+addresses and thread interleavings) transfered to analysis tools are still 
+enormous.
 
 
 The second problem is that the frameworks that take the ``partially-decoupled" 
@@ -101,14 +104,13 @@ execution states to the analysis.
 
 % P4: Our approach. Replication. DMT. And why we are better than existing 
 % replication systems: avoid shipping schedules, avoid annotations.
-To address the three problems, this paper presents \xxx, an efficient, 
-transparent dynamic program analysis framework. Our key insight is that one can 
-actually construct multiple equivalent executions with a technique called 
-\emph{state machine replication (or \smr)}~\cite{paxos:simple, 
-paxos:practical}. \smr assumes a deterministic application, runs the 
-application on multiple machines (or replicas), and enforces a consistent 
-sequence of inputs for the application across replicas as long as a majority of 
-replicas reach consensus on each input.
+To address the three problems, this paper presents \xxx, an efficient, transparent dynamic program analysis 
+framework. Our key insight is that one can actually construct multiple 
+equivalent executions with a technique called \emph{state machine replication 
+(or \smr)}~\cite{paxos:simple, paxos:practical}. \smr assumes a deterministic 
+application, runs the application on multiple machines (or replicas), and 
+enforces a consistent sequence of inputs for the application across replicas as 
+long as a majority of replicas reach consensus on each input.
 
 
 However, \smr alone is not sufficient to construct multiple equivalent 
