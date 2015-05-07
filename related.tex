@@ -1,8 +1,8 @@
 \section{Related Work} \label{sec:related}
 
-Existing analysis frameworks can be classsified into two approaches depending 
+Existing analysis frameworks can be classified into two approaches depending 
 on how a framework exposes an application's actual execution states to an 
-anlysis tool. The first approach inlines an analysis within an 
+analysis tool. The first approach in-lines an analysis within an 
 actual execution~\cite{dynamorio, pin:pldi05, 
 valgrind:pldi, lift:micro06, tsan}, which may cause prohibitive slowdown in the executions when 
 an analysis does heavyweight work. Recently, researchers have proposed to 
@@ -13,9 +13,9 @@ into ``partially-decoupled" approach because they still need to frequently
 transfer execution states from the execution (\eg, effective memory addresses 
 and thread interleavings) to analysis. These ``partially-decoupled" frameworks 
 have shown up to 4X speedup over the traditional frameworks on the same 
-analysis, which shows that decoupling analysis from execution is a promissing 
+analysis, which shows that decoupling analysis from execution is a promising 
 direction. \xxx fully decouples analysis from execution via replicating 
-equavalent executions.
+equivalent executions.
 
 \smr has been studied by the literature for decades, and it is recognized by 
 both industry and academia as a powerful fault-tolerance technique in clouds 
@@ -34,7 +34,7 @@ storage~\cite{paxos:datastore} and wide-area network~\cite{mencius:osdi08}.
 Hypervisor-based Fault Tolerance~\cite{hft:sosp95} leverages a hypervisor to 
 build a primary-back system for single-core machines. Unlike \xxx that 
 transparently replicate applications via introducing the socket API-based 
-consensue interface, these systems focus on specific types of applications 
+consensus interface, these systems focus on specific types of applications 
 (\eg, distributed lock service~\cite{chubby:osdi}, file 
 system~\cite{zookeeper}).
 
