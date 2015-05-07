@@ -6,11 +6,11 @@
 % fully-coupled, but slow.
 Dynamic program analysis frameworks have become increasingly pervasive and 
 critical because they enable a wide range of powerful analysis tools at 
-runtime. Existing analysis frameworks can be classsified into two approaches 
+runtime. Existing analysis frameworks can be classified into two approaches 
 depending on how a framework exposes an application's actual execution states 
-to an anlysis tool. Traditional analysis frameworks~\cite{dynamorio, 
+to an analysis tool. Traditional analysis frameworks~\cite{dynamorio, 
 pin:pldi05, valgrind:pldi, lift:micro06, tsan} take a ``fully-coupled" 
-approach: a framework inlines an analysis with the execution, then the analysis 
+approach: a framework in-lines an analysis with the execution, then the analysis 
 can inspect all or most execution states. However, this approach can easily let 
 the analysis slow down the actual execution. To improve performance, leveraging 
 a fact that many analyses can be done asynchronously with the actual execution, 
@@ -65,7 +65,7 @@ However, traditional ``fully-coupled" frameworks typically take the shadow
 memory approach to hold analysis results for each memory byte in the actual 
 execution, then different analyses may require different copies of 
 shadow memory. It is not trivial to extend these frameworks to support multiple 
-copies of shadow memory. It is not trival to extend ``paritall-decoupled" 
+copies of shadow memory. It is not trivial to extend ``partially-decoupled" 
 frameworks to support multiple types of analysis tools at the same time either, 
 because these frameworks heavily carve the transfered execution states for each 
 type of analysis.
@@ -116,14 +116,14 @@ replicas reach consensus on each input.
 
 However, \smr alone is not sufficient to construct multiple equivalent 
 executions because today's typical applications largely use threads and are 
-nondeterministic. The thread interleavings (or emph{schedules}) in different 
+nondeterministic. The thread interleavings (or \emph{schedules}) in different 
 replica can easily lead to divergent execution states and break \smr. To 
 address this problem, \xxx leverages \emph{deterministic multithreading (or 
 \dmt)}, a recent advanced threading technique that can efficiently enforce that 
 inter-thread communications happen in the same total order, then different 
 replicas in \smr run into the same schedules and progress with the same 
 execution states. In sum, by leveraging \smr and \dmt, one can construct 
-equivalent execution in replicas, then \xxx can run multiple anlyses in 
+equivalent execution in replicas, then \xxx can run multiple analyses in 
 minor replicas transparently, while the majority of the replicas can still 
 reach consensus and process inputs efficiently.
 
@@ -135,7 +135,7 @@ this challenge, \xxx has incorporated a transparent application checkpoint and
 restore mechanism for the analysis to decide which checkpoint to roll back.
 
 
-We have implemented a \xxx system propotype in Linux. Evaluation on a widely 
+We have implemented a \xxx system prototype in Linux. Evaluation on a widely 
 used server program \clamav with three replicas shows that \xxx runs 
 efficiently with a race detection tool Helgrind~\cite{valgrind:pldi} with 
 a overhead 1.8\% over the replication execution running without the analysis on 
@@ -162,12 +162,12 @@ a overhead 1.8\% over the replication execution running without the analysis on
 
 
 % P6: Benefits. This paragraph can be removed.
-The main contribution of \xxx is the idea of constructing multiple equavalent 
-executions to fully decoupe execution and analysis. Leveraging the replication 
+The main contribution of \xxx is the idea of constructing multiple equivalent 
+executions to fully decouple execution and analysis. Leveraging the replication 
 architecture, majority of replicas running the actual executions can process 
 inputs fast. In addition, multiple analysis tools can run transparently within 
 minor replicas, so that tool developers can now focus on the analysis logic 
-itself, and can even strenghten the guarantees of analysis tools via removing 
+itself, and can even strengthen the guarantees of analysis tools via removing 
 the performance considerations.
 
 % In the reamaining of this paper, \ref{sec:background} introduces some 
