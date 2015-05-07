@@ -40,7 +40,7 @@ To transparently checkpoint an application, \xxx's checkpointer component
 leverages a popular, open source checkpoint-restore tool called 
 \criu~\cite{criu}. This tool has supported CPU registers, memory, etc. However, 
 one key issue still exists: a server constantly serves requests, and 
-checkpointing and restoring TCP stacks on different machines is notorioursly 
+checkpointing and restoring TCP stacks on different machines is notoriously 
 difficult. Our trick to avoid this difficulty is that we have observed that 
 server programs always have some idle moments. Thus, a \xxx non-primary replica 
 running an actual execution does a checkpoint periodically (one minute by 
@@ -50,7 +50,7 @@ For the checkpoint frequency on analysis nodes, we design it to be high,
 because: (1) analyses may need to roll back whenever detecting an malicious 
 events; and (2) the time cost by a checkpoint operation does not matter much 
 because the analysis is heavyweight anyway. Thus, a \xxx replica running an 
-anlysis performs a checkpoint at the moment the server has finished serving 
+analysis performs a checkpoint at the moment the server has finished serving 
 the current batch of socket connections: once the \paxos consensus component on 
 each node finds that currently no socket connections are alive, the replica 
 does a checkpoint. This checkpoint moment is also good for \xxx's rollback API 
