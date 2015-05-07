@@ -10,8 +10,9 @@ The \paxos consensus component is a critical component to enforce a consistent
 total order of socket operations from client programs. Although there are 
 already a number of open source \paxos implementations~\cite{concoord, 
 zookeeper, chubby:osdi, libpaxos}, we find it necessary to re-implement a 
-\paxos protocol because \xxx we found it hard to port their current consensus 
-interface to our socket consensus interface.
+\paxos protocol because it is hard to port their current consensus 
+interface to \xxx's socket consensus interface.
+
 
 We have implemented a standard \paxos protocol based on a well-known approach 
 called ``\paxos Made Practical"~\cite{paxos:practical} because it is easy to 
@@ -38,17 +39,23 @@ into Berkeley DB storage on local SSD.
 To transparently checkpoint an application, \xxx's checkpointer component 
 leverages a popular, open source checkpoint-restore tool called 
 \criu~\cite{criu}. This tool has supported CPU registers, memory, etc. However, 
-one key issue still exists: a server constantly server requests, and 
+one key issue still exists: a server constantly serves requests, and 
 checkpointing and restoring TCP stacks on different machines is notorioursly 
 difficult. Our trick to avoid this difficulty is that we have observed that 
-server programs always have some idle moments. Thus, \xxx performs each 
-checkpoint at the moment the server has finished serving the current batch of 
-socket connections: once the \paxos consensus component on each node finds that 
-currently no socket connections are alive, and a period has elapsed (10 seconds 
-by default), we do a checkpoint. This checkpoint moment is also good for the 
-rollback API because it helps the analysis get rid of the likely malicious socket 
-connection.
+server programs always have some idle moments. Thus, a \xxx non-primary replica 
+running an actual execution does a checkpoint periodically (one minute by 
+default) when the replica has no alive socket connections.
 
+For the checkpoint frequency on analysis nodes, we design it to be high, 
+because: (1) analyses may need to roll back whenever detecting an malicious 
+events; and (2) the time cost by a checkpoint operation does not matter much 
+because the analysis is heavyweight anyway. Thus, a \xxx replica running an 
+anlysis performs a checkpoint at the moment the server has finished serving 
+the current batch of socket connections: once the \paxos consensus component on 
+each node finds that currently no socket connections are alive, the replica 
+does a checkpoint. This checkpoint moment is also good for \xxx's rollback API 
+because it helps the analysis get rid of the current socket connections which 
+trigger the malicious events. 
 
 
 % To meet the second requirement, we create an API that can be called by an 

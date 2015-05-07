@@ -2,7 +2,7 @@
 
 Existing analysis frameworks can be classsified into two approaches depending 
 on how a framework exposes an application's actual execution states to an 
-anlysis tool. The first approach fully or mostly inlines an analysis within an 
+anlysis tool. The first approach inlines an analysis within an 
 actual execution, which may cause prohibitive slowdown in the executions when 
 an analysis does heavyweight work. Recently, researchers have proposed to 
 decouple analysis from execution via parallely executing analysis and 
@@ -31,7 +31,7 @@ storage~\cite{paxos:datastore} and wide-area network~\cite{mencius:osdi08}.
 Hypervisor-based Fault Tolerance~\cite{hft:sosp95} leverages a hypervisor to 
 build a primary-back system for single-core machines. Unlike \xxx that 
 transparently replicate applications via introducing the socket API-based 
-consensue interface, hese systems focus on only specific types of applications 
+consensue interface, these systems focus on specific types of applications 
 (\eg, distributed lock service~\cite{chubby:osdi}, file 
 system~\cite{zookeeper}).
 
