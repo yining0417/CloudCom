@@ -11,7 +11,7 @@
 {\bf Approach} & {\bf Response time (ms)} \\
 \hline\\[-2.3ex]
 Native execution                       & 1270.3        \\
-\xxx framework only                       & 1208.4        \\
+\xxx bare framework only                       & 1208.4        \\
 \xxx with Helgrind                                   & 1230.4     \\
 % \xxx with Helgrind and Callgrind                       & XX        \\
 Helgrind only                       & 21086.8       \\
@@ -21,25 +21,28 @@ Helgrind only                       & 21086.8       \\
 \label{tab:overhead}
 \end{table}
 
-We evaluated \xxx on \clamav, an anti-virus scanning server that scans files 
-parallely and deletes malicious ones. Our evaluation was done on a set of three 
+We evaluated \xxx on \mediatomb~\cite{mediatomb}, a 
+\upnp multimedia server that parallely uploads, shares, and transcodes 
+pictures and videos. Our evaluation was done on a set of three 
 Linux 3.2.14 machines within a 1Gbps bandwidth LAN, and each machine has 2.80 
 GHz dual-socket hex-core Intel Xeon with 24 hyper-threading cores and 64GB 
-memory. we used \clamav's own client utility \v{clamdscan} to request the 
-server to parallely (by default, 8 threads) scan \clamav's own source code and 
-installation directories. we measured each workload's response time because it 
-has direct impact on users. For the analysis, we select 
+memory. Because \mediatomb uses a web-based interface, we used a popular web 
+server benchmark \ab~\cite{apachebench} to invoke concurrent requests 
+which use \mencoder to transcode a randomly downloaded 15MB video from AVI to 
+MP4. To mitigate network latency, the benchmark clients were ran within the 
+LAN. We measured each workload's response time because it 
+has direct impact on users. For the analysis, we selected 
 Helgrind~\cite{valgrind:pldi} because it is one of the most popular race 
 detection tool and it suffers from huge slowdown.
 
 Table~\ref{tab:overhead} shows the performance results running \mediatomb in 
 \xxx. When running the bare \xxx replication framework without any analysis, 
 the performance is slightly faster than the native execution, because the 
-\parrot runtime we leverages schedules \pthread synchronizations with its own 
-flag-relay approach, which is highly optimized on multi-core. This approach has 
-much fewer context switches than the traditional \pthread runtime, with 
-detailed performance results and CPU performance counters shown in 
-\parrot~\cite{parrot:sosp13}.
+\parrot runtime we leverage schedules \pthread synchronizations with its own 
+flag-relay approach~\cite{parrot:sosp13}, which is highly optimized on 
+multi-core. \parrot's evaluation has confirmed that this approach has much 
+fewer context switches than the traditional \pthread runtime when running 
+\mencoder, the same program that \mediatomb uses to transcode video.
 
 When running Helgrind in one replica, the performance overhead of \xxx over the 
 bare framework is merely \overhead, because the \paxos protocol \xxx leverages 
