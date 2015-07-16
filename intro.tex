@@ -95,8 +95,9 @@ application on multiple machines (or replicas), and typically uses the \paxos
 protocol to enforce a consistent sequence of inputs for the application across 
 replicas as long as a majority of replicas reach consensus on each input. 
 Leveraging \smr, all replicas consistently transform the same execution states, 
-then minor replicas can just transparently run an analysis tool on each and 
-majority replicas run actual executions to process inputs fast.
+then minor replicas can just transparently run an heavyweight analysis tool on 
+each, and majority replicas run actual executions or lightweight analysis tools 
+to process inputs fast.
 
 
 However, \smr alone is not sufficient to construct multiple equivalent 
@@ -117,15 +118,17 @@ has incorporated a transparent application-level checkpoint mechanism with
 expressive API for replicas to rock back consistently.
 
 
-We be have conducted \xxx's feasibility study in Linux. To leverage \smr, \xxx 
-incoporates a \paxos protocol implementation in \repbox, a transparent \smr 
-system for general server applications. To leverage \dmt, \xxx incoporates 
-\parrot, a \dmt runtime system that has shown to run fast on a wide range of 
-popular multithreaded programs. Evaluation on a widely used multimedia server 
-program \mediatomb~\cite{mediatomb} with three replicas (each has 24 cores) 
-shows that \xxx is able to support multiple anslysis tools transparently 
-without modifying these tools. Moreover, \xxx only incurred 1.8\% overhead over 
-its bare replication framework.
+We have conducted a feasibility study for \xxx in Linux. To leverage \smr, \xxx 
+incoporates a \paxos protocol implementation in \repbox~\cite{repbox:sosp15}, a 
+transparent \smr system for general server applications. To leverage \dmt, \xxx 
+incoporates \parrot, a \dmt runtime system that has shown to run fast on a wide 
+range of popular multithreaded programs. Evaluation on a widely used multimedia 
+server program \mediatomb~\cite{mediatomb} with three replicas (each has 24 
+cores) shows that \xxx is able to transparently run a heavyweight analysis 
+tool, the Helgrind race detector~\cite{valgrind:pldi}, and a lightweight 
+analysis tool, DynamoRio's code coverage tool drcov~\cite{dynamorio}, within 
+the same execution. Moreover, \xxx only incurred 1.8\% overhead over its bare 
+replication framework.
 
 
 % P6: Benefits. This paragraph can be removed.
@@ -138,9 +141,9 @@ potential to strengthen and speedup the tools themselves. \xxx compensates
 traditional ``fully-coupled" frameworks because it can easily run them on the 
 analysis replicas.
 
-In the remaining of this paper, \S\ref{sec:background} introduces the background 
-of \smr and \dmt, \S\ref{sec:overview} presents an overview \xxx's design, 
-\S\ref{sec:discuss} discusses \xxx's potential benefits, and 
+In the remaining of this paper, \S\ref{sec:background} introduces the 
+background of \smr and \dmt, \S\ref{sec:overview} presents an overview \xxx's 
+design, \S\ref{sec:discuss} discusses \xxx's potential benefits, and 
 \S\ref{sec:checkpoint} describes \xxx's checkpoint and rollback mechanism. 
 \S\ref{sec:eval} presents evaluation results, \S\ref{sec:related} introduces 
 related work, and \S\ref{sec:conclusion} concludes.
