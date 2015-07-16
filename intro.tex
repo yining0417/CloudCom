@@ -133,16 +133,21 @@ transform the same execution states.
 
 
 A practical challenge for \xxx is that even asynchronous analysis tools
-sometimes would prefer to roll back to previous execution states when they
-detect harmful events. To address this challenge, \xxx has incorporated a
-transparent application-level checkpoint mechanism (\S\ref{sec:checkpoint}).
+sometimes would prefer to roll back to previous execution states and discard 
+malicious inputs that triggered harmful events. To address this challenge, \xxx 
+has incorporated a transparent application-level checkpoint mechanism with 
+expressive API for replicas to rock back consistently (\S\ref{sec:checkpoint}).
 
 
-We have implemented a \xxx system prototype in Linux. Evaluation on a widely 
-used multimedia server program \mediatomb~\cite{mediatomb} with three replicas
-(each has 24 cores) shows that \xxx runs efficiently with a race detection tool 
-Helgrind~\cite{valgrind:pldi} with 1.8\% overhead over \xxx's bare replication 
-framework.
+We have conducted a feasibility on \xxx in Linux. To leverage \smr, \xxx 
+incoporates the \paxos implementation in \repbox, a transparent \smr 
+system for general server applications. To leverage \dmt, \xxx incoporates 
+\parrot, a \dmt system that has shown to run fast on a wide range of 
+popular multithreaded programs. Evaluation on a widely used multimedia server 
+program \mediatomb~\cite{mediatomb} with three replicas (each has 24 cores) 
+shows that \xxx is able to support multiple anslysis tools transparently 
+without modifying these tools. Moreover, \xxx only incurred 1.8\% overhead over 
+its bare replication framework.
 
 
 % P6: Benefits. This paragraph can be removed.
@@ -151,214 +156,7 @@ executions to fully decouple an application's actual execution and analysis
 tools, which benefits applications, analysis tools, and frameworks. \xxx can
 greatly improve an application's quality by running multiple analysis tools in
 production runs efficiently. \xxx is transparent to analysis tools and has the
-potential to strengthen these tools (\S\ref{sec:discuss}). \xxx compensates
-traditional ``fully-coupled" frameworks because it can easily run them on the
-analysis replicas.
+potential to strengthen and speedup the tools themselves (\S\ref{sec:discuss}). 
+\xxx compensates traditional ``fully-coupled" frameworks because it can easily 
+run them on the analysis replicas.
 
-
-% P5: A practical challenge. Transparent checkpoint.
-% However, to make \xxx's asynchronous analysis framework practical, two 
-% challenges should be addressed. First, depending on machine restarts and 
-% network partitions, a node's role may change, not only between a \paxos 
-% primary 
-% and backup, but also between normal nodes and analysis nodes, ande even 
-% between 
-% different analysis nodes. We design a checkpoint mechanism that matches up 
-% checkpoints from different role machines with input total order ID to address 
-% this challenge. Second, we need a mechanism to roll back all replicas when a 
-% bad event (\eg, deferencing a NULL pointer) has occured and detected by the 
-% analysis tool. We design a a simple API for analysis tool to invoke so that 
-% the 
-% replicas can reach consensus on this roll back and act consistently.
-
-
-
-
-
-
-
-% In the reamaining of this paper, \ref{sec:background} introduces some 
-% background on \smr and \dmt, \ref{sec:overview} gives an overview of \xxx's 
-% framework architecture and discusses on what types of analyses are suitable 
-% for % \xxx,
-
-
-
-% which introduces three major benefits. First, \xxx's replication 
-% architecture provides an efficient framework for many asynchronous 
-% analysis tools, ranging from reliability tools, to profiling tools, and to 
-% logging tools. Second, unlike many previous work which tightly orchest the 
-% framework with the analysis for better performance (\eg, ShadowReplica and 
-% ASPLOS13), our framework is transparent to analysis logic, so it is 
-% complementary to existing analyses as well as frameworks and can easily 
-% deploy existing frameworks in our replicas (\eg, Valgrind). Third, the 
-% flexibility on the number of replicas enable multiple analyses (up to \v{f}) 
-% in % one execution. 
-
-
-
-
-
-
-% Powerfuly analyses are usually heavyweight and prohibitively slow down the 
-% actual execution that runs synchronously. This problem has restricted most of 
-% existing frameworks as well as the analysis tools to deploy only in testing 
-% labs without being able to exercise real-world workloads. In fact, many 
-% analyses can be done asynchronously (\eg, data race detection and profling 
-% tools), so recently researchers have proposed asynchronous frameworks (\eg, 
-% Aftersight, Spec, ASPLOS13) via an advanced technique called 
-% ``record-replay": % the record phase runs the actual execution and records 
-% nondeterministic sources % such as inputs, while the replay phase runs 
-% (typically offline) the actual % execution with an analysis tool on the 
-% recorded inputs. This asynchronous % approach decouples the analysis from the 
-% execution and lets the actual % execution run efficiently.
-
-
-% P3: Some recent work tried to avoid the synchronizing execution states with
-% an approach called record-replay. But thread interleabings still need to sync.
-% and not transparent as well.
-% Unfortunately, the emerging multithreading trend, which is driven by the rise 
-% of the multi-core hardware, poses a significant challenge on existing 
-% asynchronous frameworks. For instance, today's popular server applications 
-% (\eg, \apache) use multiple threads to server requests parallelly. These 
-% parallel and continuously running applications require record-replay to run 
-% online (cite Respec) which frequently synchronize thread interleavings (or 
-% \emph{schedules}), otherwise the record and replay may run into different 
-% schedules and easily leading to divergent execution states. Despite a variety 
-% of notable approaches are proposed (cite Respec, DoublePlay, and ASPLOS 
-% 2013), 
-% efficient and scalable online record-replay is still an open problem. For 
-% instance, two notable systems incur 28\% to 55\% overhead with four threads 
-% in 
-% record phase.
-
-% For 
-% instance, although a recent work (ASPLOS2013) shows that they can parallize 
-% data race detection by 4X after applying some smart optimizations, they 
-% admits 
-% that the detection still has a 5X to 15X slowdown with their benchmarks.
-
-
-% Worse, existing asynchronous frameworks significantly trade off transparency 
-% between the analyses and the frameworks. For better performance, they 
-% significantly orchest the frameworks with specific type of analysis, which 
-% requires reconstruct from the analysis (two race detection algorithms) into 
-% three phases in their framworks, although the analysis algorithms themselves 
-% are already notouriously complicated and subtle. Multithreading poses 
-% significant performance and transparency issues to existing synchronous 
-% frameworks, too (\eg, ShadowReplica, LIFT).
-
-
-
-% P2: Existing analysis frameworks have two problems because they are 
-% synchronous. Reliability, Securityk, and Profling tools.
-% First, slow. Second, can support only one analysis at the same time. Three, 
-% % need to orchest the analysis algorithm as well as the framework to adapt to 
-% the framework.
-% 1: slow.
-
-% 2: can not support mulitple analysis at the same time.
-%   Can valgrind do multiple analysis at the same time?
-%   Can Speck do multiple analysis at the same time?
-
-% 3: need to orchest the analysis significantly, or even sacrifice guarantees.
-%   Peter Chen's: need to separate anaysis to multiple stages.
-%   TaintDroid: sacrifice control flow taint.  
-% Unfortunately, despite decades of effort, existing program analysis 
-% frameworks 
-% % are still extremely difficult to deploy in production runs, mainly due to 
-% two 
-% % % problems. First, these frameworks prohibitively slow down the actual 
-% % executions % (\eg, up to 40X in Valgrind and 12X in ShadowReplica), because 
-% the % synchronous % approach in these frameworks need to frequently exchange 
-% program % states between % the executions and the analysis tools. Whenever a 
-% piece of % analysis work is % slow, the actual execution has to wait for the 
-% analysis to be % done.
-% 
-% Second, the synchronous approach causes existing frameworks to significantly 
-% involve with the program state exchange with the analysis tool, causing these 
-% frameworks to support only one analysis tool at the same time. To the best of 
-% our knowledge, no evaluation in existing frameworks have shown to be able to 
-% support multiple analysis tools. This problem leads to a paradox: if an 
-% application wants the benefit of one analysis tool, it has to exclude the 
-% other % tools.
-
-% P3: Why existing sync approach must fail.
-% We argue that the synchronous approach in existing frameworks is not 
-% fundamental, and many anlysis tools (\eg, data race detectors and profiling 
-% tools) can be ran asynchronously, if there is we could meet these 
-% requirements: (1) there is a transparent replication framework that can 
-% replicate inputs and nondeterministic events such as threads aquiring locks; 
-% and (2) there is a mechanism for a analysis tool to notify the framework if 
-% bad % events such as deferencing a null pointer occurs or the tool detects 
-% that % a % stack overflow occurs; (3) the framework has a transparent 
-% application % checkpoint and recovery feature if bad events occurs. Even for 
-% a % security % analysis tool, if the security threat does not involve leaking 
-% information to % the outside world (\eg, using deallocated memory or 
-% uninitialized memory), % which application checkpoint can not revert, this 
-% asynchronous approach could % be suitable for this tool.
-
-
-% P4: Our key insight is that many analysis does not have to be synchronous, 
-% and % they can be implemented asynchrously. This paper presents asynchronous 
-% analysis % fvalgrind --tool=memcheck ls -lramework. Key weapon, transparent
-% state machine replication.
-
-%% Existing types of analysis frameworks:
-% 1: shadow memory. Valgrind. TaintDroid. YY Zhou's Lift. Pin. DynamoRio.
-% 2: record replay. Peter Chen's Aftersight.
-% 3: decoupling execution and analysis. ShadowReplica. Speck (also have record 
-% replay).
-
-% P5: Application scope. Not for leaking analysis.
-% To meet these requiremnts, this paper presents \xxx, a program analysis 
-% framework that supports asynchronous and transparent program anlysis tools. 
-% The % core of \xxx is \repbox, a state machine replication (or \smr) system 
-% that % can % transparently replicate today's general multithreaded programs 
-% for % high % availability. \smr runs replicas of an application on multiple 
-% machines % (nodes), tolerating many possible node and network failures.  To 
-% keep % the % replicas consistent, it invokes a distributed consensus protocol 
-% \paxos~\cite{paxos}) to ensure that a majority of the replicas agree on the 
-% input request sequence. \repbox incorporates an efficient Deterministic 
-% Multithreading (or \dmt) engine, which practically enforces the same thread 
-% interleavings for the application running across replicas.
-% 
-% \xxx addresses both the two problems in today's analysis frameworks. A 
-% typical % setting of a \xxx deployment contains 2\v{f}+1 nodes. A node acts 
-% as % the % primary node, which accepts client requests, invokes \paxos 
-% consensus on % the % order of these requests, and sends back responses to 
-% clients. The other % nodes % act as backup nodes, which reach consensus on 
-% requests and process % requests. % One or multiple analysis tools run on at 
-% most % \v{f} nodes, while the % other % nodes run the application without 
-% analysis and % process requests fast.
-% 
-% However, to make \xxx's asynchronous analysis framework practical, two 
-% practical challenges must be addressed. First, depending on machine restarts 
-% and network partitions, a node's role may change, not only between primary 
-% and % backup, but also between normal nodes and analysis nodes, ande even 
-% between % different analysis nodes. We design a new checkpoint mechanism that 
-% matches up % checkpoints from different role machines with input total order 
-% ID % to address % this problem. Second, we need a mechanism to roll back all 
-% replicas % when a bad % event (\eg, deferencing a NULL pointer) has occured 
-% and % detected by % the % analysis tool. We design a a simple API for 
-% analysis % tool % to invoke so % that the % replicas can reach consensus on 
-% this % roll back % and % act consistently.
-% 
-% To verify that \xxx's asynchronous approach is feasible, we have evaluated 
-% \xxx with four diverse types of widely uses server programs. We measured the 
-% checkpint time cost, run multiple valgrind analysis on different nodes, and 
-% collected performance results. These results also show that \xxx is 
-% complementary to existing analysis frameworks.
-
-% Problem: for some security attack such as stack overflow, the attacker 
-% may totally replace the LD_PRELOAd library so that our interception layer
-% can never go back, and we can never roll back.
-
-% P6: Key technical challenges. Transparent and timely (to respond to attacks) 
-% checkpoint. Migration of analysis from one machine to another.
-% When bad events are detected, how does the analysis involve with the 
-% framework?
-% Notify the framework, involve sync point. Roll back the replicas.
-
-% P7: Our initial results. Checkpoint time. Run with valgrind one analysis. Or 
-% two valgrind analysis, one at each replica.
