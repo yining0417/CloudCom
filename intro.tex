@@ -85,40 +85,18 @@ executions efficiently and transparently?
 
 
 
-% Existing in-line 
-% analysis frameworks also only supports one analysis at the same time because 
-% a % typical such frameworks typically maintain analysis results with shadow 
-% memory, 
-% which can only support one analysis in one execution.
-
-
-% We argue that many analyses can be fully decoupled from the executions if 
-% we could have such a framework that can meet three requirements. First (R1), 
-% the framework must consistently replicate the same inputs for the executions 
-% with and without analysis even for server applications (\eg, \apache) that 
-% continuously accept inputs. Second (R2), given the same input, the framework 
-% must efficiently enforce the same thread interleavings (or \emph{schedules}) 
-% for execution and analysis without the need of frequently transfering 
-% schedules % between them. Third (R3), when bad events occur in the execution 
-% or % the % analysis (\eg, a NULL pinter dereference) caused by some malicious 
-% inputs, % the % framework must provide a transparent checkpoint and restore 
-% mechanism to % recover both the execution and the analysis back to an 
-% equavalent % state % before % the malicious inputs are processed, and then 
-% replicas % consistently % discard the % malicious inputs.
-
-
 % P4: Our approach. Replication. DMT. And why we are better than existing 
 % replication systems: avoid shipping schedules, avoid annotations.
 To address this question, this paper presents \xxx, an efficient, 
 transparent dynamic program analysis framework by leveraging a technique called 
 \emph{state machine replication (or \smr)}~\cite{paxos:simple, 
 paxos:practical, paxos}. \smr assumes a deterministic application, runs the 
-application on multiple machines (or replicas), and enforces a consistent 
-sequence of inputs for the application across replicas as long as a majority of 
-replicas reach consensus on each input. Leveraging \smr, all replicas
-consistently transform the same execution states, then minor replicas can just
-transparently run an analysis tool on each and majority
-replicas run actual executions to process inputs fast.
+application on multiple machines (or replicas), and typically uses the \paxos 
+protocol to enforce a consistent sequence of inputs for the application across 
+replicas as long as a majority of replicas reach consensus on each input. 
+Leveraging \smr, all replicas consistently transform the same execution states, 
+then minor replicas can just transparently run an analysis tool on each and 
+majority replicas run actual executions to process inputs fast.
 
 
 However, \smr alone is not sufficient to construct multiple equivalent 
@@ -136,13 +114,13 @@ A practical challenge for \xxx is that even asynchronous analysis tools
 sometimes would prefer to roll back to previous execution states and discard 
 malicious inputs that triggered harmful events. To address this challenge, \xxx 
 has incorporated a transparent application-level checkpoint mechanism with 
-expressive API for replicas to rock back consistently (\S\ref{sec:checkpoint}).
+expressive API for replicas to rock back consistently.
 
 
-We have conducted a feasibility on \xxx in Linux. To leverage \smr, \xxx 
-incoporates the \paxos implementation in \repbox, a transparent \smr 
+We be have conducted \xxx's feasibility study in Linux. To leverage \smr, \xxx 
+incoporates a \paxos protocol implementation in \repbox, a transparent \smr 
 system for general server applications. To leverage \dmt, \xxx incoporates 
-\parrot, a \dmt system that has shown to run fast on a wide range of 
+\parrot, a \dmt runtime system that has shown to run fast on a wide range of 
 popular multithreaded programs. Evaluation on a widely used multimedia server 
 program \mediatomb~\cite{mediatomb} with three replicas (each has 24 cores) 
 shows that \xxx is able to support multiple anslysis tools transparently 
@@ -156,12 +134,12 @@ executions to fully decouple an application's actual execution and analysis
 tools, which benefits applications, analysis tools, and frameworks. \xxx can
 greatly improve an application's quality by running multiple analysis tools in
 production runs efficiently. \xxx is transparent to analysis tools and has the
-potential to strengthen and speedup the tools themselves (\S\ref{sec:discuss}). 
-\xxx compensates traditional ``fully-coupled" frameworks because it can easily 
-run them on the analysis replicas.
+potential to strengthen and speedup the tools themselves. \xxx compensates 
+traditional ``fully-coupled" frameworks because it can easily run them on the 
+analysis replicas.
 
-The rest of this paper, \S\ref{sec:background} introduces the background of 
-\smr and \dmt, \S\ref{sec:overview} presents an overview \xxx's design, 
+In the remaining of this paper, \S\ref{sec:background} introduces the background 
+of \smr and \dmt, \S\ref{sec:overview} presents an overview \xxx's design, 
 \S\ref{sec:discuss} discusses \xxx's potential benefits, and 
 \S\ref{sec:checkpoint} describes \xxx's checkpoint and rollback mechanism. 
 \S\ref{sec:eval} presents evaluation results, \S\ref{sec:related} introduces 
