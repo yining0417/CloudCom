@@ -36,15 +36,6 @@ machines.
 
 \section{\xxx Overview} \label{sec:overview}
 
-This section first introduces \xxx's architecture with its key components, and 
-then discusses which types of analyses are suitable to run in \xxx, including 
-the how \xxx mutually benefit with analyses. We mainly consider server 
-applications (\eg, \mediatomb and \apache) because they provide online service 
-and thus require powerful analyses to guarantee software quality. Utility 
-programs can also be easily run in our \xxx.
-
-\subsection{Architecture} \label{sec:arch}
-
 \xxx's deployment is similar to a typical \smr's. In a \xxx-replicated
 system, a set of 2\v{f}+1 machines (nodes) are set up within a LAN. Among these 
 nodes, at least \v{f}+1 nodes run an actual execution or a lightweight analysis tool on each so that they can reach consensus on inputs and process requests fast, while at most \v{f} nodes run an heavyweight analysis tool on each. Once the \xxx system starts, 
@@ -138,9 +129,9 @@ intercept socket operations.
 
 % Our model. Multiple writer multiple reader.
 
-\subsection{Discussion} \label{sec:discuss}
+\section{Discussion} \label{sec:discuss}
 
-\subsubsection{What Types of Analyses are Suitable to Run in \xxx?} 
+\subsection{What Types of Analyses are Suitable to Run in \xxx?} 
 \label{sec:analysis-types}
 
 We envision that an analysis is suitable for \xxx if: (1) it can run 
@@ -156,7 +147,7 @@ analysis and leak information to clients before the analysis detects the
 leakage. Nevertheless, many security tools such as use-after-free 
 vulnerabilities can be deployed in \xxx.
 
-\subsubsection{Can \xxx Strengthen Existing Analyses?} 
+\subsection{Can \xxx Strengthen Existing Analyses?} 
 \label{sec:strengthen-analysis}
 
 \xxx is not only transparent to analysis tools, but has the potential to 
@@ -180,7 +171,12 @@ persistently and consistently enforced across replicas, and failing minor
 nodes (either an analysis or an actual execution node) do not affect the other 
 nodes' executions and analyses.
 
-\subsubsection{Can Existing Analyses Benefit \xxx?} 
+\subsection{Can \xxx Speedup Existing Analyses?} 
+\label{sec:speedup-analysis}
+
+TBD.
+
+\subsection{Can Existing Analyses Benefit \xxx?} 
 \label{sec:strengthen-crane}
 
 Interestingly, analyses running in \xxx can benefit \xxx's \dmt runtime and 

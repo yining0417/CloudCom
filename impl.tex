@@ -1,33 +1,37 @@
-\section{Implementation} \label{sec:impl}
+% \section{Implementation} \label{sec:impl}
 
 % This section first introduces the implementation details of \xxx's \paxos 
 % component, and then presents the implementation choices of the checkpoint 
 % component.
 
-\subsection{\paxos Protocol} \label{sec:paxos}
-% SMR. Paxos. Choose it because: (1) fast. (2) transparent to applications.
-The \paxos consensus component is a critical component to enforce a consistent 
-total order of socket operations from client programs. Although there are 
-already a number of open source \paxos implementations~\cite{concoord, 
-zookeeper, chubby:osdi, libpaxos}, we find it necessary to re-implement a 
-\paxos protocol because it is hard to port their current consensus 
-interface to \xxx's socket consensus interface.
+% \subsection{\paxos Protocol} \label{sec:paxos}
+% % SMR. Paxos. Choose it because: (1) fast. (2) transparent to applications.
+% The \paxos consensus component is a critical component to enforce a 
+% consistent 
+% total order of socket operations from client programs. Although there are 
+% already a number of open source \paxos implementations~\cite{concoord, 
+% zookeeper, chubby:osdi, libpaxos}, we find it necessary to re-implement a 
+% \paxos protocol because it is hard to port their current consensus 
+% interface to \xxx's socket consensus interface.
+% 
+% 
+% We have implemented a standard \paxos protocol based on a well-known approach 
+% called ``\paxos Made Practical"~\cite{paxos:practical} because it is easy to 
+% understand, use, and fast. In normal case, only the primary node is proposing 
+% consensus requests, so consensus can be achieved fast. When exceptional cases 
+% such as network partitions and node failures occur, a \paxos leader election 
+% is 
+% invoked to resolve conflicts. Each socket operation from the client is 
+% assigned 
+% a global, monotonically increasing viewstamp (or \emph{global index}) to 
+% identify each checkpoint. Upon consensus on a socket operation, each 
+% consensus 
+% component persistently stores the operation type, arguments, and global index 
+% into Berkeley DB storage on local SSD.
 
 
-We have implemented a standard \paxos protocol based on a well-known approach 
-called ``\paxos Made Practical"~\cite{paxos:practical} because it is easy to 
-understand, use, and fast. In normal case, only the primary node is proposing 
-consensus requests, so consensus can be achieved fast. When exceptional cases 
-such as network partitions and node failures occur, a \paxos leader election is 
-invoked to resolve conflicts. Each socket operation from the client is assigned 
-a global, monotonically increasing viewstamp (or \emph{global index}) to 
-identify each checkpoint. Upon consensus on a socket operation, each consensus 
-component persistently stores the operation type, arguments, and global index 
-into Berkeley DB storage on local SSD.
 
-
-
-\subsection{Checkpoint and Restore} \label{sec:checkpoint}
+\section{Checkpoint and Rollback Design} \label{sec:checkpoint}
 
 % Second, once an anlysis 
 % captures some bad events caued by processing malicious inputs, \xxx must 
