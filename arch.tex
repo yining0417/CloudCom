@@ -154,31 +154,41 @@ vulnerabilities can be deployed in \xxx.
 \subsection{Can \xxx Strengthen Existing Analyses?} 
 \label{sec:strengthen-analysis}
 
-\xxx is not only transparent to analysis tools, but has the potential to 
-strengthen existing analyses via its performance benefit. Previously, to 
-mitigate the huge performance slowdown, some analysis tool developers sometimes 
-have to weaken the guarantees of an analysis. For instance, 
-ThreadSanitizer\cite{tsan}, one of the most practical race detectors, only 
-logs the last four accesses for each memory byte instead of the complete access 
-history, because logging and analyzing the complete history is quite 
+\xxx has the potential to strengthen existing analyses via its performance 
+benefit. Previously, to mitigate the huge performance slowdown, some analysis 
+tool developers sometimes have to weaken the guarantees of an analysis. For 
+instance, ThreadSanitizer\cite{tsan}, one of the most practical race detectors, 
+only logs the last four accesses for each memory byte instead of the complete 
+access history, because logging and analyzing the complete history is quite 
 heavyweight (\eg, 20X+ slowdown for some testing programs the authors 
 evaluated). However, an incomplete access history may miss data races at 
 runtime. With \xxx, developers can now strengthen the analysis by logging 
 complete memory access history.
 
-\smr provides an extra fault-tolerance benefit for \xxx. Existing 
-reliability and security analyses tend to expose or detect harmful defeats in 
-an application, which may crash the application. In addition, the actual 
-executions across different nodes may fail as well due to hardware or OS 
+\xxx also has the potential to speedup existing analysis tools themselves via 
+its replication architecture. For instance, the high logging overhead for 
+failure reproductions on multi-processors is an open research 
+problem~\cite{sherlog:asplos10}. Fortunately, with \xxx's architecture, these 
+logging tools now can separate different logging aspects such as functions, 
+libraries, and threads into different replicas (\eg, each replica logs for only 
+one thread), greatly reducing the logging overhead. Sampling-based race 
+detection tools (\eg,~\cite{datacollider:osdi10}) can also grealty reduce 
+sampling overhead by dividing sampling work into replicas, or can significantly 
+multiply sampling rates by running the same tool among replicas.
+
+Moreover, \xxx provides an extra fault-tolerance benefit for analysis tools. 
+Existing reliability and security analyses tend to expose or detect harmful 
+defeats in an application, which may crash the application. In addition, the 
+actual executions across different nodes may fail as well due to hardware or OS 
 failures. With \xxx's \smr architecture, the sequence of inputs are 
 persistently and consistently enforced across replicas, and failing minor 
 nodes (either an analysis or an actual execution node) do not affect the other 
 nodes' executions and analyses.
 
-\subsection{Can \xxx Speedup Existing Analyses?} 
-\label{sec:speedup-analysis}
-
-TBD.
+% \subsection{Can \xxx Speedup Existing Analyses?} 
+% \label{sec:speedup-analysis}
+% 
+% TBD.
 
 \subsection{Can Existing Analyses Benefit \xxx?} 
 \label{sec:strengthen-crane}
