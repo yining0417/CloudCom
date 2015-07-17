@@ -36,15 +36,15 @@ machines.
 
 \section{\xxx Overview} \label{sec:overview}
 
-\xxx's deployment is similar to a typical \smr's: a set of 2\v{f}+1 machines 
-(for short, nodes) are set up within a LAN. Among these nodes, at least \v{f}+1 
-nodes run an actual execution or a lightweight analysis tool on each so that 
-they can reach consensus on inputs and process requests fast, while at most 
-\v{f} nodes run an heavyweight analysis tool on each. Once the \xxx system 
-starts, one node becomes the \emph{primary} node which proposes the order of 
-requests to execute, and the other nodes become backup nodes which follow the 
-primary's proposals. An arbitrary number of clients in LAN or WAN send 
-network requests to the primary and get responses.
+\xxx's deployment model is similar to a typical \smr's: a set of 2\v{f}+1 
+machines (for short, nodes) are set up within a LAN. Among these nodes, at 
+least \v{f}+1 nodes run an actual execution or a lightweight analysis tool on 
+each so that they can reach consensus on inputs and process requests fast, 
+while at most \v{f} nodes run an heavyweight analysis tool on each. Once the 
+\xxx system starts, one node becomes the \emph{primary} node which proposes the 
+order of requests to execute, and the other nodes become backup nodes which 
+follow the primary's proposals. An arbitrary number of clients in LAN or WAN 
+send network requests to the primary and get responses.
 
 
 \begin{figure}[t]
@@ -59,32 +59,35 @@ network requests to the primary and get responses.
 
 Figure~\ref{fig:arch} shows an instance of \xxx running on 
 each node. The instance contains three main components, the \paxos consensus 
-component, the \dmt scheduler, the checkpointer component. A server program 
-runs transparently in a \xxx instance with or without an analysis. Neither the 
-server or the analysis is aware of \xxx's components.
+component, the \dmt scheduler, and the checkpointer component. A server program 
+runs transparently in a \xxx instance with or without an analysis tool. Neither 
+the server or the analysis is aware of \xxx's components.
 
-To support general server programs, \xxx chooses the POSIX socket API as
-consensus interface. \xxx enforces two kinds of orders for socket
-operations.  First, for requests coming from the clients, such as \connect and
-\send requests, \xxx enforces that all nodes see the same totally ordered
-sequence of these requests using the \paxos and socket API interposition
-components.  (\xxx does not need to order the blocking socket operations
-in the clients because we mainly focus on analyses for server applications.) 
-Second, for server applications' blocking operations, \xxx schedules them 
-according to the matching operations from the clients (\eg, a \send from a 
-client matches a \recv from the server within the same socket connection). \xxx 
-does not schedule non-blocking operations in servers (\eg, \send to 
-clients) because it focuses on replicating the server's execution states.
+To support general server programs transparently, \xxx leverages \repbox's 
+\paxos consensus protocol, which takes the POSIX socket API as
+consensus interface. This \paxos protocol enforces two kinds of 
+orders for socket operations. First, for requests coming from the clients, 
+such as \connect and \send requests, this protocol enforces that all nodes see 
+the same totally ordered sequence of these requests using the \paxos and socket 
+API interposition components.  (this protocol does not need to order the 
+blocking socket operations in the clients because we mainly focus on analyses 
+for server applications.) Second, for server applications' blocking operations, 
+this \paxos protocol schedules them according to the matching operations from 
+the clients (\eg, a \send from a client matches a \recv from the server within 
+the same socket connection). This protocol does not schedule non-blocking 
+operations in servers (\eg, \send to clients) because it focuses on replicating 
+the server's execution states. For practicality, this \paxos protocol takes a 
+well-known engineering approach~\cite{paxos:practical}: only the 
+primary invokes consensus request during normal operations, and an leader 
+election is invoked when exceptions such as network partitions occur.
 
 
-The \paxos consensus component is a \xxx instance's gateway.  It accepts socket
-requests from the clients and invoke a \paxos consensus instance with the other 
-replicas on this operation. Once a consensus is reached, this component 
-forwards the operation to the \dmt component. This component is also the only 
-\xxx 
-component that communicates among different \xxx instances. For practicality, 
-\xxx uses a well-known \paxos engineering approach~\cite{paxos:practical} in 
-which only the primary invokes consensus request during normal operations.
+In a \xxx instance, the \paxos consensus component is the gateway.  This 
+component accepts socket requests from the clients and invoke a \paxos 
+consensus instance with the other replicas on this operation. Once a consensus 
+is reached, this component forwards the operation to the \dmt component. This 
+component is also the only \xxx component that communicates among different 
+\xxx instances. 
 
 
 The \dmt component runs within the same process as a server replica, and
@@ -118,12 +121,14 @@ server program and the \dmt scheduler; the \paxos consensus component does not
 require checkpoints because we explicitly design it to be stateless (all socket 
 operations have been persistently logged).
 
+
 If an analysis detects a malicious event and decides to roll back to a 
-checkpoint associated with a socket operation index, the analysis calls a 
-\v{void rollback(int} \v{index = -1)} API provided by \xxx. Ignoring the 
-argument in this API means rolling back to the last checkpoint within this 
-replica. To determine a specific index to roll back, the analysis can also 
-intercept socket operations.
+checkpoint associated with a socket operation index, the analysis can call a 
+\v{void rollback(int} \v{index=-1,} \v{bool discard=0)} API provided 
+by \xxx. Ignoring the argument in this API means rolling back to the last 
+checkpoint within all replicas and discard all inputs since this checkpoint. To 
+determine a specific index to roll back, the analysis can also intercept socket 
+operations. More details on this API is described in \S\ref{sec:checkpoint}.
 
 
 % Our model. Multiple writer multiple reader.
