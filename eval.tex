@@ -8,51 +8,51 @@
 \centering
 \vspace{-.05in}
 \begin{tabular}{lrrr}
-{\bf Approach} & {\bf Response time (ms)} \\
+{\bf Approach} & {\bf Execution time (ms)} \\
 \hline\\[-2.3ex]
-Native execution                       & 1270.3        \\
-\xxx bare framework only                       & 1208.4        \\
-\xxx with Helgrind                                   & 1230.4     \\
-% \xxx with Helgrind and Callgrind                       & XX        \\
-Helgrind only                       & 21086.8       \\
+Native execution                       & 991        \\
+\xxx bare framework only                       & 992        \\
+\xxx with Helgrind                                   & 1,048     \\
+\xxx with drcov                                   & 1,036     \\
+\xxx with Helgrind and drcov                       & 1,012        \\
+Helgrind only                       & 41,018       \\
+drcov only                       & 1,272       \\
 \end{tabular}
 \vspace{-.05in}
-\caption{{\em \xxx performance.}} 
+\caption{{\em \clamav's performance running in \xxx.}}
 \label{tab:overhead}
 \end{table}
 
-We evaluated \xxx on \mediatomb~\cite{mediatomb}, a 
-\upnp multimedia server that parallely uploads, shares, and transcodes 
-pictures and videos. Our evaluation was done on a set of three 
+We evaluated \xxx on \clamav~\cite{clamav}, a popular anti-virus scanning 
+server that scans files parallely and deletes malicious ones. Our evaluation was done on a set of three 
 Linux 3.2.14 machines within a 1Gbps bandwidth LAN, and each machine has 2.80 
 GHz dual-socket hex-core Intel Xeon with 24 hyper-threading cores and 64GB 
-memory. Because \mediatomb uses a web-based interface, we used a popular web 
-server benchmark \ab~\cite{apachebench} to invoke concurrent requests 
-which use \mencoder to transcode a randomly downloaded 15MB video from AVI to 
-MP4. To mitigate network latency, the benchmark clients were ran within the 
-LAN. We measured each workload's response time because it 
-has direct impact on users. For the analysis, we selected 
-Helgrind~\cite{valgrind:pldi} because it is one of the most popular race 
-detection tool and it suffers from huge slowdown.
+memory. To evaluate performance, we used \clamav's own client utility 
+\v{clamdscan} to request the \clamav server to spawn 8 threads to parallely scan its own source code 
+and installation directories and measure the utility's execution time. To mitigate network 
+latency, the benchmark clients were ran within the LAN. We selected two popular 
+analysis tools: one heavyweight tool, the Helgrind race 
+detector~\cite{valgrind:pldi}; and one lightweight 
+tool, DynamoRio's code coverage tool drcov~\cite{dynamorio}.
 
-Table~\ref{tab:overhead} shows the performance results running \mediatomb in 
-\xxx. When running the bare \xxx replication framework without any analysis, 
-the performance is slightly faster than the native execution, because the 
-\parrot runtime we leverage schedules \pthread synchronizations with its own 
-flag-relay approach~\cite{parrot:sosp13}, which is highly optimized on 
-multi-core. \parrot's evaluation has confirmed that this approach has much 
-fewer context switches than the traditional \pthread runtime when running 
-\mencoder, the same program that \mediatomb uses to transcode video.
+Table~\ref{tab:overhead} shows the performance results running \clamav in 
+\xxx. \xxx's bare replication framework without any analysis, incorporates 
+negligible overhead compared the native execution. The performance overhead of 
+running Helgrind only in one replica incured 5.8\% overhead compared to the native execution, 
+because the other replica node and the primary run the native executions and 
+reach consensus fast. When running the drcov tool only or running two tools, 
+\xxx incurre only 2.1\% to 3.6\% overhead, because the drcov tool incurred 
+moderate overhead (28.3\% compared to native execution), and once the drcov 
+tool reaches consensus with the primary on the \v{clamdscan} utility's request, 
+the primary processes the request and responses fast.
 
-When running Helgrind in one replica, the performance overhead of \xxx over the 
-bare framework is merely \overhead, because the \paxos protocol \xxx leverages 
-serve requests fast as long as the other replicas (the majority) reach 
-consensus. When running Helgrind only with \mediatomb, the performance overhead 
-compared to native execution is 1560.3\%. This result reflects that \xxx's 
+When running Helgrind only with \clamav, the performance slowdown is 40.4x. This result reflects that \xxx's 
 replication architecture masks the huge performance slowdown of Helgrind, so 
-that client programs feel that \mediatomb runs efficiently even with the 
+that client programs feel that \clamav runs efficiently even with the 
 powerful analysis turned on. Note that Helgrind is already carried in Valgrind, 
-a traditional analysis framework that takes the ``fully-coupled" approach. 
-Overall, this result reflects that \xxx is efficient, transparent to the 
-Helgrind analysis, and complementary to an traditional analysis framework 
-Valgrind.
+a traditional analysis framework that takes the ``fully-coupled" approach. So 
+does drcov for the DynamoRio analysis framework. Overall, this evaluation shows that \xxx is efficient, transparent to the 
+Helgrind and drcov, and complementary to an traditional analysis framework 
+Valgrind and DynamoRio. in addition, to the best of our knowledge, this 
+evaluation is the first one to show that mulitiple types of analysis tools can 
+run together within the same execution.

@@ -34,9 +34,15 @@ distributed locks, and storage meta data). SMR has also been applied broadly to
 build various highly available services, including 
 storage~\cite{paxos:datastore} and wide-area network~\cite{mencius:osdi08}. 
 Hypervisor-based Fault Tolerance~\cite{hft:sosp95} leverages a hypervisor to 
-build a primary-back system for single-core machines. Unlike \xxx that 
-transparently replicate applications via introducing the socket API-based 
-consensus interface, these systems focus on specific types of applications 
-(\eg, distributed lock service~\cite{chubby:osdi}, file 
-system~\cite{zookeeper}).
+build a primary-back system for single-core machines. These systems focus on 
+specific types of applications (\eg, distributed lock service~\cite{chubby:osdi}, file 
+system~\cite{zookeeper}) and thus they are not designed to be transparent to 
+general server applications.
+
+\repbox~\cite{repbox:sosp15} is the first fault-tolerance system for transparently replicate 
+server applications via introducing the socket API-based \paxos consensus interface. 
+\xxx leverages \repbox's \paxos implementation to transparently support analysis 
+tools. To the best of our knowledge, \xxx is the first work that applies the 
+\smr concept to construct multiple equivalent executions for transparent 
+analyses. \xxx is not designed for fault-tolerance.
 
