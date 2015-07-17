@@ -39,10 +39,9 @@ specific types of applications (\eg, distributed lock service~\cite{chubby:osdi}
 system~\cite{zookeeper}) and thus they are not designed to be transparent to 
 general server applications.
 
-\repbox~\cite{repbox:sosp15} is the first fault-tolerance system for transparently replicate 
-server applications via introducing the socket API-based \paxos consensus interface. 
-\xxx leverages \repbox's \paxos implementation to transparently support analysis 
+\repbox~\cite{repbox:sosp15} is the first fault-tolerance system for transparently 
+replicating server applications. \xxx leverages \repbox's \paxos implementation to transparently support analysis 
 tools. To the best of our knowledge, \xxx is the first work that applies the 
-\smr concept to construct multiple equivalent executions for transparent 
+\smr concept to a new domain: constructing multiple equivalent executions for transparent 
 analyses. \xxx is not designed for fault-tolerance.
 
