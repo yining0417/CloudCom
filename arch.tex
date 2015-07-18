@@ -132,7 +132,7 @@ invoke a consensus on checkpointing each replica as the next operation. When
 the tool 
 catches a malicious event and decides to roll back to a 
 checkpoint associated with a socket operation index, the analysis can call a 
-\v{rollback(int} \v{index=-1,} \v{bool discard=0)} API provided 
+\v{rollback(int} \v{index=-1,} \v{bool discard=true)} API provided 
 by \xxx. Ignoring the argument in this API means rolling back to the last 
 checkpoint within all replicas and discard all inputs since this checkpoint. To 
 determine a specific index to roll back, the analysis can also intercept socket 

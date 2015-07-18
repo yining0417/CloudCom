@@ -38,30 +38,30 @@ overrun protection tools) in \xxx, we have designed two checkpoint and rollback
 functions. When an analysis tool calls the \v{checkpoint()} function, \xxx uses 
 its \paxos consensus component to invoke an operation: ``take a checkpoint 
 associated with the global index of the latest socket operation". Once a 
-consensus is reached, all replicas (including primary) does a checkpoint 
+consensus is reached, all replicas (including primary) do a checkpoint 
 operation as the next consensus operation.
 
 
-When the tool catches a malicious event and decides to roll back to a 
-checkpoint associated with a socket operation index, the analysis can call a 
-\v{void rollback(int} \v{index=-1,} \v{bool discard=0)} API provided 
-by \xxx. Ignoring the argument in this API means rolling back to the last 
-checkpoint within all replicas and discard all inputs since this checkpoint. 
-This API works as three steps: (1) current replica uses the \paxos consensus 
-component to invoke an operation: ``rollback to a previous checkpoint according 
-to \v{index}"; (2) each replica invokes \criu to do the actual rollback 
-operation; (3) each replica discards all future inputs after the rollback, if 
-\v{discard} is on. This API ensures all replicas to consistently rollback and 
-discard malicious inputs, so that following executions can safely bypass the 
-malicious events caused by these inputs.
+When the tool catches a malicious event and decides to roll back to a previous
+checkpoint associated with a socket operation index, the tool calls a 
+\v{rollback(int} \v{index=-1,} \v{bool discard=true)} function. Ignoring the 
+arguments in this function means rolling back to the last checkpoint within all 
+replicas and discard all inputs since this checkpoint. This API works as three 
+steps: (1) current replica uses the \paxos consensus component to request an 
+operation: ``rollback to a previous checkpoint according to \v{index}"; (2) 
+once consensus is reached, each replica invokes \criu to do the actual rollback 
+operation; (3) if \v{discard} is on, each replica discards all future inputs 
+since the checkpoint. This API ensures all replicas to rollback and discard 
+malicious inputs consistently, then following executions can safely skip these 
+inputs.
 
 
-This checkpoint mechanism has a few limitations: (1) it 
+\xxx's checkpoint mechanism has a few limitations: (1) it 
 trades off transparency between an analysis tool and \xxx's framework; (2) it 
-may defer the processing of network requests; and (3) it can not recover 
-information leaked to the clients. However, considering the benefits 
-(\S\ref{sec:strengthen-analysis}) that \xxx may bring to tools, this checkpoint 
-mechanism is still worthwhile.
+may defer the processing of network requests; and (3) it can not revoke 
+information that have already leaked to the clients. However, considering the 
+benefits (\S\ref{sec:strengthen-analysis}) that \xxx may bring to tools, we 
+argue that this checkpoint mechanism is still worthwhile.
 
 % Second, once an anlysis 
 % captures some bad events caued by processing malicious inputs, \xxx must 
