@@ -30,7 +30,7 @@ can be less perturbed by the analysis.
 % prohibitively % slow down the execution.
 
 
-Unfortunately, despite these great effort, existing analysis frameworks are
+Unfortunately, despite these great effort, most existing analysis frameworks are
 still hard to deploy in production runs, mainly due to three problems. The first
 problem is still performance. Traditional frameworks fully couples the analysis
 with the actual execution using the shadow memory approach, so whenever an
@@ -63,16 +63,16 @@ maintain.)
 
 
 The third problem is that existing frameworks, including both traditional ones
-and recent ones, have not shown to support multiple types of analysis tools
-within one execution. Multiple analysis tools bring multiple powerful
+and recent ones, have not shown to run multiple types of analysis tools 
+together. Multiple analysis tools bring multiple powerful
 guarantees, which is attractive to today's applications. However, the
-traditional ``fully-coupled" frameworks typically take the shadow memory
-approach to hold analysis results for each memory byte in the actual execution,
-then different analyses may require different copies of shadow memory per byte.
-It is not trivial to extend these frameworks to support multiple copies of
-shadow memory. Considering ``partially-decoupled" frameworks, it is not trivial
-to extend them to support multiple types of analysis tools within one execution
-either, because these frameworks heavily carve the transfered execution states,
+traditional ``fully-coupled" frameworks typically take the shadow memory 
+approach to hold analysis results for each memory byte in the actual execution, 
+then different analyses may require different copies of shadow memory per byte. 
+It is not trivial to extend these frameworks to support multiple copies of 
+shadow memory. Considering ``partially-decoupled" frameworks, it is not trivial 
+to extend them to support multiple types of analysis tools within one execution 
+either, because these frameworks heavily carve the transfered execution states, 
 which are hard to reuse for different types of analysis tools.
 
 
