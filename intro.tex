@@ -120,15 +120,21 @@ expressive API for replicas to rock back consistently.
 
 We have conducted a feasibility study for \xxx in Linux. To leverage \smr, \xxx 
 incorporates a \paxos protocol implementation in \repbox~\cite{repbox:sosp15}, 
-a transparent \smr system for general server applications. To leverage \dmt, 
-\xxx incorporates \parrot~\cite{parrot:sosp13}, a \dmt runtime system that has 
-shown to run fast on a wide range of popular multithreaded programs. Evaluation 
-on a popular parallel anti-virus scanning server \clamav~\cite{clamav} with 
-three replicas (each has 24 cores) shows that \xxx is able to transparently run 
-two analysis tools together: one is a heavyweight analysis tool, the Helgrind 
-race detector~\cite{valgrind:pldi}; the other is a lightweight analysis tool, 
-DynamoRio's code coverage tool drcov~\cite{dynamorio}. Moreover, \xxx incurred 
-merely 2.1\% overhead over the actual execution.
+the first \smr system that transparently replicates server applications via its 
+socket-API based \paxos consensus interface. Note that, unlike \repbox, \xxx's 
+main purpose is \emph{not} to provide fault-tolerance, but to construct multiple 
+equivalent executions so that applications can enjoy efficient and transparent 
+analyses. To leverage \dmt, \xxx incorporates \parrot~\cite{parrot:sosp13}, a \dmt 
+runtime system that has shown to run fast on a wide range of popular 
+multithreaded programs.
+
+Evaluation on a popular parallel anti-virus scanning 
+server \clamav~\cite{clamav} with three replicas (each has 24 cores) shows that 
+\xxx is able to transparently run two analysis tools together: one is a 
+heavyweight analysis tool, the Helgrind race detector~\cite{valgrind:pldi}; the 
+other is a lightweight analysis tool, DynamoRio's code coverage tool 
+drcov~\cite{dynamorio}. Moreover, \xxx incurred merely 2.1\% overhead over the 
+actual execution.
 
 
 % P6: Benefits. This paragraph can be removed.
@@ -139,9 +145,7 @@ greatly improve an application's quality by running multiple analysis tools in
 production runs efficiently. \xxx is transparent to analysis tools and has the
 potential to strengthen and speedup the tools themselves via its replication 
 architecture. \xxx compensates traditional ``fully-coupled" frameworks because 
-it can easily run them on the analysis replicas. Notably, \xxx's main purpose 
-is \emph{not} to provide fault tolerance, but to fully decouple actual 
-executions and analysis tools.
+it can easily run them on the analysis replicas.
 
 
 In the remaining of this paper, \S\ref{sec:background} introduces the 
