@@ -31,17 +31,16 @@
 
 
 
-\section{Checkpoint and Rollback Design} \label{sec:checkpoint}
+\section{Checkpoint and Rollback Mechanism} \label{sec:checkpoint}
 
-To support synchronous analysis tools, \xxx provides two checkpoint and rollback 
-functions. When an analysis tool calls the \v{checkpoint()} function, \xxx 
-uses its \paxos consensus component to invoke an operation: ``take a checkpoint 
+To support synchronous analysis tools (\eg, control flow integrity and buffer 
+overrun protection tools) in \xxx, we have designed two checkpoint and rollback 
+functions. When an analysis tool calls the \v{checkpoint()} function, \xxx uses 
+its \paxos consensus component to invoke an operation: ``take a checkpoint 
 associated with the global index of the latest socket operation". Once a 
 consensus is reached, all replicas (including primary) does a checkpoint 
-operation as the next consensus operation. This checkpoint operation trade off 
-transparency between an analysis tool and \xxx's framework, and may defer 
-the processing of network requests, but we argue that this operation is worthwhile 
-for supporting synchronous analysis tools in \xxx.
+operation as the next consensus operation.
+
 
 When the tool catches a malicious event and decides to roll back to a 
 checkpoint associated with a socket operation index, the analysis can call a 
@@ -56,6 +55,14 @@ operation; (3) each replica discards all future inputs after the rollback, if
 discard malicious inputs, so that following executions can safely bypass the 
 malicious events caused by these inputs.
 
+
+This checkpoint mechanism has a few limitations: (1) it 
+trades off transparency between an analysis tool and \xxx's framework; (2) it 
+may defer the processing of network requests; and (3) it can not recover 
+information leaked to the clients. However, considering the benefits 
+(\S\ref{sec:strengthen-analysis}) that \xxx may bring to tools, this checkpoint 
+mechanism is still worthwhile.
+
 % Second, once an anlysis 
 % captures some bad events caued by processing malicious inputs, \xxx must 
 % allow % the analysis to invoke an operation to consistently roll back all 
@@ -65,11 +72,13 @@ malicious events caused by these inputs.
 
 % To transparently checkpoint an application, \xxx's checkpointer component 
 % leverages a popular, open source checkpoint-restore tool called 
-% \criu~\cite{criu}. This tool has supported CPU registers, memory, etc. However, 
+% \criu~\cite{criu}. This tool has supported CPU registers, memory, etc. 
+% However, 
 % one key issue still exists: a server constantly serves requests, and 
 % checkpointing and restoring TCP stacks on different machines is notoriously 
 % difficult. Our trick to avoid this difficulty is that we have observed that 
-% server programs always have some idle moments. Thus, a \xxx non-primary replica 
+% server programs always have some idle moments. Thus, a \xxx non-primary 
+% replica 
 % running an actual execution does a checkpoint periodically (one minute by 
 % default) when the replica has no alive socket connections.
 
@@ -78,9 +87,11 @@ malicious events caused by these inputs.
 % events; and (2) the time cost by a checkpoint operation does not matter much 
 % because the analysis is heavyweight anyway. Thus, a \xxx replica running an 
 % analysis performs a checkpoint at the moment the server has finished serving 
-% the current batch of socket connections: once the \paxos consensus component on 
+% the current batch of socket connections: once the \paxos consensus component 
+% on 
 % each node finds that currently no socket connections are alive, the replica 
-% does a checkpoint. This checkpoint moment is also good for \xxx's rollback API 
+% does a checkpoint. This checkpoint moment is also good for \xxx's rollback 
+% API 
 % because it helps the analysis get rid of the current socket connections which 
 % trigger the malicious events. 
 

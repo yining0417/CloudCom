@@ -35,11 +35,31 @@ build various highly available services, including
 storage~\cite{paxos:datastore} and wide-area network~\cite{mencius:osdi08}. 
 Hypervisor-based Fault Tolerance~\cite{hft:sosp95} leverages a hypervisor to 
 build a primary-back system for single-core machines. These systems focus on 
-specific types of applications (\eg, distributed lock service~\cite{chubby:osdi}, file 
-system~\cite{zookeeper}) and thus they are not designed to be transparent to 
-general server applications.
+specific types of applications (\eg, distributed lock 
+service~\cite{chubby:osdi}, file system~\cite{zookeeper}) and thus they are not 
+designed to be transparent to general multithreaded applications.
 
-\repbox~\cite{repbox:sosp15} is the first \smr system to transparently 
-replicate server applications for fault-tolerance. \xxx is a program analysis 
-framework which leverages \repbox's \paxos implementation to transparently support analysis tools. To the best of our knowledge, \xxx is the first work that applies the \smr concept to a new domain: constructing multiple equivalent executions for transparent analyses. Unlike \repbox, \xxx's main purpose is not fault-tolerance.
+In order to support multithreading in SMR, Eve~\cite{eve:osdi12} introduces a 
+new ``execute-verify" approach: it first executes a batch of requests 
+speculatively, and then verifies whether these requests have conflicts (\eg, 
+different thread interleavings) that cause execution state divergence. If 
+conflicts occur, Eve rolls back. Eve's execution divergence verification 
+requires developers to manually annotate all shared states in application code, 
+thus it is not transparent to applications.
+
+Rex~\cite{rex:eurosys14} addresses the thread interleaving divergence problem 
+with a ``execute-agree-follow" approach: it first records thread interleavings 
+on the primary node by executing requests, and then replays these interleavings 
+on the other backups. Rex requires frequently shipping thread interleavings 
+across nodes, which may be slow. Furthermore, Rex requires application 
+developers to build their own checkpoint-restore mechanism, thus this mechanism 
+is not transparent to applications.
+
+\repbox~\cite{repbox:sosp15} is the first \smr system that transparently 
+replicates server applications via its socket-API based \paxos consensus 
+interface. Unlike \repbox, \xxx's main purpose is not fault-tolerance. \xxx is 
+a program analysis framework which leverages \repbox's \paxos implementation to 
+transparently support analysis tools. \xxx's main contribution is that it 
+applied the \smr concept to a new domain: constructing multiple equivalent 
+executions to enable efficient and transparent analyses.
 
