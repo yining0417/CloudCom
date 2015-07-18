@@ -51,9 +51,8 @@ steps: (1) current replica uses the \paxos consensus component to request an
 operation: ``rollback to a previous checkpoint according to \v{index}"; (2) 
 once consensus is reached, each replica invokes \criu to do the actual rollback 
 operation; (3) if \v{discard} is on, each replica discards all future inputs 
-since the checkpoint. This API ensures all replicas to rollback and discard 
-malicious inputs consistently, then following executions can safely skip these 
-inputs.
+since the checkpoint. This API makes all replicas rollback and discard 
+malicious inputs consistently.
 
 
 \xxx's checkpoint mechanism has a few limitations: (1) although this mechanism's 

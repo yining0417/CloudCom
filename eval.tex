@@ -8,7 +8,7 @@
 \centering
 \vspace{-.05in}
 \begin{tabular}{lrrr}
-{\bf Approach} & {\bf Execution time (ms)} \\
+{\bf Approach} & {\bf Response time (ms)} \\
 \hline\\[-2.3ex]
 Native execution                       & 991        \\
 \xxx bare framework only                       & 992        \\
@@ -29,36 +29,40 @@ was done on a set of three
 Linux 3.2.14 machines within a 1Gbps bandwidth LAN, and each machine has 2.80 
 GHz dual-socket hex-core Intel Xeon with 24 hyper-threading cores and 64GB 
 memory. To evaluate performance, we used \clamav's own client utility 
-\v{clamdscan} to ask the \clamav server to scan its own source code 
-and installation directories, and we measured \v{clamdscan}'s 
-execution time as the server's response time. The \clamav server spawned 8 
-threads to process this workload. To avoid network latency, \v{clamdscan} was 
-ran within the primary node. Adding network latency would further mask \xxx's 
-overhead. To evaluate whether \xxx can transparently run analysis tools, we 
-selected two popular tools: one heavyweight tool, the Helgrind race 
-detector~\cite{valgrind:pldi}; and one lightweight tool, DynamoRio's code 
-coverage tool drcov~\cite{dynamorio}.
+\clamdscan to ask the \clamav server to scan its own source code 
+and installation directories, and we measured \clamdscan's 
+execution time as the server's response time. The \clamav server spawned eight 
+threads to scan these directories in parallel. To avoid network latency, 
+\clamdscan was ran within the primary node. Adding network latency would 
+further mask \xxx's overhead. To evaluate whether \xxx can transparently run 
+analysis tools, we selected two popular tools: one heavyweight tool, the 
+Helgrind race detector~\cite{valgrind:pldi}; and one lightweight tool, 
+DynamoRio's code coverage tool \drcov~\cite{dynamorio}. For each data point, we 
+ran it for 5 times and picked the median value.
 
 Table~\ref{tab:overhead} shows the performance results running \clamav in 
 \xxx. \xxx's bare replication framework incurred negligible overhead over 
 the native execution. When running Helgrind only in one 
 replica, \xxx incurred 5.8\% overhead over the native execution, because both 
 the other replica node and the primary ran the native executions and they 
-reached consensus fast. When running the drcov tool only or running two tools, 
-\xxx incurred only 2.1\% to 3.6\% overhead, because the drcov tool incurred 
-moderate overhead (28.3\% compared to native execution), and once the drcov 
-tool reached consensus with the primary on the \v{clamdscan} utility's request, 
-the primary just processed the request and responsed to \v{clamdscan} 
-regardless of drcov's execution.
+reached consensus fast. When running the \drcov tool only or running both 
+tools, \xxx incurred only 2.1\% to 3.6\% overhead, and once the \drcov tool 
+reached consensus with the primary on the \clamdscan utility's request, the 
+primary just processed the request and responsed to \clamdscan regardless of 
+\drcov's execution. We considered \xxx's performance overhead negligible 
+compared to the native executions.
 
-When running Helgrind only with \clamav, the performance slowdown was 40.4X. 
-This result reflects that \xxx's replication architecture masks the huge 
-performance slowdown of Helgrind, so that \v{clamdscan} felt that \clamav ran 
-efficiently even with both the two analyses were turned on. Note that Helgrind 
-is already carried in Valgrind, a traditional analysis framework that takes the 
-``fully-coupled" approach. So does drcov for the DynamoRio analysis framework. 
-Overall, this evaluation shows that \xxx is efficient, transparent to the 
-Helgrind and drcov tools, and complementary to traditional analysis frameworks 
+The \drcov tool itself incurred a moderate 28.3\% overhead compared to native 
+execution), while Helgrind itself incurred a 40.4X slowdown. 
+Table~\ref{tab:overhead}'s results show that \xxx's replication architecture 
+masked the huge performance slowdown of Helgrind, then \clamdscan felt that 
+\clamav ran efficiently even with both the two analyses were turned on.
+
+Note that Helgrind is already carried in Valgrind, a traditional analysis 
+framework that takes the ``fully-coupled" approach. So does \drcov for the 
+DynamoRio analysis framework. Overall, this evaluation shows that \xxx is 
+efficient, transparent to the 
+Helgrind and \drcov tools, and complementary to traditional analysis frameworks 
 Valgrind and DynamoRio. In addition, to the best of our knowledge, \xxx's 
 evaluation is the first one that has shown to run multiple types of analysis 
 tools together.
