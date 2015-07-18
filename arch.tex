@@ -108,7 +108,7 @@ the return points of blocking socket operations in server replicas, too, to
 ensure that requests are admitted exactly at the same logical time across 
 replicas.
 
-To support synchrous analysis tools, \xxx's checkpointer component can be invoked 
+To support synchronous analysis tools, \xxx's checkpointer component can be invoked 
 by an analysis tool and consistently roll back to safe 
 execution states. Each checkpoint is associated with the index of the last executed 
 socket operation, so that \xxx can consistently match up with the execution states of native 
@@ -120,7 +120,7 @@ server program and the \dmt scheduler; the \paxos consensus component does not
 require checkpoints because we explicitly design it to be stateless (all socket 
 operations have been persistently logged). 
 
-When a synchrous analysis tool determines that there may be a potential malicious event ahead, 
+When a synchronous analysis tool determines that there may be a potential malicious event ahead, 
 it calls a \v{checkpoint()} function, which uses \xxx's own \paxos component to 
 invoke a consensus on checkpointing each replica as the next operation. When the tool 
 catches a malicious event and decides to roll back to a 
@@ -146,7 +146,7 @@ conflicting order of \pthread synchronizations that \xxx's \dmt runtime
 enforces. Many reliability analyses (\eg, data race detection), profiling, 
 and logging tools meet this requirement.
 
-Some synchrous security analysis such as control 
+Some synchronous security analysis such as control 
 flow integrity can not transparently run in \xxx because it monitors the execution 
 synchronously for each control flow transfer. In addition, some other security 
 analysis such as information leakage protection can not transparently run in \xxx 
@@ -179,7 +179,7 @@ problem~\cite{sherlog:asplos10}. Fortunately, with \xxx's architecture, these
 logging tools now can separate different logging aspects such as functions, 
 libraries, and threads into different replicas (\eg, each replica logs for only 
 one thread), greatly reducing the logging overhead. Sampling-based race 
-detection tools (\eg,~\cite{datacollider:osdi10}) can also grealty reduce 
+detection tools (\eg,~\cite{datacollider:osdi10}) can also greatly reduce 
 sampling overhead by dividing sampling work into replicas, or can significantly 
 multiply sampling rates by running the same tool among replicas.
 

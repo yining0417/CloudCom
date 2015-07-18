@@ -33,15 +33,15 @@
 
 \section{Checkpoint and Rollback Design} \label{sec:checkpoint}
 
-To support synchrouns analysis tools, \xxx provides two checkpoint and rollback 
-functions. When an anslysis tool calls the \v{checkpoint()} function, \xxx 
+To support synchronous analysis tools, \xxx provides two checkpoint and rollback 
+functions. When an analysis tool calls the \v{checkpoint()} function, \xxx 
 uses its \paxos consensus component to invoke an operation: ``take a checkpoint 
 associated with the global index of the latest socket operation". Once a 
 consensus is reached, all replicas (including primary) does a checkpoint 
 operation as the next consensus operation. This checkpoint operation trade off 
 transparency between an analysis tool and \xxx's framework, and may defer 
-theprocessing the network requests, but we argue that this operation is worthwhile 
-for supporting synchrouns analysis tools in \xxx.
+the processing of network requests, but we argue that this operation is worthwhile 
+for supporting synchronous analysis tools in \xxx.
 
 When the tool catches a malicious event and decides to roll back to a 
 checkpoint associated with a socket operation index, the analysis can call a 
