@@ -56,12 +56,12 @@ malicious inputs consistently, then following executions can safely skip these
 inputs.
 
 
-\xxx's checkpoint mechanism has a few limitations: (1) it 
-trades off transparency between an analysis tool and \xxx's framework; (2) it 
-may defer the processing of network requests; and (3) it can not revoke 
-information that have already leaked to the clients. However, considering the 
-benefits (\S\ref{sec:strengthen-analysis}) that \xxx may bring to tools, we 
-argue that this checkpoint mechanism is still worthwhile.
+\xxx's checkpoint mechanism has a few limitations: (1) although this mechanism's 
+API is expressive, they moderately trade off transparency between an analysis 
+tool and \xxx's framework; (2) it may defer the processing of network requests; 
+and (3) it can not revoke information that have already leaked to clients. 
+However, considering the benefits (\S\ref{sec:strengthen-analysis}) that \xxx 
+may bring to tools, we argue that this checkpoint mechanism is still worthwhile.
 
 % Second, once an anlysis 
 % captures some bad events caued by processing malicious inputs, \xxx must 

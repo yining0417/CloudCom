@@ -48,16 +48,16 @@ reached consensus fast. When running the drcov tool only or running two tools,
 \xxx incurred only 2.1\% to 3.6\% overhead, because the drcov tool incurred 
 moderate overhead (28.3\% compared to native execution), and once the drcov 
 tool reached consensus with the primary on the \v{clamdscan} utility's request, 
-the primary just processed the request and responsed to \v{clamdscan} regardless 
-of drcov's execution.
+the primary just processed the request and responsed to \v{clamdscan} 
+regardless of drcov's execution.
 
 When running Helgrind only with \clamav, the performance slowdown was 40.4X. 
 This result reflects that \xxx's replication architecture masks the huge 
 performance slowdown of Helgrind, so that \v{clamdscan} felt that \clamav ran 
-efficiently even with both the two analyses were turned on. Note that Helgrind is already carried in Valgrind, 
-a traditional analysis framework that takes the ``fully-coupled" approach. So 
-does drcov for the DynamoRio analysis framework. Overall, this evaluation shows 
-that \xxx is efficient, transparent to the 
+efficiently even with both the two analyses were turned on. Note that Helgrind 
+is already carried in Valgrind, a traditional analysis framework that takes the 
+``fully-coupled" approach. So does drcov for the DynamoRio analysis framework. 
+Overall, this evaluation shows that \xxx is efficient, transparent to the 
 Helgrind and drcov tools, and complementary to traditional analysis frameworks 
 Valgrind and DynamoRio. In addition, to the best of our knowledge, \xxx's 
 evaluation is the first one that has shown to run multiple types of analysis 
