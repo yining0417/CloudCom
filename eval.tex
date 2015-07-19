@@ -33,12 +33,13 @@ memory. To evaluate performance, we used \clamav's own client utility
 and installation directories, and we measured \clamdscan's 
 execution time as the server's response time. The \clamav server spawned eight 
 threads to scan these directories in parallel. To avoid network latency, 
-\clamdscan was ran within the primary node. Adding network latency would 
-further mask \xxx's overhead. To evaluate whether \xxx can transparently run 
+\clamdscan was ran within the primary node. Adding network latency will mask \xxx's overhead. Each data point was ran for five times and 
+we picked the median value.
+
+To evaluate whether \xxx can transparently run 
 analysis tools, we selected two popular tools: one heavyweight tool, the 
 Helgrind race detector~\cite{valgrind:pldi}; and one lightweight tool, 
-DynamoRio's code coverage tool \drcov~\cite{dynamorio}. For each data point, we 
-ran it for five times and picked the median value.
+DynamoRio's code coverage tool \drcov~\cite{dynamorio}. 
 
 Table~\ref{tab:overhead} shows the performance results running \clamav in 
 \xxx. \xxx's bare replication framework incurred negligible overhead over 
