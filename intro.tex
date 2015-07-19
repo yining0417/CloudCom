@@ -91,7 +91,8 @@ To address this question, this paper presents \xxx, an efficient,
 transparent dynamic program analysis framework by leveraging a technique called 
 \emph{state machine replication (or \smr)}~\cite{paxos:simple, 
 paxos:practical, paxos}. \smr assumes a deterministic application, runs the 
-application on multiple machines (or replicas), and typically uses the \paxos 
+application on multiple machines (or replicas), and typically uses the 
+\paxos~\cite{paxos} consensus
 protocol to enforce a consistent sequence of inputs for the application across 
 replicas as long as a majority of replicas reach consensus on each input. 
 Leveraging \smr, all replicas consistently transform the same execution states, 
@@ -115,7 +116,7 @@ A practical challenge for \xxx is that even asynchronous analysis tools
 sometimes would prefer to roll back to previous execution states and discard 
 malicious inputs that triggered harmful events. To address this challenge, \xxx 
 has incorporated a transparent application-level checkpoint mechanism with 
-expressive API for replicas to rock back consistently.
+expressive API for replicas to roll back consistently.
 
 
 We have conducted a feasibility study for \xxx in Linux. To leverage \smr, \xxx 
