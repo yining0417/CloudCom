@@ -92,41 +92,55 @@ transparent dynamic program analysis framework by leveraging a technique called
 \emph{transparent state machine replication}, presented in 
 \repbox~\cite{repbox:sosp15}. This technique aims to provide a regular 
 multithreaded application fault-tolerance benefits transparently without modifying 
-this application. This benefit is especially attractive to today's server applications which 
-provide on-line service and thus natarually demind high availability.
+this application. To do so, \repbox combines two techniques, \emph{state machine replication (or 
+\smr)} and \emph{deterministic multithreading (or \dmt)}.
 
 
-To accomplish transparent state machine replication, \repbox leverages two key 
-techniques. The first one is \emph{state machine replication (or \smr)}, which assumes a deterministic 
-application and runs the application on multiple machines (or replicas). \smr 
-typically uses the \paxos~\cite{paxos} consensus protocol to enforce a 
-consistent sequence of inputs for the application across replicas, as long as a 
-majority of replicas reach consensus on each input. Thus, despite minor replica 
-failures, \smr still makes the replicated application available. To support general server 
- applications transparently without modifying 
-them, \repbox creates a socket-API based \paxos consensus interface.
+% To accomplish transparent state machine replication, \repbox leverages two key 
+% techniques. The first one is \emph{state machine replication (or \smr)}, which assumes a deterministic 
+% application and runs the application on multiple machines (or replicas). \smr 
+% typically uses the \paxos~\cite{paxos} consensus protocol to enforce a 
+% consistent sequence of inputs for the application across replicas, as long as a 
+% majority of replicas reach consensus on each input. Thus, despite minor replica 
+% failures, \smr still makes the replicated application available. To support general server 
+%  applications transparently without modifying 
+% them, \repbox creates a socket-API based \paxos consensus interface.
 
 
-However, for \repbox, \smr alone is not sufficient to support today's 
-applications which widely use threads and thus are nondeterministic. At runtime, 
-replicas may run into different thread interleavings (or \emph{schedules}), 
-easily leading to divergent execution states. To address this problem, \repbox 
-also leverages \emph{deterministic multithreading (or \dmt)}, a recent advanced 
-threading technique that efficiently enforce inter-thread communications to 
-happen in the same total order, then different replicas enforce the same schedules 
-on the same input.
+% However, for \repbox, \smr alone is not sufficient to support today's 
+% applications which widely use threads and thus are nondeterministic. At runtime, 
+% replicas may run into different thread interleavings (or \emph{schedules}), 
+% easily leading to divergent execution states. To address this problem, \repbox 
+% also leverages \emph{deterministic multithreading (or \dmt)}, a recent advanced 
+% threading technique that efficiently enforce inter-thread communications to 
+% happen in the same total order, then different replicas enforce the same schedules 
+% on the same input.
 
-With \smr and \dmt, \repbox manages to construct multiple equivalent executions 
-transparently, then \xxx can just run analysis tools on some replicas while the other replicas 
-still run actual executions and process client requests fast.
-
-
-When applying \repbox to support program analysis tools, a practical challenge that \xxx 
-faces is: even asynchronous analysis tools (\eg, race detectors) 
+Leveraging \repbox, \xxx can just run analysis tools on some replicas while the other replicas 
+still run actual executions and process client requests fast. However, to achieve this goal, 
+\xxx must address three practical challenges. First, even asynchronous analysis tools (\eg, race detectors) 
 sometimes may decide to roll back to previous execution states and discard 
-malicious inputs that triggered harmful events. To address this challenge in 
-\xxx, this paper designed a transparent application-level checkpoint mechanism 
+malicious inputs that triggered harmful events. To address this challenge, 
+\xxx provides a transparent application-level checkpoint mechanism 
 with expressive API for replicas to roll back consistently.
+
+Second, it is unknown whether \xxx's replication techniques and analysis tools can benefit 
+each other. To address this challenge, this paper discusses several types of 
+analyses in which \xxx has the potential to strengthen and speedup existing 
+tools themselves via \xxx's replication architecture. In addition, 
+this paper points out that existing race detection tools can actually speedup 
+\xxx. In a word, \xxx and existing analysis tools form a mutual benefitial 
+eco-system.
+
+Third, despite much effort, state-of-the-art still lacks evaluation to show that different types of 
+analysis tools can actually run together. To address this challenge, we have conducted 
+a feasibility study for \xxx in Linux. We evaulated on a popular parallel anti-virus 
+scanning server \clamav~\cite{clamav} with three 
+replicas (each has 24 cores) shows that \xxx is able to transparently run two 
+analysis tools together: one is a heavyweight analysis tool, the Helgrind race 
+detector~\cite{valgrind:pldi}; the other is a lightweight analysis tool, 
+DynamoRio's code coverage tool drcov~\cite{dynamorio}. Moreover, \xxx incurred 
+merely 2.1\% overhead over the actual execution.
 
 
 % We have conducted a feasibility study for \xxx in Linux. To leverage \smr, 
@@ -143,23 +157,14 @@ with expressive API for replicas to roll back consistently.
 % \dmt runtime system that has shown to run fast on a wide range of popular 
 % multithreaded programs.
 
-We have conducted a feasibility study for \xxx in Linux. Evaluation on a 
-popular parallel anti-virus scanning server \clamav~\cite{clamav} with three 
-replicas (each has 24 cores) shows that \xxx is able to transparently run two 
-analysis tools together: one is a heavyweight analysis tool, the Helgrind race 
-detector~\cite{valgrind:pldi}; the other is a lightweight analysis tool, 
-DynamoRio's code coverage tool drcov~\cite{dynamorio}. Moreover, \xxx incurred 
-merely 2.1\% overhead over the actual execution.
+
 
 
 % P6: Benefits. This paragraph can be removed.
 The main contribution of \xxx is the idea of applying transparent state 
 machine replication to fully decouple 
 an application's actual execution and analysis tools, which benefits 
-applications, analysis tools, and frameworks. Other contributions include a 
-discussion on \xxx's unique potential to strengthen and speedup existing 
-analysis tools themselves via \xxx's replication architecture, and \xxx's 
-evaluation which has shown to support different types of analysis tools together. Note that: (1) unlike 
+applications, analysis tools, and frameworks. Note that: (1) unlike 
 \repbox, \xxx does \emph{not} aim to provide fault-tolerance, but aims to 
 construct multiple equivalent executions so that applications can enjoy 
 efficient and transparent analyses; and (2) \xxx does not aim to replace 
