@@ -91,24 +91,20 @@ To address this question, this paper presents \xxx, an efficient,
 transparent dynamic program analysis framework by leveraging a technique called 
 \emph{transparent state machine replication (or \tsmr)}, presented in 
 \repbox~\cite{repbox:sosp15}. \tsmr aims to provide a regular 
-multithreaded application a state machine replication (or 
-\smr)~\cite{paxos:simple, paxos:practical, paxos} service transparently without modifying 
-this application, then this application has strong fault-tolerance benefit. 
-This benefit is especially attractive to today's server applications which 
-provide on-line service and deminds high availablility.
+multithreaded application fault-tolerance benefits transparently without modifying 
+this application. This benefit is especially attractive to today's server applications which 
+provide on-line service and thus natarually demind high availability.
 
 
 To accomplish transparent state machine replication, \repbox leverages two key 
 techniques. The first one is \emph{state machine replication (or \smr)}, which assumes a deterministic 
-application, runs the application on multiple machines (or replicas), and 
+application and runs the application on multiple machines (or replicas). \smr 
 typically uses the \paxos~\cite{paxos} consensus protocol to enforce a 
-consistent sequence of inputs for the application across replicas as long as a 
-majority of replicas reach consensus on each input. Leveraging \smr, all 
-replicas consistently transform the same execution states, then minor replicas 
-can just transparently run an heavyweight analysis tool on each, and majority 
-replicas run actual executions or lightweight analysis tools to process inputs 
-fast. To transparently support general server applications, \repbox is the 
-first work to present a socket-API based \paxos consensus interface.
+consistent sequence of inputs for the application across replicas, as long as a 
+majority of replicas reach consensus on each input. Thus, despite minor replica 
+failures, \smr still makes the replicated application available. To support general server 
+ applications transparently without modifying 
+them, \repbox creates a socket-API based \paxos consensus interface.
 
 
 However, for \repbox, \smr alone is not sufficient to support today's 
