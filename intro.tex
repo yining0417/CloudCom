@@ -90,16 +90,16 @@ executions efficiently and transparently?
 To address this question, this paper presents \xxx, an efficient, 
 transparent dynamic program analysis framework by leveraging a technique called 
 \emph{transparent state machine replication (or \tsmr)}, presented in 
-\repbox~\cite{repbox:sosp15}. \tsmr aims to transparently provide a regular 
-multithreaded application with a state machine replication (or 
-\smr)~\cite{paxos:simple, paxos:practical, paxos} service without modifying 
+\repbox~\cite{repbox:sosp15}. \tsmr aims to provide a regular 
+multithreaded application a state machine replication (or 
+\smr)~\cite{paxos:simple, paxos:practical, paxos} service transparently without modifying 
 this application, then this application has strong fault-tolerance benefit. 
 This benefit is especially attractive to today's server applications which 
 provide on-line service and deminds high availablility.
 
 
-To accomplish transparent state machine replication, \repbox leverages 
-\emph{state machine replication (or \smr)}, which assumes a deterministic 
+To accomplish transparent state machine replication, \repbox leverages two key 
+techniques. The first one is \emph{state machine replication (or \smr)}, which assumes a deterministic 
 application, runs the application on multiple machines (or replicas), and 
 typically uses the \paxos~\cite{paxos} consensus protocol to enforce a 
 consistent sequence of inputs for the application across replicas as long as a 
@@ -112,21 +112,22 @@ first work to present a socket-API based \paxos consensus interface.
 
 
 However, for \repbox, \smr alone is not sufficient to support today's 
-applications widely use threads and thus are nondeterministic. At runtime, 
+applications which widely use threads and thus are nondeterministic. At runtime, 
 replicas may run into different thread interleavings (or \emph{schedules}), 
 easily leading to divergent execution states. To address this problem, \repbox 
 also leverages \emph{deterministic multithreading (or \dmt)}, a recent advanced 
 threading technique that efficiently enforce inter-thread communications to 
-happen in the same total order, then different replicas run the same schedules 
-on the same input and transform the same execution states. With \smr and \dmt, 
-\repbox manages to construct multiple equivalent executions, then \xxx can just 
-transparently run analysis tools on some replicas while the other replicas 
+happen in the same total order, then different replicas enforce the same schedules 
+on the same input.
+
+With \smr and \dmt, \repbox manages to construct multiple equivalent executions 
+transparently, then \xxx can just run analysis tools on some replicas while the other replicas 
 still run actual executions and process client requests fast.
 
 
 A practical challenge that faces \xxx when applying \repbox to support program 
 analysis tools is: even asynchronous analysis tools (\eg, race detectors) 
-sometimes would prefer to roll back to previous execution states and discard 
+sometimes may opt to roll back to previous execution states and discard 
 malicious inputs that triggered harmful events. To address this challenge in 
 \xxx, this paper designed a transparent application-level checkpoint mechanism 
 with expressive API for replicas to roll back consistently.
@@ -160,19 +161,18 @@ The main contribution of \xxx is the idea of applying \tsmr to fully decouple
 an application's actual execution and analysis tools, which benefits 
 applications, analysis tools, and frameworks. Other contributions include a 
 discussion on \xxx's unique potential to strengthen and speedup existing 
-analysis tools themselves via \xxx's replication architecture, and our 
-evaluation on demonstrating \xxx's feasibility on efficiently and transparently 
-supporting multiple types of analysis tools together. Note that: (1) unlike 
-\repbox, \xxx does \emph{not} aim to provide fault-tolerance, but aim to 
+analysis tools themselves via \xxx's replication architecture, and \xxx's 
+evaluation supporting multiple types of analysis tools together. Note that: (1) unlike 
+\repbox, \xxx does \emph{not} aim to provide fault-tolerance, but aims to 
 construct multiple equivalent executions so that applications can enjoy 
 efficient and transparent analyses; and (2) \xxx does not aim to replace 
-traditional ``fully-coupled" frameworks, but to compensate them because \xxx 
+traditional ``fully-coupled" frameworks, but aims to compensate them because \xxx 
 can easily run them on replicas.
 
 
 In the remaining of this paper, \S\ref{sec:background} introduces the 
-background of \tsmr and the \repbox system, \S\ref{sec:discuss} discusses 
-\xxx's potential benefits, and \S\ref{sec:checkpoint} describes \xxx's 
-checkpoint and rollback mechanism. \S\ref{sec:eval} presents evaluation 
+background of the \repbox system. \S\ref{sec:overview} gives an overview of 
+\xxx, including its deployment model, its checkpoint design for analysis 
+tools, and its potential benefits. \S\ref{sec:eval} presents evaluation 
 results, \S\ref{sec:related} introduces related work, and 
 \S\ref{sec:conclusion} concludes.

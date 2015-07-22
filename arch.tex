@@ -109,28 +109,53 @@ replicas.
 
 
 % Our model. Multiple writer multiple reader.
-\section{\xxx Overview} \label{sec:model}
+\section{\xxx Overview} \label{sec:overview}
 
-\xxx's main purpose is to support transparent analyses, so its deployment model is different 
-from \repbox's: in \xxx, a set of 2\v{f}+1 
-machines (for short, nodes) are set up within a LAN. Among these nodes, at 
-least \v{f}+1 nodes run an actual execution or a lightweight analysis tool on 
+\xxx's deployment model is the similar but different from \repbox's: among the 
+2\v{f}+1 nodes, at least \v{f}+1 nodes run an actual execution or a lightweight analysis tool on 
 each so that they can reach consensus on inputs and process requests fast, 
-while at most \v{f} nodes run an heavyweight analysis tool on each. Once the 
-\xxx system starts, one node becomes the \emph{primary} node which proposes the 
-order of requests to execute, and the other nodes become backup nodes which 
-follow the primary's proposals. An arbitrary number of clients in LAN or WAN 
-send network requests to the primary and get responses.
+while at most \v{f} nodes run an heavyweight analysis tool on each. Empirically 
+(see \S\ref{sec:eval}), this paper considers an analysis tool with no more than 30\% overhead as 
+lightweight tools (\eg, DynamoRio's drcov tool~\cite{dynamorio}), while the other tools heavyweight 
+tools (\eg, the Helgrind race detector~\cite{valgrind:pldi}).
 
-TBD: emphasis what is lightweight and heavyweight. Suggestions.
+An \xxx instance running on each node is the same as the one in 
+Figure~\ref{fig:repbox} except that a server program runs transparently in a \xxx instance 
+with or without an analysis tool. Neither the server or the analysis is aware of \xxx's 
+components. The remaing of this secion first presents \xxx's checkpoint and 
+rollback design for analysis tools (\S\ref{sec:checkpoint}), and discusses \xxx's potential 
+benefits (\S\ref{sec:discuss}).
 
-Figure~\ref{fig:arch} shows an instance of \xxx running on 
-each node. The instance contains three main components, the \paxos consensus 
-component, the \dmt scheduler, and the checkpointer component. A server program 
-runs transparently in a \xxx instance with or without an analysis tool. Neither 
-the server or the analysis is aware of \xxx's components.
+\subsection{Checkpoint and Rollback Mechanism} \label{sec:checkpoint}
+
+To support synchronous analysis tools (\eg, control flow integrity and buffer 
+overrun protection tools) in \xxx, we have designed two checkpoint and rollback 
+functions. When an analysis tool calls the \v{checkpoint()} function, \xxx uses 
+its \paxos consensus component to invoke an operation: ``take a checkpoint 
+associated with the global index of the latest socket operation". Once a 
+consensus is reached, all replicas (including primary) do a checkpoint 
+operation as the next consensus operation.
 
 
+When the tool catches a malicious event and decides to roll back to a previous
+checkpoint associated with a socket operation index, the tool calls a 
+\v{rollback(int} \v{index=-1,} \v{bool discard=true)} function. Ignoring the 
+arguments in this function means rolling back to the last checkpoint within all 
+replicas and discard all inputs since this checkpoint. This API works as three 
+steps: (1) current replica uses the \paxos consensus component to request an 
+operation: ``rollback to a previous checkpoint according to \v{index}"; (2) 
+once consensus is reached, each replica invokes \criu to do the actual rollback 
+operation; (3) if \v{discard} is on, each replica discards all future inputs 
+since the checkpoint. This API makes all replicas rollback and discard 
+malicious inputs consistently.
+
+
+\xxx's checkpoint mechanism has a few limitations: (1) although this mechanism's 
+API is expressive, they moderately trade off transparency between an analysis 
+tool and \xxx's framework; (2) it may defer the processing of network requests; 
+and (3) it can not revoke information that have already leaked to clients. 
+However, considering the benefits (\S\ref{sec:strengthen-analysis}) that \xxx 
+may bring to tools, we argue that this checkpoint mechanism is still worthwhile.
 
 
 \subsection{Discussion} \label{sec:discuss}
