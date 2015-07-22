@@ -32,7 +32,7 @@ can be less perturbed by the analysis.
 
 Unfortunately, despite these great effort, most existing analysis frameworks are
 still hard to deploy in production runs, mainly due to three problems. The first
-problem is still performance. Traditional frameworks fully couples the analysis
+problem is still performance. Traditional frameworks fully couple the analysis
 with the actual execution using the shadow memory approach, so whenever an
 analysis does some heavyweight work, the execution is slowed down (\eg, a
 popular race detection tool ThreadSanitizer~\cite{tsan}, which uses a
@@ -121,8 +121,8 @@ transparently, then \xxx can just run analysis tools on some replicas while the 
 still run actual executions and process client requests fast.
 
 
-A practical challenge that faces \xxx when applying \repbox to support program 
-analysis tools is: even asynchronous analysis tools (\eg, race detectors) 
+When applying \repbox to support program analysis tools, a practical challenge that \xxx 
+faces is: even asynchronous analysis tools (\eg, race detectors) 
 sometimes may decide to roll back to previous execution states and discard 
 malicious inputs that triggered harmful events. To address this challenge in 
 \xxx, this paper designed a transparent application-level checkpoint mechanism 
