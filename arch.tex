@@ -1,6 +1,6 @@
 \section{\repbox Background} \label{sec:background}
 
-\repbox's deployment is similar to a typical \smr's. In a \repbox-replicated
+\repbox's deployment model is similar to a typical \smr's. In a \repbox-replicated
 system, a set of 2\v{f}+1 machines (nodes) are set up within a LAN,
 and each node runs an instance of \repbox containing the same server
 program. Once the \repbox system starts, one node becomes the \emph{primary}
@@ -11,8 +11,7 @@ get responses.  If failures occur, the nodes run a leader election to
 elect a new leader and continue. Despite \v{f} nodes fail, \repbox still 
 guaratees availability of the replicated application.
 
-Figure~\ref{fig:repbox} shows an instance of \repbox running on 
-each node. This section presents the background of \repbox's two key techniques, 
+This section presents the background of \repbox's two key techniques, 
 \smr (\S\ref{sec:smr}) and \dmt (\S\ref{sec:dmt}).
 
 \begin{figure}[t]
@@ -55,13 +54,14 @@ the same socket connection). This protocol does not schedule non-blocking
 operations in servers (\eg, \send to clients) because it focuses on replicating 
 the server's execution states.
 
-For practicality, \repbox's \paxos implementation takes a well-known 
-engineering approach~\cite{paxos:practical}: only the primary invokes consensus 
-request during normal operations, and an leader election is invoked when 
-exceptions such as network partitions occur.
+% For practicality, \repbox's \paxos implementation takes a well-known 
+% engineering approach~\cite{paxos:practical}: only the primary invokes consensus 
+% request during normal operations, and an leader election is invoked when 
+% exceptions such as network partitions occur.
 
 
-In a \repbox instance, the \paxos consensus component is the gateway.  This 
+Figure~\ref{fig:repbox} shows an instance of \repbox running on 
+each node, and the \paxos consensus component is the gateway of this instance.  This 
 component accepts socket requests from the clients and invoke a \paxos 
 consensus instance with the other replicas on this operation. Once a consensus 
 is reached, this component forwards the operation to the \dmt component. This 
@@ -88,7 +88,7 @@ deterministic.  The overhead of \dmt is typically moderate: one recent
 overhead on a wide range of 108 popular multithreaded programs on 24-core
 machines.
 
-The \dmt component runs within the same process as a server replica, and
+The \dmt component in Figure~\ref{fig:repbox} runs within the same process as a server replica, and
 enforces the same logical clocks for inter-thread communication
 operations. \repbox leverages the \parrot~\cite{parrot:sosp13} \dmt runtime
 system because it is fast (\ie, 12.7\% overhead for a wide range of 108 popular 
@@ -111,10 +111,10 @@ replicas.
 % Our model. Multiple writer multiple reader.
 \section{\xxx Overview} \label{sec:overview}
 
-\xxx's deployment model is the similar but different from \repbox's: among the 
-2\v{f}+1 nodes, at least \v{f}+1 nodes run an actual execution or a lightweight analysis tool on 
-each so that they can reach consensus on inputs and process requests fast, 
-while at most \v{f} nodes run an heavyweight analysis tool on each. Empirically 
+\xxx's deployment model is similar to \repbox's except two things: (1) at least \v{f}+1 nodes 
+run an actual execution or a lightweight analysis tool on 
+each so that they can reach consensus on inputs and process requests fast, and 
+(2) at most \v{f} nodes run an heavyweight analysis tool on each. Empirically 
 (see \S\ref{sec:eval}), this paper considers an analysis tool with no more than 30\% overhead as 
 lightweight tools (\eg, DynamoRio's drcov tool~\cite{dynamorio}), while the other tools heavyweight 
 tools (\eg, the Helgrind race detector~\cite{valgrind:pldi}).
@@ -146,7 +146,7 @@ steps: (1) current replica uses the \paxos consensus component to request an
 operation: ``rollback to a previous checkpoint according to \v{index}"; (2) 
 once consensus is reached, each replica invokes \criu to do the actual rollback 
 operation; (3) if \v{discard} is on, each replica discards all future inputs 
-since the checkpoint. This API makes all replicas rollback and discard 
+since the checkpoint. Overall, this API makes all replicas rollback and discard 
 malicious inputs consistently.
 
 
