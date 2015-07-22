@@ -119,7 +119,7 @@ each so that they can reach consensus on inputs and process requests fast, and
 lightweight tools (\eg, DynamoRio's drcov tool~\cite{dynamorio}), while the other tools heavyweight 
 tools (\eg, the Helgrind race detector~\cite{valgrind:pldi}).
 
-An \xxx instance running on each node is the same as the one in 
+A \xxx instance running on each node is the same as the one in 
 Figure~\ref{fig:repbox} except that a server program runs transparently in a \xxx instance 
 with or without an analysis tool. Neither the server or the analysis is aware of \xxx's 
 components. The remaing of this secion first presents \xxx's checkpoint and 
@@ -128,9 +128,21 @@ benefits (\S\ref{sec:discuss}).
 
 \subsection{Checkpoint and Rollback Mechanism} \label{sec:checkpoint}
 
-To support synchronous analysis tools (\eg, control flow integrity and buffer 
-overrun protection tools) in \xxx, we have designed two checkpoint and rollback 
-functions. When an analysis tool calls the \v{checkpoint()} function, \xxx uses 
+To allow synchronous analysis tools (\eg, control flow integrity and buffer 
+overrun protection tools) to recover from malicious events, we have designed a 
+checkpoint mechanism for \xxx. Each checkpoint is associated with the index of the last 
+executed socket operation, so that \xxx can consistently match up with the execution 
+states of native executions and various analysis executions.
+
+To perform checkpoints transparently without affecting application's executions and analyses, \xxx 
+leverages \criu~\cite{criu}, a popular, open source process checkpoint tool 
+that supports CPU registers, memory, etc. Each checkpoint operation is only performed on the 
+server program and the \dmt scheduler; the \paxos consensus component does not 
+require checkpoints because we explicitly design it to be stateless (all socket 
+operations have been persistently logged). 
+
+\xxx provides two functions, one for checkpoint and the other for rollback.
+When an analysis tool calls the \v{checkpoint()} function, \xxx uses 
 its \paxos consensus component to invoke an operation: ``take a checkpoint 
 associated with the global index of the latest socket operation". Once a 
 consensus is reached, all replicas (including primary) do a checkpoint 
