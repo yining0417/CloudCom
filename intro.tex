@@ -89,69 +89,90 @@ executions efficiently and transparently?
 % replication systems: avoid shipping schedules, avoid annotations.
 To address this question, this paper presents \xxx, an efficient, 
 transparent dynamic program analysis framework by leveraging a technique called 
-\emph{state machine replication (or \smr)}~\cite{paxos:simple, 
-paxos:practical, paxos}. \smr assumes a deterministic application, runs the 
-application on multiple machines (or replicas), and typically uses the 
-\paxos~\cite{paxos} consensus
-protocol to enforce a consistent sequence of inputs for the application across 
-replicas as long as a majority of replicas reach consensus on each input. 
-Leveraging \smr, all replicas consistently transform the same execution states, 
-then minor replicas can just transparently run an heavyweight analysis tool on 
-each, and majority replicas run actual executions or lightweight analysis tools 
-to process inputs fast.
+\emph{transparent state machine replication (or \tsmr)}, presented in 
+\repbox~\cite{repbox:sosp15}. \tsmr aims to transparently provide a regular 
+multithreaded application with a state machine replication (or 
+\smr)~\cite{paxos:simple, paxos:practical, paxos} service without modifying 
+this application, then this application has strong fault-tolerance benefit. 
+This benefit is especially attractive to today's server applications which 
+provide on-line service and deminds high availablility.
 
 
-However, \smr alone is not sufficient to construct multiple equivalent 
-executions because today's applications widely use threads and thus are 
-nondeterministic. At runtime, replicas may run into different thread
-interleavings (or \emph{schedules}), easily leading to divergent execution
-states. To address this problem, \xxx also leverages \emph{deterministic
-multithreading (or \dmt)}, a recent advanced threading technique that
-efficiently enforce inter-thread communications to happen in the same total
-order, then different replicas run the same schedules on the same input and
-transform the same execution states.
+To accomplish transparent state machine replication, \repbox leverages 
+\emph{state machine replication (or \smr)}, which assumes a deterministic 
+application, runs the application on multiple machines (or replicas), and 
+typically uses the \paxos~\cite{paxos} consensus protocol to enforce a 
+consistent sequence of inputs for the application across replicas as long as a 
+majority of replicas reach consensus on each input. Leveraging \smr, all 
+replicas consistently transform the same execution states, then minor replicas 
+can just transparently run an heavyweight analysis tool on each, and majority 
+replicas run actual executions or lightweight analysis tools to process inputs 
+fast. To transparently support general server applications, \repbox is the 
+first work to present a socket-API based \paxos consensus interface.
 
 
-A practical challenge for \xxx is that even asynchronous analysis tools
+However, for \repbox, \smr alone is not sufficient to support today's 
+applications widely use threads and thus are nondeterministic. At runtime, 
+replicas may run into different thread interleavings (or \emph{schedules}), 
+easily leading to divergent execution states. To address this problem, \repbox 
+also leverages \emph{deterministic multithreading (or \dmt)}, a recent advanced 
+threading technique that efficiently enforce inter-thread communications to 
+happen in the same total order, then different replicas run the same schedules 
+on the same input and transform the same execution states. With \smr and \dmt, 
+\repbox manages to construct multiple equivalent executions, then \xxx can just 
+transparently run analysis tools on some replicas while the other replicas 
+still run actual executions and process client requests fast.
+
+
+A practical challenge that faces \xxx when applying \repbox to support program 
+analysis tools is: even asynchronous analysis tools (\eg, race detectors) 
 sometimes would prefer to roll back to previous execution states and discard 
-malicious inputs that triggered harmful events. To address this challenge, \xxx 
-has incorporated a transparent application-level checkpoint mechanism with 
-expressive API for replicas to roll back consistently.
+malicious inputs that triggered harmful events. To address this challenge in 
+\xxx, this paper designed a transparent application-level checkpoint mechanism 
+with expressive API for replicas to roll back consistently.
 
 
-We have conducted a feasibility study for \xxx in Linux. To leverage \smr, \xxx 
-incorporates a \paxos protocol implementation in \repbox~\cite{repbox:sosp15}, 
-the first \smr system that transparently replicates server applications via its 
-socket-API based \paxos consensus interface. Note that, unlike \repbox, \xxx 
-does \emph{not} aim to provide fault-tolerance, but aim to construct multiple 
-equivalent executions so that applications can enjoy efficient and transparent 
-analyses. To leverage \dmt, \xxx incorporates \parrot~\cite{parrot:sosp13}, a 
-\dmt runtime system that has shown to run fast on a wide range of popular 
-multithreaded programs.
+% We have conducted a feasibility study for \xxx in Linux. To leverage \smr, 
+% \xxx 
+% incorporates a \paxos protocol implementation in 
+% \repbox~\cite{repbox:sosp15}, 
+% the first \smr system that transparently replicates server applications via 
+% its 
+% socket-API based \paxos consensus interface. Note that, unlike \repbox, \xxx 
+% does \emph{not} aim to provide fault-tolerance, but aim to construct multiple 
+% equivalent executions so that applications can enjoy efficient and 
+% transparent 
+% analyses. To leverage \dmt, \xxx incorporates \parrot~\cite{parrot:sosp13}, a 
+% \dmt runtime system that has shown to run fast on a wide range of popular 
+% multithreaded programs.
 
-Evaluation on a popular parallel anti-virus scanning 
-server \clamav~\cite{clamav} with three replicas (each has 24 cores) shows that 
-\xxx is able to transparently run two analysis tools together: one is a 
-heavyweight analysis tool, the Helgrind race detector~\cite{valgrind:pldi}; the 
-other is a lightweight analysis tool, DynamoRio's code coverage tool 
-drcov~\cite{dynamorio}. Moreover, \xxx incurred merely 2.1\% overhead over the 
-actual execution.
+We have conducted a feasibility study for \xxx in Linux. Evaluation on a 
+popular parallel anti-virus scanning server \clamav~\cite{clamav} with three 
+replicas (each has 24 cores) shows that \xxx is able to transparently run two 
+analysis tools together: one is a heavyweight analysis tool, the Helgrind race 
+detector~\cite{valgrind:pldi}; the other is a lightweight analysis tool, 
+DynamoRio's code coverage tool drcov~\cite{dynamorio}. Moreover, \xxx incurred 
+merely 2.1\% overhead over the actual execution.
 
 
 % P6: Benefits. This paragraph can be removed.
-The main contribution of \xxx is the idea of constructing multiple equivalent
-executions to fully decouple an application's actual execution and analysis
-tools, which benefits applications, analysis tools, and frameworks. \xxx can
-greatly improve an application's quality by running multiple analysis tools in
-production runs efficiently. \xxx is transparent to analysis tools and has the
-potential to strengthen and speedup the tools themselves via its replication 
-architecture. \xxx compensates traditional ``fully-coupled" frameworks because 
-it can easily run them on the analysis replicas.
+The main contribution of \xxx is the idea of applying \tsmr to fully decouple 
+an application's actual execution and analysis tools, which benefits 
+applications, analysis tools, and frameworks. Other contributions include a 
+discussion on \xxx's unique potential to strengthen and speedup existing 
+analysis tools themselves via \xxx's replication architecture, and our 
+evaluation on demonstrating \xxx's feasibility on efficiently and transparently 
+supporting multiple types of analysis tools together. Note that: (1) unlike 
+\repbox, \xxx does \emph{not} aim to provide fault-tolerance, but aim to 
+construct multiple equivalent executions so that applications can enjoy 
+efficient and transparent analyses; and (2) \xxx does not aim to replace 
+traditional ``fully-coupled" frameworks, but to compensate them because \xxx 
+can easily run them on replicas.
 
 
 In the remaining of this paper, \S\ref{sec:background} introduces the 
-background of \smr and \dmt, \S\ref{sec:overview} presents an overview \xxx's 
-design, \S\ref{sec:discuss} discusses \xxx's potential benefits, and 
-\S\ref{sec:checkpoint} describes \xxx's checkpoint and rollback mechanism. 
-\S\ref{sec:eval} presents evaluation results, \S\ref{sec:related} introduces 
-related work, and \S\ref{sec:conclusion} concludes.
+background of \tsmr and the \repbox system, \S\ref{sec:discuss} discusses 
+\xxx's potential benefits, and \S\ref{sec:checkpoint} describes \xxx's 
+checkpoint and rollback mechanism. \S\ref{sec:eval} presents evaluation 
+results, \S\ref{sec:related} introduces related work, and 
+\S\ref{sec:conclusion} concludes.
