@@ -31,7 +31,7 @@
 
 
 
-\section{Checkpoint and Rollback Mechanism} \label{sec:checkpoint}
+\subsection{Checkpoint and Rollback Mechanism} \label{sec:checkpoint}
 
 To support synchronous analysis tools (\eg, control flow integrity and buffer 
 overrun protection tools) in \xxx, we have designed two checkpoint and rollback 
@@ -102,3 +102,37 @@ may bring to tools, we argue that this checkpoint mechanism is still worthwhile.
 % operation to the primary node with the the list of the last checkpoint's 
 % global % indexes. The primary then invokes a consensus on an internal roll 
 % back % opration, % with the 
+
+
+
+
+
+% To support synchronous analysis tools, \xxx's checkpointer component can be 
+% invoked 
+% by an analysis tool and consistently roll back to safe 
+% execution states. Each checkpoint is associated with the index of the last 
+% executed 
+% socket operation, so that \xxx can consistently match up with the execution 
+% states of native 
+% executions and various analysis executions. To perform checkpoints 
+% transparently without affecting application's executions and analyses, \xxx 
+% leverages \criu~\cite{criu}, a popular, open source process checkpoint tool 
+% that supports 
+% CPU registers, memory, etc. Each checkpoint operation is only performed on the 
+% server program and the \dmt scheduler; the \paxos consensus component does not 
+% require checkpoints because we explicitly design it to be stateless (all socket 
+% operations have been persistently logged). 
+
+% When a synchronous analysis tool determines that there may be a potential 
+% malicious event ahead, 
+% it calls a \v{checkpoint()} function, which uses \xxx's own \paxos component to 
+% invoke a consensus on checkpointing each replica as the next operation. When 
+% the tool 
+% catches a malicious event and decides to roll back to a 
+% checkpoint associated with a socket operation index, the analysis can call a 
+% \v{rollback(int} \v{index=-1,} \v{bool discard=true)} API provided 
+% by \xxx. Ignoring the argument in this API means rolling back to the last 
+% checkpoint within all replicas and discard all inputs since this checkpoint. To 
+% determine a specific index to roll back, the analysis can also intercept socket 
+% operations. More details on the work flow of the checkpoint and rollback APIs 
+% are described in \S\ref{sec:checkpoint}.
