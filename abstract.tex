@@ -14,10 +14,11 @@ only one type of tools to run within one execution.
 
 This paper presents \xxx, an efficient and transparent framework that fully 
 decouples execution and analysis by constructing multiple equivalent 
-executions. To do so, \xxx leverages two techniques: state machine replication 
-(or SMR) and deterministic multithreading (or DMT). SMR ensures that replicas 
-running the same application always see the same sequence of inputs, then 
-multiple analyses can run within some replicas transparently. DMT efficiently
-enforces the same thread interleavings across replicas and eliminates the need
-of transferring thread interleavings from the actual execution to analysis.
-Evaluation shows that \xxx is easy to run two asynchronous analysis tools together and has reasonable overhead.
+executions. To do so, \xxx leverages a recent fault-tolerant technique: 
+\emph{transparent state machine replication} (or TSMR), which runs the same 
+software application on a set of machines (or replicas), and ensures that 
+all replicas see the same sequence of inputs and process these inputs with 
+the same efficient thread interleavings automatically. In addition, this paper 
+discusses potential directions in which \xxx can further strenghthen existing 
+analyses. Evaluation shows that \xxx is easy to run two asynchronous 
+analysis tools together and has reasonable overhead.
