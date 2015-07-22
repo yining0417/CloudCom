@@ -128,7 +128,7 @@ malicious inputs that triggered harmful events. To address this challenge,
 \xxx provides a transparent application-level checkpoint mechanism 
 with expressive API for replicas to roll back consistently.
 
-Second, it is unknown whether \xxx's replication techniques and analysis tools can benefit 
+Second, it is unknown whether \xxx's replication techniques and existing analysis tools can benefit 
 each other. To address this challenge, this paper discusses several types of 
 analyses in which \xxx has the potential to strengthen and speedup existing 
 tools themselves via \xxx's replication architecture. In addition, 
@@ -137,13 +137,13 @@ this paper points out that existing race detection tools can actually speedup
 eco-system.
 
 Third, despite much effort, state-of-the-art still lacks evaluation to show that different types of 
-analysis tools can actually run together. To address this challenge, we have conducted 
-a feasibility study for \xxx in Linux. We evaulated on a popular parallel anti-virus 
+analysis tools can actually run together. To address this challenge, we 
+evaluated \xxx on a popular parallel anti-virus 
 scanning server \clamav~\cite{clamav} with three 
-replicas (each has 24 cores) shows that \xxx is able to transparently run two 
+replicas (each has 24 cores) in Linux. Our evaluation shows that \xxx is able to transparently run two 
 analysis tools together: one is a heavyweight analysis tool, the Helgrind race 
 detector~\cite{valgrind:pldi}; the other is a lightweight analysis tool, 
-DynamoRio's code coverage tool drcov~\cite{dynamorio}. Moreover, \xxx incurred 
+DynamoRio's code coverage tool \drcov~\cite{dynamorio}. Moreover, \xxx incurred 
 merely 2.1\% overhead over the actual execution.
 
 
