@@ -89,8 +89,8 @@ executions efficiently and transparently?
 % replication systems: avoid shipping schedules, avoid annotations.
 To address this question, this paper presents \xxx, an efficient, 
 transparent dynamic program analysis framework by leveraging a technique called 
-\emph{transparent state machine replication (or \tsmr)}, presented in 
-\repbox~\cite{repbox:sosp15}. \tsmr aims to provide a regular 
+\emph{transparent state machine replication}, presented in 
+\repbox~\cite{repbox:sosp15}. This technique aims to provide a regular 
 multithreaded application fault-tolerance benefits transparently without modifying 
 this application. This benefit is especially attractive to today's server applications which 
 provide on-line service and thus natarually demind high availability.
@@ -153,7 +153,8 @@ merely 2.1\% overhead over the actual execution.
 
 
 % P6: Benefits. This paragraph can be removed.
-The main contribution of \xxx is the idea of applying \tsmr to fully decouple 
+The main contribution of \xxx is the idea of applying transparent state 
+machine replication to fully decouple 
 an application's actual execution and analysis tools, which benefits 
 applications, analysis tools, and frameworks. Other contributions include a 
 discussion on \xxx's unique potential to strengthen and speedup existing 
