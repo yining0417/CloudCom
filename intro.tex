@@ -90,10 +90,14 @@ executions efficiently and transparently?
 To address this question, this paper presents \xxx, an efficient, 
 transparent dynamic program analysis framework by leveraging a technique called 
 \emph{transparent state machine replication}, presented in 
-\repbox~\cite{repbox:sosp15}. This technique aims to provide a regular 
-multithreaded application fault-tolerance benefits transparently without modifying 
-this application. To do so, \repbox combines two techniques, \emph{state machine replication (or 
-\smr)} and \emph{deterministic multithreading (or \dmt)}.
+\repbox~\cite{repbox:sosp15}. This technique runs the same multithreaded 
+application on a set of machines (or replicas) transparently without modifying 
+these applications, and enforces that all replicas
+perform the same execution state transitions. To do so, \repbox combines two techniques, 
+ \emph{state machine replication (or 
+\smr)} and \emph{deterministic multithreading (or \dmt)}.  \smr ensures that all replicas
+always see the same sequence of inputs as long as majority of replicas agree on these inputs. 
+ \dmt efficiently enforces the same thread interleavings across replicas on each input.
 
 
 % To accomplish transparent state machine replication, \repbox leverages two key 
