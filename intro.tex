@@ -20,7 +20,7 @@ frameworks~\cite{decouple:usenix08, speck:asplos08,
 shadowreplica:ccs13, wester:parallelizing:asplos13, superpin, jungwoo:oopsla09}
 take a second ``partially-decoupled" approach: only analysis-critical execution
 states (\eg, effective memory addresses and thread interleavings) are
-transfered to the analysis running on other CPU cores, then the actual execution
+transferred to the analysis running on other CPU cores, then the actual execution
 can be less perturbed by the analysis.
 
 
@@ -44,14 +44,14 @@ fewer
 execution states. However, the overall slowdown of these recent frameworks are
 still prohibitive in their own evaluation because the amount of execution states
 (\eg, effective memory addresses~\cite{shadowreplica:ccs13} and thread
-interleavings~\cite{wester:parallelizing:asplos13}) transfered to analysis tools
+interleavings~\cite{wester:parallelizing:asplos13}) transferred to analysis tools
 are still enormous.
 
 
 The second problem is that recent frameworks with the ``partially-decoupled"
 approach heavily trade off transparency with analysis tools. To be able to
 transfer fewer execution states to an analysis tool, these frameworks require
-heavily carving the analysis tool as well as the transfered execution states.
+heavily carving the analysis tool as well as the transferred execution states.
 For example, a recent framework~\cite{wester:parallelizing:asplos13} for race
 detection tools leverages the record-replay
 technique~\cite{scribe:sigmetrics2010, respec:asplos10, racepro:sosp11} to
@@ -72,7 +72,7 @@ then different analyses may require different copies of shadow memory per byte.
 It is not trivial to extend these frameworks to support multiple copies of 
 shadow memory. Considering ``partially-decoupled" frameworks, it is not trivial 
 to extend them to support multiple types of analysis tools within one execution 
-either, because these frameworks heavily carve the transfered execution states, 
+either, because these frameworks heavily carve the transferred execution states, 
 which are hard to reuse for different types of analysis tools.
 
 
@@ -133,7 +133,7 @@ each other. To address this challenge, this paper discusses several types of
 analyses in which \xxx has the potential to strengthen and speedup existing 
 tools themselves via \xxx's replication architecture. In addition, 
 this paper points out that existing race detection tools can actually speedup 
-\xxx. In a word, \xxx and existing analysis tools form a mutual benefitial 
+\xxx. In a word, \xxx and existing analysis tools form a mutually beneficial 
 eco-system.
 
 Third, despite much effort, state-of-the-art still lacks evaluation to show that different types of 
