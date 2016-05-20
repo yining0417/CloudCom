@@ -1,0 +1,86 @@
+\begin{algorithm}[t]
+
+\DontPrintSemicolon
+
+%\SetCommentSty{textrm}
+
+\small
+
+\SetCommentSty{textrm}
+
+\SetKwInOut{Input}{Input}\SetKwInOut{Output}{Global}
+\Input{program $prog$, initial state $s_0$, checker $checker$}
+\Output{state queue $q$, branch tree $brtree$}
+
+\SetKwBlock{Titlea}{RuleDirectedSE($prog$, $s_0$, $checker$)}{end}
+\Titlea {
+  $q$.add($\langle s_0, prog$.entry$\rangle$) \;
+  \While {{\rm $q$ not empty {\bf and} time limit not reached}} {
+    $\langle s, i \rangle$ $\leftarrow$ $q.$remove() \;
+    \If {{\rm $i$ is not a symbolic branch statement} {\bf or}
+        {\rm only one branch is feasible}} {
+      $\langle s', i' \rangle$ $\leftarrow$ run($s$, $i$) \;
+      HandleNewState($s$, $i$, $s'$, $i'$, $checker$) \;
+    } \Else(\tcp*[h]{fork states and add constraints}) {
+      $s_{true}$ $\leftarrow$ $s + \{$$i$.cond = true$\}$ \;
+      $s_{false}$ $\leftarrow$ $s + \{$$i$.cond = false$\}$ \;
+      \nlset{*} $brtree$.add($i$, $s_{true}$, $s_{false}$) \;
+      HandleNewState($s$, $i$, $s_{true}$, $i$.true\_br, $checker$) \;
+      HandleNewState($s$, $i$, $s_{false}$, $i$.false\_br, $checker$) \;
+    }
+  }
+}
+
+\SetKwBlock{Titlea}{HandleNewState($s$, $i$, $s'$, $i'$, $checker$) \tcp*[h]{Note: $s'$
+    is updated}}{end}
+\Titlea {
+  \nlset{*} \If {{\rm {\bf not} $checker$.OnExecution($s$, $i$, $evmask$)}} {
+    \nlset{*} \Return \tcp*[h]{error detected!} \;
+  }
+  \nlset{*} $s'$.path.push\_back($i$) \;
+  \nlset{*} \If {$evmask$ $\neq$ 0} {
+    \nlset{*} $s'$.events.push\_back($\langle i, evmask \rangle$) \;
+  }
+  \lIf {{\rm $s'$ is not end of path}} {
+    $q$.add($\langle s', i' \rangle$) \;
+  } \nlset{*} \lElse  {
+    Prune($s'$, $checker$) \tcp*[h]{$s'$ is end of path} \;
+  }
+}
+
+\SetKwBlock{Titlea}{Prune($s$, $checker$)}{end}
+\Titlea {
+  $slice$ $\leftarrow$ Slice($s.path$, $s.events$, $checker$) \;
+  \ForEach {{\rm symbolic branch $i$ in $s.path$ but not in $slice$}} {
+    $br$ $\leftarrow$ branch of $i$ not executed in $s.path$ \;
+    $pruned$ $\leftarrow$ $brtree$.find\_states($br$) \;
+    $q$.remove($pruned$) \;
+  }
+  $brtree$.remove($s$) \tcp*[l]{because $s$ is end of path}
+}
+
+\SetKwBlock{Titlea}{Slice($path$, $events$, $checker$)}{end}
+\Titlea {
+  $slice$ $\leftarrow$ empty sequence \;
+  \For {{\rm $i$ $\in$ reverse($path$)}} {
+    \If {{\rm any $e \in events$ transitively depends on $i$}} {
+      $slice$.push\_front($i$) \;
+    }
+    \ElseIf {{\rm $i$ is a branch instruction}} {
+      \For {{\rm $j$ $\in$ instructions $i$ reaches off
+          $path$}} {
+        \If {{\rm $checker$.MayBeEvent($j$)}} {
+          $slice$.push\_front($i$) \;
+          {\bf break} \;
+        }
+      }
+    }
+  }
+  \Return $slice$ \;
+}
+
+\caption{\xxx's search algorithm}
+
+\label{alg:explore}
+
+\end{algorithm}
