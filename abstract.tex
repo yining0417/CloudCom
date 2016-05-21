@@ -3,15 +3,15 @@
 % frameworks are widely used in many areas. Lots areas face increasing 
 % computational demand. But still didn't meet the latency % and fault-tolerance 
 % citeria in some areas.
-Driven by the increasing computational demand, cluster management systems (\eg, 
-\mesos) are already pervasive and important. Unforunately, despite much effort, 
-these systems are still difficult to support critical applications (\eg, 
-trading, medical, and military services) because these applications naturally 
-demand high-availability and short latency. Existing systems typically 
-replicate their task controllers in order to tolerate single-point failures of 
-this controller and to reschedule applications from their failures. However, 
-the applications themselves are still often a signle point of failure, which 
-inevitably hurt availability.
+Driven by the increasing computational demands, cluster management systems 
+(\eg, \mesos) are already pervasive and important. Unforunately, despite much 
+effort, these systems are still difficult to support critical applications 
+(\eg, trading, medical, and military services) because these applications 
+naturally demand high-availability and short latency. Existing systems 
+typically replicate their task controllers in order to tolerate single-point 
+failures of this controller and to reschedule applications from their failures. 
+However, the applications themselves are still often a signle point of failure, 
+which inevitably hurt availability.
 
 % P1.1: fault-tolerance. paxos may help, but didn't meet the latency 
 % requirements.

@@ -3,9 +3,32 @@
 % P1: lots of applications require various big data frameworks. Trading, fraud 
 % detection, aviation, medical, military. But existing systems can not meet the 
 % high latency and availability requriements of these applications.
+Driven the the drastically increasing computational demands and the volumns of 
+data, more and more applications are being pushed to deploy in cluster 
+managemement systems~\cite{mesos,borg,helix,yarn} in order to harness the 
+computational resources in clusters. These applications not only include typical 
+big-data frameworks (\eg,~\cite{spark}), but also critical applications such as 
+trading platforms, fraud detection systems, health care systems, and military 
+systems. We consider an application \emph{critical} if its high requirements on 
+availability and response time. For example, a high-frequency trading platform 
+tends to be highly-availabile during the stock operation hours, and adding a 
+few hundred \us to the platform's response time means huge money lost.
+
+Unfortunately, despite recent advances in building and applying cluster 
+managemement systems~\cite{mesos,borg,helix,yarn}, these systems are still 
+difficult to meet the high requirements of critical applications because these 
+systems do not provide high-availability to the applications. Specifically, to 
+make the systems themselves highly-availabile, existing systems typically 
+replicate their controller component which accepts tasks, allocate 
+computational resources, and (re)schedule tasks on availabile resources. 
+However, the applications themselves are not replicated: if an application 
+crashes or a computational resource goes down (\eg, hardware errors), these 
+systems have to reschedule the tasks, leaving an arbitral unavailable time 
+window for these applications.
 
 % P2: SMR a promising approach, but slow.
-State machine replication~\cite{paxos}.
+State machine replication (SMR)~\cite{paxos} may be a promising conceptual idea 
+to address the availability problem of critical applications.
 
 % P3: RDMA, new opportunity. Two RDMA systems.
 
