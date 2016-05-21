@@ -35,12 +35,14 @@ same program on a number of replicas and uses a distributed consensus protocol
 (\eg, 
 \paxos~\cite{paxos:practical,paxos,paxos:simple,paxos:complex,epaxos:sosp13}) 
 to enforce the same inputs among 
-replicas. Typically, \paxos assigns a replica as the leader to propose 
-consensus requests, and the other replicas agree or reject requests. 
-An input consensus can achieve as long as a majority of replicas 
+replicas. An input consensus can achieve as long as a majority of replicas 
 agree, thus SMR can tolerate various faults such as minor replica failures. For 
 instance, two existing systems \borg~\cite{borg} and \mesos~\cite{borg} use 
 \paxos to replicate their controllers.
+
+% Typically, \paxos assigns a replica as the leader to propose 
+% consensus requests, and the other replicas agree or reject requests. 
+
 
 However, \paxos's consensus is notoriously difficult to be fast. 
 To agree on an input, traditional consensus protocols invoke at least one 

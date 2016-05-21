@@ -1,35 +1,67 @@
 \section{Background} \label{sec:background}
 
-TBD.
+% TBD.
 
-\subsection{State Machine Replication} \label{sec:smr}
+\subsection{\paxos}\label{sec:paxos}
+% \paxos background. Keys:
+% Leader, backup.
+% Persistent storage. 
+% Network round trips in normal case. Latency.
+An SMR system runs the same program and its data on a set of machines 
+(replicas), and it uses a distributed consensus protocol (typically, 
+\paxos~\cite{paxos:complex,paxos,paxos:simple,paxos:live,paxos:fast,
+paxos:practical}) to coordinates inputs across replicas. For efficiency, in 
+normal case, \paxos often lets one replica work as the leader which invokes 
+consensus requests, and the other replicas work as backups to agree on or 
+reject 
+these requests. If the leader fails, \paxos elects a new leader from the 
+backups.
+
+% Two reliability features must be enforced in a standard \paxos protocol. The 
+% first one is durability. When a new input comes, the \paxos leader writes this 
+% input in local stable storage. The leader then starts a new consensus round, 
+% which invokes a consensus request on ``processing this input" to the other 
+% backups. A backup also writes the received consensus request in local storage 
+% if it agrees on this request. Durability ensures that even if the leader or 
+% backups fail and restart, they can still retrieve the requests from local 
+% stable 
+% storage and re-execute them.
+% 
+% The second feature is safety. As long as a quorum (typically, majority) of 
+% replicas agree on this input (\ie, this input is \emph{committed}), \paxos 
+% guarantees that all replicas consistently agree to process this input. If a 
+% replica sees that an input consensus has been reached, this consensus must have 
+% really been reached by at least a majority of replicas. Safety ensures that if 
+% a consensus has not really been reached, no replica will ``think" that this 
+% consensus has been reached.
+
+% Durability and safety make replicas consistently agree on each input and 
+% tolerate various faults, including machine failures and network errors. 
+
+% As consensus rounds move on, \paxos consistently enforces the same sequence of 
+% inputs across replicas. It also enforces same execution states across replicas 
+% without divergence if a program behaves as a deterministic state machine (\ie, 
+% always produces the same output on the same input).
+
+% Normal case, round trip.
+Network latency of consensus messages is one key problem to make general server 
+programs adopt SMR. For instance, in an efficient, practical 
+\paxos implementation~\cite{paxos:practical}, each input in normal case takes 
+one consensus round-trip between every two replicas (one request from the 
+leader and one reply from a backup).
 
 \subsection{RDMA} \label{sec:rdma}
 
-% \repbox's deployment model is similar to a typical \smr's. In a \repbox-replicated
-% system, a set of 2\v{f}+1 machines (nodes) are set up within a LAN,
-% and each node runs an instance of \repbox containing the same server
-% program. Once the \repbox system starts, one node becomes the \emph{primary}
-% node which proposes the order of requests to execute, and the others
-% become backup nodes which follow the primary's proposals. An arbitrary
-% number of clients in LAN or WAN send network requests to the primary and
-% get responses.  If failures occur, the nodes run a leader election to
-% elect a new leader and continue. Despite \v{f} nodes fail, \repbox still 
-% guaratees availability of the replicated application.
-% 
-% This section presents the background of \smr (\S\ref{sec:smr}) and \dmt 
-% (\S\ref{sec:dmt}), the two techniques that \repbox combines. 
-% 
-% 
-\begin{figure}[t]
-\vspace{.20in}
-\centering
-\includegraphics[width=.47\textwidth]{figures/arch}
-\vspace{.06in}
-\caption{{\em The \xxx Architecture.} Key components are shaded (and 
-in green).} \label{fig:repbox}
-\vspace{-.05in}
-\end{figure}
+RDMA architecture such as Infiniband~\cite{infiniband} or RoCE~\cite{roce} 
+recently becomes commonplace in datacenters due to its extreme low latency, 
+high throughput, and its decreasing prices. 
+
+RDMA provides three types of communication primitives, from slowest to 
+fastest: IPoIB (IP over Infiniband), message verbs, and one-sided read/write 
+operations. A one-sided RDMA read/write operation can directly write from one 
+replica's memory to a remote replica's memory, completely bypassing OS kernel 
+and CPU of the remote replica. For brevity, the rest of this paper denotes a 
+one-sided RDMA write operation as a ``WRITE".
 
 
 % \subsection{State Machine Replication (\smr)} \label{sec:smr}
@@ -117,6 +149,17 @@ in green).} \label{fig:repbox}
 
 % Our model. Multiple writer multiple reader.
 \section{\xxx Overview} \label{sec:overview}
+
+\begin{figure}[t]
+\vspace{.20in}
+\centering
+\includegraphics[width=.47\textwidth]{figures/arch}
+\vspace{.06in}
+\caption{{\em The \xxx Architecture.} Key components are shaded (and 
+in green).} \label{fig:repbox}
+\vspace{-.05in}
+\end{figure}
+
 
 TBD. 
 
