@@ -24,13 +24,45 @@ computational resources, and (re)schedule tasks on availabile resources.
 However, the applications themselves are not replicated: if an application 
 crashes or a computational resource goes down (\eg, hardware errors), these 
 systems have to reschedule the tasks, leaving an arbitral unavailable time 
-window for these applications.
+window for these applications. A possible key reason of this problem is that 
+these systems are initially designed for big-data engines which already 
+considered fault recovery (but, not availability).
 
 % P2: SMR a promising approach, but slow.
-State machine replication (SMR)~\cite{paxos} may be a promising conceptual idea 
-to address the availability problem of critical applications.
+State machine replication (SMR)~\cite{paxos} may be a promising approach 
+to address the availability problem of critical applications. SMR runs the 
+same program on a number of replicas and uses a distributed consensus protocol 
+(\eg, 
+\paxos~\cite{paxos:practical,paxos,paxos:simple,paxos:complex,epaxos:sosp13}) 
+to enforce the same inputs among 
+replicas. Typically, \paxos assigns a replica as the leader to propose 
+consensus requests, and the other replicas agree or reject requests. 
+An input consensus can achieve as long as a majority of replicas 
+agree, thus SMR can tolerate various faults such as minor replica failures. For 
+instance, two existing systems \borg~\cite{borg} and \mesos~\cite{borg} use 
+\paxos to replicate their controllers.
+
+However, \paxos's consensus is notoriously difficult to be fast. 
+To agree on an input, traditional consensus protocols invoke at least one 
+message round-trip between two replicas. Given that a \v{ping} in Ethernet 
+takes hundreds of \us, a program running in an SMR system with three replicas 
+must wait at least this time before processing an input. 
 
 % P3: RDMA, new opportunity. Two RDMA systems.
+Remote Direct Access Memory (RDMA) is a promising technique to mitigate 
+consensus latency because recently it becomes cheaper and increasingly 
+pervasive in datacenters. RDMA allows a process to directly write to the 
+user space memory of a remote process, completely bypassing the remote OS 
+kernel or CPU (the so called ``one-sided" operations). An 
+evaluation~\cite{pilaf:usenix14} shows that such a write round-trip takes only 
+$\sim$3 \us in the Infiniband architecture~\cite{infiniband}. Two recent 
+RDMA-enabled \paxos implementations~\cite{dare:hpdc15,falcon:github} reported 
+$\sim$15 \us consensus latency.
+
+% As a common 
+% RDMA practice, to ensure that such a write successfully resides in the 
+% memory of a remote process, the local process should wait until the remote NIC 
+% (network interface card) sends an ACK to the local host's NIC. 
 
 % P4: We present a new fast, highly-available computing platform by building a 
 % eco system with Mesos and RDMA SMR systems.
