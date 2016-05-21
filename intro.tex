@@ -99,11 +99,12 @@ requests.
 In an implementation level, \xxx integrates a RDMA-enabled \paxos 
 implementation~\cite{falcon:github} with \mesos~\cite{mesos}, a widely used 
 cluster managemement system. This integration forms a mutual beneficial 
-eco-system: by replicating tasks with \paxos, \xxx ensures that minor failures 
-in a task does not affect the other tasks to compute reply efficiently. By 
-leveraging \mesos's resource allocation and isolation feature, \xxx can run 
-diverse applications on the same physical machine, saving much of the phyiscal 
-hardware cost in typical \paxos.
+eco-system\footnote{We name our system after the ancient Chinese three-legged 
+tripod, a reliable, multi-purpose container.}: by replicating tasks with 
+\paxos, \xxx ensures that minor failures in a task does not affect the other 
+tasks to compute reply efficiently. By leveraging \mesos's resource allocation 
+and isolation feature, \xxx can run diverse applications on the same physical 
+machine, saving much of the phyiscal hardware cost in typical \paxos.
 
 % P5: Applications enjoy better latency and fault-tolerance.
 
