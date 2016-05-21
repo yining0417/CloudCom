@@ -219,169 +219,28 @@ offers and allocations from the application. An application runs as if \xxx does
 not replicate any of its tasks, and \xxx handles all the replication logica.
 
 In the first step, slave machines periodically report their available computing 
-resources (\eg, CPU cores and memory) to the leader controller. In the 
+resources (\eg, CPU cores and memory) to the leader controller. In the second 
+step, instead of reporting available resources, \xxx divides the amount of 
+resources by each application's \v{R} value and then reports to the 
+application. This is to reserve enough resources for \xxx to replicate the same 
+task with \v{R} copies.
 
-% \xxx's deployment model is similar to \repbox's except two things: (1) at least \v{f}+1 nodes 
-% run an actual execution or a lightweight analysis tool on 
-% each so that they can reach consensus on inputs and process requests fast, and 
-% (2) at most \v{f} nodes run an heavyweight analysis tool on each. Empirically 
-% (see \S\ref{sec:eval}), this paper considers an analysis tool with no more than 30\% overhead as 
-% lightweight tools (\eg, DynamoRio's drcov tool~\cite{dynamorio}), while the other tools heavyweight 
-% tools (\eg, the Helgrind race detector~\cite{valgrind:pldi}).
-% 
-% A \xxx instance running on each node is the same as the one in 
-% Figure~\ref{fig:repbox} except that a server program runs transparently in a \xxx instance 
-% with or without an analysis tool. Neither the server or the analysis is aware of \xxx's 
-% components. The remaing of this section first presents \xxx's checkpoint and 
-% rollback design for analysis tools (\S\ref{sec:checkpoint}), and discusses \xxx's potential 
-% benefits (\S\ref{sec:discuss}).
+In the third step, an application scheduler submits tasks to the leader 
+controller. The leader controller then invokes a consensus on this task by 
+carring the resource offer maded to the application.
 
-% \subsection{Checkpoint and Rollback Mechanism} \label{sec:checkpoint}
-% 
-% To allow synchronous analysis tools (\eg, control flow integrity and buffer 
-% overrun protection tools) to recover from malicious events, we have designed a 
-% checkpoint mechanism for \xxx. Each checkpoint is associated with the index of the last 
-% executed socket operation, so that \xxx can consistently match up with the execution 
-% states of native executions and various analysis executions.
-% 
-% To perform checkpoints transparently without affecting application's executions and analyses, \xxx 
-% leverages \criu~\cite{criu}, a popular, open source process checkpoint tool 
-% that supports CPU registers, memory, etc. Each checkpoint operation is only performed on the 
-% server program and the \dmt scheduler; the \paxos consensus component does not 
-% require checkpoints because we explicitly design it to be stateless (all socket 
-% operations have been persistently logged). 
-% 
-% \xxx provides two functions, one for checkpoint and the other for rollback.
-% When an analysis tool calls the \v{checkpoint()} function, \xxx uses 
-% its \paxos consensus component to invoke an operation: ``take a checkpoint 
-% associated with the global index of the latest socket operation". Once a 
-% consensus is reached, all replicas (including primary) do a checkpoint 
-% operation as the next consensus operation.
-% 
-% 
-% When the tool catches a malicious event and decides to roll back to a previous
-% checkpoint associated with a socket operation index, the tool calls a 
-% \v{rollback(int} \v{index=-1,} \v{bool discard=true)} function. Ignoring the 
-% arguments in this function means rolling back to the last checkpoint within all 
-% replicas and discard all inputs since this checkpoint. This API works as three 
-% steps: (1) current replica uses the \paxos consensus component to request an 
-% operation: ``rollback to a previous checkpoint according to \v{index}"; (2) 
-% once consensus is reached, each replica invokes \criu to do the actual rollback 
-% operation; (3) if \v{discard} is on, each replica discards all future inputs 
-% since the checkpoint. Overall, this API makes all replicas rollback and discard 
-% malicious inputs consistently.
-% 
-% 
-% \xxx's checkpoint mechanism has a few limitations: (1) although this mechanism's 
-% API is expressive, they moderately trade off transparency between an analysis 
-% tool and \xxx's framework; (2) it may defer the processing of network requests; 
-% and (3) it can not revoke information that have already leaked to clients. 
-% However, considering the benefits (\S\ref{sec:strengthen-analysis}) that \xxx 
-% may bring to tools, we argue that this checkpoint mechanism is still worthwhile.
-% 
-% 
-% \subsection{Discussion} \label{sec:discuss}
-% 
-% \subsubsection{What Types of Analyses are Suitable to Run in \xxx?} 
-% \label{sec:analysis-types}
-% 
-% We envision that an analysis can transparently run in \xxx if: (1) it can run 
-% asynchronously with the actual execution, and (2) it does not schedule 
-% conflicting order of \pthread synchronizations that \xxx's \dmt runtime 
-% enforces. Many reliability analyses (\eg, data race detection), profiling, 
-% and logging tools meet this requirement.
-% 
-% Some synchronous security analysis such as control 
-% flow integrity can not transparently run in \xxx because it monitors the 
-% execution 
-% synchronously for each control flow transfer. In addition, some other security 
-% analysis such as information leakage protection can not transparently run in 
-% \xxx 
-% because the actual execution may probably run faster than the 
-% analysis and leak information to clients before the analysis detects the 
-% leakage. Nevertheless, many security tools such as use-after-free 
-% vulnerabilities can be transparently deployed in \xxx. If a synchronous 
-% analysis 
-% tool would like to run in \xxx, it should use \xxx's checkpoint 
-% and rollback APIs (\S\ref{sec:checkpoint}).
-% 
-% 
-% \subsubsection{Can \xxx Strengthen Existing Analyses?} 
-% \label{sec:strengthen-analysis}
-% 
-% \xxx has the potential to strengthen existing analyses via its performance 
-% benefit. Previously, to mitigate the huge performance slowdown, some analysis 
-% tool developers sometimes have to weaken the guarantees of an analysis. For 
-% instance, ThreadSanitizer\cite{tsan}, one of the most practical race detectors, 
-% only logs the last four accesses for each memory byte instead of the complete 
-% access history, because logging and analyzing the complete history is quite 
-% heavyweight (\eg, 20X+ slowdown for some testing programs the authors 
-% evaluated). However, an incomplete access history may miss data races at 
-% runtime. With \xxx, developers can now strengthen the analysis by logging 
-% complete memory access history.
-% 
-% \xxx also has the potential to speedup existing analysis tools themselves via 
-% its replication architecture. For instance, the high logging overhead for 
-% failure reproductions on multi-processors is an open research 
-% problem~\cite{sherlog:asplos10}. Fortunately, with \xxx's architecture, these 
-% logging tools now can separate different logging aspects such as functions, 
-% libraries, and threads into different replicas (\eg, each replica logs for only 
-% one thread), greatly reducing the logging overhead. Sampling-based race 
-% detection tools (\eg,~\cite{datacollider:osdi10}) can also greatly reduce 
-% sampling overhead by dividing sampling work into replicas, or can significantly 
-% multiply sampling rates by running the same tool among replicas.
-% 
-% Moreover, \xxx provides an extra fault-tolerance benefit for analysis tools. 
-% Existing reliability and security analyses tend to expose or detect harmful 
-% defeats in an application, which may crash the application. In addition, the 
-% actual executions across different nodes may fail as well due to hardware or OS 
-% failures. With \xxx's \smr architecture, the sequence of inputs are 
-% persistently and consistently enforced across replicas, and failing minor 
-% nodes (either an analysis or an actual execution node) do not affect the other 
-% nodes' executions and analyses.
-% 
-% % \subsection{Can \xxx Speedup Existing Analyses?} 
-% % \label{sec:speedup-analysis}
-% % 
-% % TBD.
-% 
-% \subsubsection{Can Existing Analyses Benefit \xxx?} 
-% \label{sec:strengthen-crane}
-% 
-% Interestingly, analyses running in \xxx can benefit \xxx's \dmt runtime and 
-% improve \xxx's performance. Existing typical \dmt systems use two approaches to 
-% enforce schedules. First, a \dmt approach enforcing a total order order for 
-% shared memory accesses (for short, mem-schedules) is fully deterministic even 
-% with data races, but this approach incurs prohibitive slowdown. For instance, 
-% \dthreads~\cite{dthreads:sosp11} incurs several times slowdown for many 
-% programs because typical applications have intensive amounts of shared memory 
-% accesses.
-% 
-% The other \dmt approach is enforcing a total order for 
-% synchronizations only (for short, sync-schedules). This approach can be 
-% efficient because most code is not synchronization and can still run in 
-% parallel. For instance, \kendo, \tern, and \peregrine~\cite{kendo:asplos09, 
-% cui:tern:osdi10, parrot:sosp13} incurred less than 16\% overhead on most 
-% programs they evaluated. However, this approach is only deterministic when 
-% no races occur. Overall, despite much effort~\cite{dthreads:sosp11, 
-% parrot:sosp13, peregrine:sosp11, determinator:osdi10}, an open problem still 
-% exists: people lack a simple and deployable approach to enforce fully 
-% deterministic and efficient \dmt schedules.
-% 
-% 
-% Fortunately, \xxx's replication architecture can address this problem by simply
-% running a race detector in one replica, then \xxx can choose the faster \dmt 
-% approach that enforces sync-schedules. If the race detector reports a race, 
-% application developers can easily diagnose and fix it because synchronization 
-% schedules enforced by \dmt already make races easily 
-% reproducible~\cite{pres:sosp09}. By enforcing the same synchronization 
-% schedules across replicas, race detection results consistently hold for all 
-% replicas. In sum, \xxx and race detection tools form a mutually beneficial 
-% eco-system.
+Once a majority of controllers agrees on executing this task, each controller 
+does the fourth task. It schedules this task on an available slave machine 
+according to the resource offer. To avoid controllers putting the same task on 
+the same slave machine, each controller maintains a disjoint bitmask of slave 
+machines; it only schedules this task on machines belongs to its bitmask if this 
+machine has available resource to hold this task.
 
-% \section{Replication-aware Scheduling} \label{sec:algo}
-% \input{code/explore.algo.tex}
-% TBD.
+% More discussions, frangmentation, 4+1+1, not available to hole 3*2. 
+% But critical applications, resource is often not a bottleneck compared to 
+% response time and availability.
+
+
 
 \section{Tail-tolerance Design} \label{sec:tail}
 
