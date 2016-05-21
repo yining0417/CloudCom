@@ -59,6 +59,18 @@ $\sim$3 \us in the Infiniband architecture~\cite{infiniband}. Two recent
 RDMA-enabled \paxos implementations~\cite{dare:hpdc15,falcon:github} reported 
 $\sim$15 \us consensus latency.
 
+A straightforward approach to achieve high-availability for critical 
+applications could be integrating \paxos within each application. However, 
+doing so faces two issues. First, \paxos is notoriously difficult to 
+understand~\cite{raft:usenix14}, implement~\cite{paxos:practical}, and 
+verify~\cite{demeter:sosp11}. Second, running a \paxos-enabled application in a 
+cluster managemement system could be problematic because the system is unaware 
+of the. For instance, if the system schedules all the replicas of the same 
+task on the same machine, then a single-point failure on this machine 
+will turn down all replicas. 
+% Integrating \paxos to an application requires 
+% strong \paxos expertise for the application developers
+
 % As a common 
 % RDMA practice, to ensure that such a write successfully resides in the 
 % memory of a remote process, the local process should wait until the remote NIC 
@@ -66,8 +78,32 @@ $\sim$15 \us consensus latency.
 
 % P4: We present a new fast, highly-available computing platform by building a 
 % eco system with Mesos and RDMA SMR systems.
+This paper proposes \xxx, a cluster management system design that automatically 
+provides high-availability to general applications. To avoid the two 
+aforementioned issues, \xxx's design chooses to integrate \paxos in the cluster 
+system, not the application. Doing so has two benefits. First, \xxx's \paxos 
+acts a single, general SMR service to general applications: we can just 
+leverage existing reliability tools~\cite{modist:nsdi09,demeter:sosp11} to make 
+sure this \paxos protocol is correct and then we can benefit many other 
+applications. Second, now \xxx's own scheduler can handle the replication logic 
+and schedule replicas of the same task on diverse physical machines.
+
+\xxx achieves fast fault-tolerance with RDMA-enabled 
+\paxos protocols~\cite{dare:hpdc15,falcon:github}. \xxx supports both normal 
+applications (\ie, non-critical) and critical ones. In \xxx, a replicas of 
+controllers run a critical application's same task on diverse physical 
+machines, and controllers use a fast \paxos protocol to agree on computational 
+requests. 
 
 % Benefits.
+In an implementation level, \xxx integrates a RDMA-enabled \paxos 
+implementation~\cite{falcon:github} with \mesos~\cite{mesos}, a widely used 
+cluster managemement system. This integration forms a mutual beneficial 
+eco-system: by replicating tasks with \paxos, \xxx ensures that minor failures 
+in a task does not affect the other tasks to compute reply efficiently. By 
+leveraging \mesos's resource allocation and isolation feature, \xxx can run 
+diverse applications on the same physical machine, saving much of the phyiscal 
+hardware cost in typical \paxos.
 
 % P5: Applications enjoy better latency and fault-tolerance.
 
