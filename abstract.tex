@@ -3,15 +3,15 @@
 % frameworks are widely used in many areas. Lots areas face increasing 
 % computational demand. But still didn't meet the latency % and fault-tolerance 
 % citeria in some areas.
-Driven by the increasing computational demand, cluster management systems 
-are already pervasive and important. Unforunately, despite much effort, these 
-systems are still difficult to support critical applications (\eg, trading, 
-medical, and military services) because these applications naturally demand 
-high-availability and short latency. Existing systems mainly replicate their 
-task controllers in order to tolerate single-point failure of this controller 
-and to reschedule applications from their failures. However, the applications 
-themselves are still often a signle point of failure, which inevitably hurt 
-availability.
+Driven by the increasing computational demand, cluster management systems (\eg, 
+\mesos) are already pervasive and important. Unforunately, despite much effort, 
+these systems are still difficult to support critical applications (\eg, 
+trading, medical, and military services) because these applications naturally 
+demand high-availability and short latency. Existing systems typically 
+replicate their task controllers in order to tolerate single-point failures of 
+this controller and to reschedule applications from their failures. However, 
+the applications themselves are still often a signle point of failure, which 
+inevitably hurt availability.
 
 % P1.1: fault-tolerance. paxos may help, but didn't meet the latency 
 % requirements.
@@ -24,12 +24,12 @@ availability.
 This paper proposes \xxx, a cluster management system design that automatically 
 provides high-availability to general applications. \xxx's key to achieve fast 
 fault-tolerance is a fast \paxos replication protocol that leverages RDMA 
-(Remote Direct Memory Access). \xxx runs replicas of the same application via a 
-set of controllers, where controllers agree on input requests efficiently with 
-this protocol. A happy side-effect in \xxx is that \xxx addresses a pervasive 
-tail-of-latency challenge with its fault-tolerance nature. Initial evaluation 
-results show that \xxx's protocol has low latency overhead compared to the 
-applications' unreplicated executions.
+(Remote Direct Memory Access). \xxx runs replicas of the same application with 
+a set of controllers, where controllers agree on computational requests 
+efficiently with this protocol. A happy side-effect in \xxx is that it 
+addresses a pervasive latency-tail challenge via its fault-tolerance 
+architecture. Initial evaluation results show that \xxx's protocol has low 
+latency overhead compared to the applications' unreplicated executions.
 % and it has the potential to 
 % promote the deployment of critical applications in cluster
 
