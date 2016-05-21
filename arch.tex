@@ -157,15 +157,47 @@ on scheduling tasks with replication.
 
 \subsection{Architecture} \label{sec:arch}
 
+\xxx's deployment model is similar to a typical cluster management system's 
+(\eg,~\cite{borg,mesos}). \xxx has a replicas of three to five controllers, 
+with each connects with the others using high-speed RDMA network. A controller 
+is elected by \paxos a the leading controller, which propose consensus requests 
+to execute tasks. The other controllers are standby controllers which agree on 
+or reject consensus requests. A number of slave machines act as computational 
+resources that hold applications' running tasks. Controllers and slaves connect 
+with either RDMA or TCP/IP. Application schedulers submit tasks to the leader 
+controller.
+
 \begin{figure}[t]
 \vspace{.20in}
 \centering
 \includegraphics[width=.47\textwidth]{figures/arch}
 \vspace{.06in}
 \caption{{\em The \xxx Architecture.} Key components are shaded (and 
-in green).} \label{fig:arch}
+in blue).} \label{fig:arch}
 \vspace{-.05in}
 \end{figure}
+
+Figure~\ref{fig:arch} depicts \xxx's architecture, and its key components are 
+shaded (and in blue). To illustrate how \xxx works in an application 
+perspective, this figure shows two applications, Hadoop and MPI. Each 
+application has a \emph{replica strengh} (R) to denote the level of 
+fault-tolerance it demands. This value is either 1 or equals the number of 
+replicas of controllers in \xxx. By default, each application has \v{R=1}, 
+which means that this application does not need replication. For such a default 
+setting, \xxx runs the task as is without replication, like a typical cluster 
+management system (\eg, Mesos).
+
+In this figure, Hadoop's R is 3, which means that it wants to replica each of 
+its task in three replicas for high-availability. Suppose Hadoop submits two 
+tasks to the leader controller, each has different shapde (triangle or hexagon). 
+The leader controller thens invokes a consensus on each task across controllers. 
+Once a consensus is reached, each controller assigns the same task on different 
+slave machines.
+
+The leader controller returns its task computation result to the Hadoop 
+scheduler unless a tail-tolerance mechanism is triggered 
+(\S\ref{sec:workflow}). standby controllers ignore the results of their tasks 
+unless this mechanism is triggered.
 
 
 
@@ -179,6 +211,15 @@ in green).} \label{fig:arch}
 \caption{{\em The \xxx Workflow on Scheduling Tasks.}} \label{fig:workflow}
 \vspace{-.05in}
 \end{figure}
+
+Figure~\ref{fig:workflow} shows \xxx's workflow on scheduling tasks with four 
+steps. This workflow is similar to that in Mesos except the second and fourth 
+steps. These two steps \xxx abstract away the replication logic in its resource 
+offers and allocations from the application. An application runs as if \xxx does 
+not replicate any of its tasks, and \xxx handles all the replication logica.
+
+In the first step, slave machines periodically report their available computing 
+resources (\eg, CPU cores and memory) to the leader controller. In the 
 
 % \xxx's deployment model is similar to \repbox's except two things: (1) at least \v{f}+1 nodes 
 % run an actual execution or a lightweight analysis tool on 
