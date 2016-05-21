@@ -96,15 +96,15 @@ machines, and controllers use a fast \paxos protocol to agree on computational
 requests. 
 
 % Benefits.
-In an implementation level, \xxx integrates a RDMA-enabled \paxos 
-implementation~\cite{falcon:github} with \mesos~\cite{mesos}, a widely used 
-cluster managemement system. This integration forms a mutual beneficial 
-eco-system\footnote{We name our system after the ancient Chinese three-legged 
-tripod, a reliable, multi-purpose container.}: by replicating tasks with 
-\paxos, \xxx ensures that minor failures in a task does not affect the other 
-tasks to compute reply efficiently. By leveraging \mesos's resource allocation 
-and isolation feature, \xxx can run diverse applications on the same physical 
-machine, saving much of the phyiscal hardware cost in typical \paxos.
+In an implementation level, \xxx proposes to integrate a RDMA-enabled \paxos 
+protocol with \mesos~\cite{mesos}, a widely used cluster managemement system. 
+This integration forms a mutual beneficial eco-system\footnote{We name our 
+system after the ancient Chinese three-legged tripod, a reliable, multi-purpose 
+container.}: by replicating tasks with \paxos, \xxx ensures that minor failures 
+in a task does not affect the other tasks to compute reply efficiently. By 
+leveraging \mesos's resource allocation and isolation feature, \xxx can run 
+diverse applications on the same physical machine, saving much of the phyiscal 
+hardware cost in typical \paxos.
 
 % P5: Applications enjoy better latency and fault-tolerance.
 
@@ -113,15 +113,42 @@ machine, saving much of the phyiscal hardware cost in typical \paxos.
 % hard to build.
 
 % P7: Can also address the performance problem: slow tail.
+In addition to fault-tolerance, \xxx's design addresses another tail-tolerance 
+problem~\cite{tail:scale} in cluster computing. The tail of latency 
+distribution problem is pervasive for decades: since a request 
+involves computations on lots of machines, the response of this request is 
+often delayed until the last computation is done. To address this problem, 
+several approaches~\cite{mapreduce,spark,tail:scale} have leveraged replicating 
+specific computions in application logic. We propose a general approach with 
+\xxx's fault-tolerance architecture: \xxx collects replicas' output on a 
+request with its consensus protocol, it then replies to client programs with 
+the fastest replica's result. Therefore, applications can safely ignore this 
+problem and focus on their application logic.
 
 % P8: in essense, a datacenter OS: handles resource allocation/isolation, 
 % fault-tolerance, and performance for frameworks (applications). Use 
 % replication to bstract away % physical machine details; frameworks now only 
 % see computing resources, safely ignore other things such as physical 
 % machines, fault-tolerance, and tails.
+As part of \xxx's development, we implemented an RDMA-enabled \paxos 
+protocol~\cite{falcon:github} in Linux. This protocol intercepts a general 
+program's inbound socket calls (\eg, \recv) and agrees on the received inputs 
+in these calls across replicas of this program. To simulate a typical Twitter 
+deployment, we ran this protocol with \redis, a popular key-value store that 
+Twitter uses, and we ran \redis's own benchmark workload. Evaluation showed 
+that, compared to \redis's unreplicated execution, this protocol incurred 
+merely X.X\% overhead on response time and Y.Y\% overhead on throughput. This 
+initial evaluation result suggests that \xxx could achieve reasonable 
+performance overhead on critical applications.
 
 % P9: Feasibility study.
 
 % P10: rest of the paper.
+The remaining of this paper is organized as follows. \S\ref{sec:background} 
+introduces background on \paxos and RDMA. \S\ref{sec:overview} gives an 
+overview of our \xxx system. \S\ref{sec:tail} describes \xxx's design on 
+tail-tolerance. \S\ref{sec:eval} presents evaluation results, 
+\S\ref{sec:related} discusses related work, and \S\ref{sec:conclusion} 
+concludes.   
 
 
