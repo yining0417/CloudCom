@@ -21,14 +21,14 @@ availability.
 % enjoy high availability, no needed to implement reliability by themselves. 
 % can also address the slow tail problem. feasibility study in two % rdma paxos 
 % systems.
-This paper proposes \xxx, a cluster management system that automatically 
+This paper proposes \xxx, a cluster management system design that automatically 
 provides high-availability to general applications. \xxx's key to achieve fast 
-fault-tolerance is a new \paxos replication protocol that leverages RDMA 
+fault-tolerance is a fast \paxos replication protocol that leverages RDMA 
 (Remote Direct Memory Access). \xxx runs replicas of the same application via a 
 set of controllers, where controllers agree on input requests efficiently with 
 this protocol. A happy side-effect in \xxx is that \xxx addresses a pervasive 
-tail-of-latency problem with its fault-tolerance nature. Initial evaluation 
-results show that \xxx's protocol has low overhead compared to the 
+tail-of-latency challenge with its fault-tolerance nature. Initial evaluation 
+results show that \xxx's protocol has low latency overhead compared to the 
 applications' unreplicated executions.
 % and it has the potential to 
 % promote the deployment of critical applications in cluster
