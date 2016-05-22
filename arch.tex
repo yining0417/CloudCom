@@ -17,31 +17,29 @@ reject
 these requests. If the leader fails, \paxos elects a new leader from the 
 backups.
 
-% Two reliability features must be enforced in a standard \paxos protocol. The 
-% first one is durability. When a new input comes, the \paxos leader writes this 
-% input in local stable storage. The leader then starts a new consensus round, 
-% which invokes a consensus request on ``processing this input" to the other 
-% backups. A backup also writes the received consensus request in local storage 
-% if it agrees on this request. Durability ensures that even if the leader or 
-% backups fail and restart, they can still retrieve the requests from local 
-% stable 
-% storage and re-execute them.
-% 
-% The second feature is safety. As long as a quorum (typically, majority) of 
-% replicas agree on this input (\ie, this input is \emph{committed}), \paxos 
-% guarantees that all replicas consistently agree to process this input. If a 
-% replica sees that an input consensus has been reached, this consensus must have 
-% really been reached by at least a majority of replicas. Safety ensures that if 
-% a consensus has not really been reached, no replica will ``think" that this 
-% consensus has been reached.
+Two main reliability features must be enforced in a standard \paxos protocol. 
+The first one is durability. When a new input comes, the \paxos leader writes 
+this input in local stable storage. The leader then starts a new consensus 
+round, which invokes a consensus request on ``processing this input" to the 
+other backups. A backup also writes the received consensus request in local 
+storage if it agrees on this request. Durability ensures that even if the 
+leader or backups fail and restart, they can still retrieve the requests from 
+local stable storage and re-execute them.
 
-% Durability and safety make replicas consistently agree on each input and 
-% tolerate various faults, including machine failures and network errors. 
+The second feature is safety. As long as a quorum (typically, majority) of 
+replicas agree on this input (\ie, this input is \emph{committed}), \paxos 
+guarantees that all replicas consistently agree to process this input. If a 
+replica sees that an input consensus has been reached, this consensus must have 
+really been reached by at least a majority of replicas. Safety ensures that if 
+a consensus has not really been reached, no replica will ``think" that this 
+consensus has been reached.
 
-% As consensus rounds move on, \paxos consistently enforces the same sequence of 
-% inputs across replicas. It also enforces same execution states across replicas 
-% without divergence if a program behaves as a deterministic state machine (\ie, 
-% always produces the same output on the same input).
+Durability and safety make replicas consistently agree on each input and 
+tolerate various faults, including machine failures and network errors. As 
+consensus rounds move on, \paxos consistently enforces the same sequence of 
+inputs across replicas. It also enforces same execution states across replicas 
+without divergence if a program behaves as a deterministic state machine (\ie, 
+always produces the same output on the same input).
 
 % Normal case, round trip.
 Network latency of consensus messages is one key problem to make general server 
