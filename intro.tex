@@ -132,7 +132,7 @@ eco-system: by replicating jobs with \paxos,
 jobs to compute results efficiently. By leveraging \mesos's resource allocation 
 and isolation features, \xxx can run different jobs' replicas on the same 
 physical machine, reducing much of the extra hardware cost in traditional 
-replication techniques.
+\paxos approaches~\cite{crane:sosp15,rex:eurosys14}.
 
 % P5: Applications enjoy better latency and fault-tolerance.
 
@@ -170,12 +170,12 @@ protocol~\cite{falcon:github} in Linux. This protocol intercepts a general
 program's inbound socket calls (\eg, \recv) and agrees on the received inputs 
 in these calls across replicas of the same program.
 
-To emulate a typical social-networking deployment, we ran this protocol with 
-\redis, a popular key-value store that Twitter uses, and we ran \redis's own 
-benchmark workload. Evaluation showed that, compared to \redis's unreplicated 
-execution, \xxx incurred merely a \tputoverhead\% overhead in throughput and 
-\latencyoverhead\% in response time. This protocol was 40.1X faster than 
-a \zookeeper SMR protocol~\cite{calvin:sigmod12} which runs on TCP/IP.
+To emulate a typical social-networking application, we ran this protocol with 
+\redis~\cite{redis}, a popular key-value store used by Twitter. Evaluation 
+showed that, compared to \redis's unreplicated execution, \xxx incurred merely a 
+\tputoverhead overhead in throughput and \latencyoverhead in response time. 
+This protocol was 40.1X faster than a widely used \zookeeper~\cite{zookeeper} 
+SMR protocol~\cite{calvin:sigmod12} which runs on TCP/IP.
 % These initial evaluation results suggest that 
 % \xxx can achieve reasonable performance overhead on critical applications.
 
