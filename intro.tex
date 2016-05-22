@@ -9,11 +9,14 @@ management systems~\cite{borg:eurosys15,mesos:nsdi11,tupperware,yarn:socc13,
 autopilot:sosp07,quincy:sosp09,apollo:osdi14,fuxi:vldb14} 
 incorporate more and more applications. Applications not only include typical 
 batch frameworks, but also \emph{critical} applications such as trading, fraud 
-detection, health care, and military applications. These applications naturally 
-require high-availability and low performance overhead in deployments. For 
-example, a high-frequency trading application tends to be highly-available 
-during its operation hours, and adding merely hundreds of \us to its response 
-time means big money lost~\cite{nosql:finance}.
+detection, health care, social-networking and military applications. These 
+applications naturally require high-availability and low performance overhead in 
+deployments. For instance, a high-frequency trading application tends to be 
+highly-available during its operation hours, and adding merely hundreds of \us 
+to its response time means big money lost~\cite{nosql:finance}. Moreover, minor 
+machine failures in social-networking applications have also turned down the 
+whole application site.
+
 % This 
 % paper considers an application \emph{critical} if it has high requirements on 
 % availability and response time. 
@@ -123,10 +126,10 @@ transparently without modifications.
 
 \xxx's \mesos-\paxos integration forms a mutual beneficial 
 eco-system: by replicating jobs with \paxos, 
-\xxx ensures that minor failures in a job does not affect its replicated jobs to 
-compute results efficiently. By leveraging \mesos's resource allocation and 
-isolation feature, \xxx can run diverse applications on the same physical 
-machine, saving much of the physical hardware cost in traditional replication 
+\xxx ensures that minor failures in a job does not affect its other replicated 
+jobs to compute results efficiently. By leveraging \mesos's resource allocation 
+and isolation features, \xxx can run diverse applications on the same physical 
+machine, reducing much of the hardware cost in traditional replication 
 techniques.
 
 % P5: Applications enjoy better latency and fault-tolerance.
@@ -141,11 +144,11 @@ techniques.
 % architecture. 
 
 In addition to fault-tolerance, \xxx also provides a tail-tolerance 
-feature~\cite{tail:cacm13} in cluster computing. The tail of latency 
-distribution problem (or straggler) is pervasive for decades: since a 
-job request consists of tasks on diverse machines, the response of this 
-job is often bounded by the slowest task. Although \xxx is not the first work 
-that presents a replication approach to address the straggler 
+feature for cluster computing. The tail-of-latency distribution 
+problem~\cite{tail:cacm13} (or straggler) is pervasive: because a 
+job request consists of tasks running on diverse machines, the response time of 
+this job is often bounded by the slowest task. Although \xxx is not the first 
+work that presents a replication approach to address the straggler 
 problem~\cite{dolly:nsdi13}, \xxx provides this feature in a simple and general 
 way on top of its \paxos replication architecture.
 
@@ -163,13 +166,14 @@ way on top of its \paxos replication architecture.
 As part of \xxx's development, we have implemented an RDMA-enabled \paxos 
 protocol~\cite{falcon:github} in Linux. This protocol intercepts a general 
 program's inbound socket calls (\eg, \recv) and agrees on the received inputs 
-in these calls across replicas of the same program. To emulate a typical 
-Twitter deployment, we ran this protocol with \redis, a popular key-value store 
-that Twitter uses, and we ran \redis's own benchmark workload. Evaluation 
-showed that, compared to \redis's unreplicated execution, \xxx
-incurred merely a \tputoverhead\% overhead in throughput and \latencyoverhead\% 
-in response time. This protocol was 40.1X faster than \zookeeper's SMR 
-protocol~\cite{calvin:sigmod12} which runs on TCP/IP.
+in these calls across replicas of the same program.
+
+To emulate a typical social-networking deployment, we ran this protocol with 
+\redis, a popular key-value store that Twitter uses, and we ran \redis's own 
+benchmark workload. Evaluation showed that, compared to \redis's unreplicated 
+execution, \xxx incurred merely a \tputoverhead\% overhead in throughput and 
+\latencyoverhead\% in response time. This protocol was 40.1X faster than 
+a \zookeeper SMR protocol~\cite{calvin:sigmod12} which runs on TCP/IP.
 % These initial evaluation results suggest that 
 % \xxx can achieve reasonable performance overhead on critical applications.
 

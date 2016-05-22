@@ -214,7 +214,8 @@ Figure~\ref{fig:workflow} shows \xxx's workflow on scheduling jobs with four
 steps. This workflow is similar to that in Mesos except the second and fourth 
 steps. These two steps \xxx abstract away the replication logic in its resource 
 offers and allocations from the application. An application runs as if \xxx does 
-not replicate any of its jobs, and \xxx handles all the replication logic.
+not replicate any of its jobs, and \xxx transparently handles all the 
+replication logic.
 
 In the first step, slave machines periodically report their available computing 
 resources (\eg, CPU cores and memory) to the leader controller. In the second 
