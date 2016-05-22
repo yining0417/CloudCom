@@ -1,6 +1,17 @@
 \section{Related Work} \label{sec:related}
 
-\para{Cluster Management Systems.} TBD.  
+\para{Cluster Management Systems.} Cluster management 
+systems~\cite{borg:eurosys15,mesos:nsdi11,tupperware,yarn:socc13,
+autopilot:sosp07,quincy:sosp09,apollo:osdi14,fuxi:vldb14} are widespread 
+because they can transparently support many diverse applications (\eg, 
+Hadoop~\cite{hadoop}, Dryad~\cite{dryad}, and key-value stores~\cite{redis}). 
+These existing systems mainly focus on high availability for themselves by 
+replicating important components (\eg, controllers) within these systems, or 
+focus on fault-recovery of applications~\cite{fuxi:vldb14}. To the best of our 
+knowledge, no existing system provides efficient and general high-availability 
+service to applications. Although \xxx's current design leverages an existing 
+system Mesos~\cite{mesos:nsdi11}, its general \paxos protocol design can also 
+be integrated in other systems.
 
 \para{State machine replication (SMR).}  SMR is a powerful, but 
 complex fault-tolerance technique. The literature has developeed a rich set of
