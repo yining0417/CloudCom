@@ -190,7 +190,7 @@ without replication, like a typical cluster management system (\eg, Mesos).
 In this figure, Hadoop's \v{R} is 3, which means that it wants to replicate 
 each of its job with three copies for high-availability. Suppose Hadoop 
 submits two jobs to the leader controller, each has different shapes (triangle 
-or hexagon). The leader controller thens invokes a consensus on each job across 
+or hexagon). The leader controller then invokes a consensus on each job across 
 controllers. Once a consensus is reached, each controller assigns the same job 
 on different slave machines.
 
@@ -232,9 +232,15 @@ carrying the resource offer made to the application.
 Once a majority of controllers agrees on executing this job, each controller 
 does the fourth step. It schedules this job on an available slave machine 
 according to the resource offer. To avoid controllers putting the same job on 
-the same slave machine, each controller maintains a disjoint bit-mask of slave 
-machines; it only schedules this job on machines belongs to its bit-mask if 
-this machine has available resource to hold this job.
+the same slave machine, the leader controller first makes an assignment on 
+which controller should run this job on which slave machine, it then carries 
+this assignment in its consensus request. Once a consensus on this job is 
+reached, each controller follows this assignment.
+% 
+% 
+% each controller maintains a disjoint bit-mask of slave 
+% machines; it only schedules this job on machines belongs to its bit-mask if 
+% this machine has available resource to hold this job.
 
 % More discussions, frangmentation, 4+1+1, not available to hole 3*2. 
 % But critical applications, resource is often not a bottleneck compared to 
