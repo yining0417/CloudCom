@@ -60,7 +60,8 @@ Figure~\ref{fig:tput} shows \xxx's throughput and
 Figure~\ref{fig:latency} response time. We varied the number of concurrent 
 benchmark connections for each server program by from one to 32 threads. 
 Overall, compared to \redis's unreplicated executions, \xxx merely incurred a 
-mean overhead of \tputoverhead in throughput and \latencyoverhead in latency.
+mean overhead of \tputoverhead in throughput and \latencyoverhead in response 
+time.
 
 As the number of threads increases, \redis's unreplicated executions 
 got a performance improvement. \xxx scaled almost as well as the unreplicated 
