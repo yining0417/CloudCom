@@ -4,9 +4,11 @@
 As part of \xxx's development, we have implemented a fast RDMA-enabled \paxos 
 protocol~\cite{falcon:github} for general applications. We evaluated this 
 protocol with \redis~\cite{redis}, a popular key-value store. We chose \redis 
-because it complies with a social-networking platform setting. For instance, 
-Twitter uses \mesos as its scheduler and runs \redis as its core key-value 
-store. Key-value stores are also widely used in critical, financial 
+because it complies with a social-networking platform setting, where 
+high-availability is important (\S\ref{sec:discuss}).
+
+For instance, Twitter uses \mesos as its scheduler and runs \redis as its core 
+key-value store. Key-value stores are also widely used in critical, financial 
 applications~\cite{nosql:finance,nosql:racs14}. In our evaluation, \xxx 
 transparently supported \redis without the need of modifying \redis's code. 
 
@@ -90,9 +92,10 @@ socket call events and consensus durations on the leader controller side. Given
 each of which invoked a \paxos consensus. The average received data bytes in 
 these socket calls were 42.0 (\eg, inputs from \recv). The average consensus 
 latency for these calls were 9.9 \us because consensus were done by RDMA WRITEs 
-across the leader and standby masters. These initial results suggest that \xxx 
-has the potential to provide a fast \paxos replication service to general 
-applications with low overhead. 
+across the leader and standby masters.
+
+These results suggest that \xxx has the potential to provide a fast 
+\paxos replication service to general applications with low overhead. 
 
 \subsection{Comparison with Traditional SMR Systems} \label{sec:compare}
 

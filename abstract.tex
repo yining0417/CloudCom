@@ -4,11 +4,12 @@
 % computational demand. But still didn't meet the latency % and fault-tolerance 
 % citeria in some areas.
 Driven by the increasing computational demands, cluster management systems 
-(\eg, \mesos) are already pervasive and important. Unfortunately, despite much 
-effort, these systems are still difficult to support critical applications 
-(\eg, trading, medical, and military services) because these applications 
-naturally demand high-availability and short latency. Existing systems 
-typically replicate their task controllers in order to tolerate single-point 
+(\eg, \mesos) are already pervasive for deploying many applications. 
+Unfortunately, despite much effort, existing systems are still difficult to 
+support critical applications (\eg, trading, medical, and military services) 
+because these applications naturally demand high-availability and small 
+deployment performance overhead. Existing systems typically replicate their 
+task controllers in order to tolerate single-point 
 failures of this controller and to reschedule applications from their failures. 
 However, the applications themselves are still often a single point of failure, 
 which inevitably hurt availability.

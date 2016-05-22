@@ -148,9 +148,11 @@ in these calls across replicas of this program. To simulate a typical Twitter
 deployment, we ran this protocol with \redis, a popular key-value store that 
 Twitter uses, and we ran \redis's own benchmark workload. Evaluation showed 
 that, compared to \redis's unreplicated execution, this protocol incurred 
-merely X.X\% overhead on response time and Y.Y\% overhead on throughput. This 
-initial evaluation result suggests that \xxx could achieve reasonable 
-performance overhead on critical applications.
+merely \latencyoverhead\% overhead on response time and \tputoverhead\% overhead 
+on throughput. \xxx's SMR protocol was 40.1X faster than \zookeeper's SMR 
+protocol~\cite{calvin:sigmod12}.
+% These initial evaluation results suggest that 
+% \xxx can achieve reasonable performance overhead on critical applications.
 
 % P9: Feasibility study.
 
