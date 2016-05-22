@@ -211,10 +211,10 @@ replication logic.
 
 In the first step, slave machines periodically report their available computing 
 resources (\eg, CPU cores and memory) to the leader controller. In the second 
-step, instead of reporting available aggregated resources collected from slave 
-machines, \xxx divides the amount of resources by each application's \v{R} 
-value and then reports to the application. This is to reserve enough resources 
-for \xxx to replicate a job with \v{R} copies.
+step, instead of reporting the aggregated available resources reported from 
+slave machines, \xxx divides the amount of resources by each application's 
+\v{R} value and then reports to the application. This is to reserve enough 
+resources for \xxx to replicate a job with \v{R} copies.
 
 \begin{figure}[t]
 % \vspace{.20in}
