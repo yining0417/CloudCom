@@ -41,16 +41,15 @@ leaving an arbitrary unavailable time window for these applications.
 % P2: SMR a promising approach, but slow.
 State machine replication (SMR)~\cite{paxos} is a promising approach 
 to address the availability problem of critical applications. SMR runs the 
-same program on a number of replicas and uses a distributed consensus protocol 
-(\eg, 
+same program on a number of physical machines (replicas) and uses a distributed 
+consensus protocol (\eg, 
 \paxos~\cite{paxos:practical,paxos,paxos:simple,paxos:complex,epaxos:sosp13}) 
-to enforce the same inputs among 
-replicas. An input consensus can achieve as long as a majority of replicas 
-agree, thus SMR can tolerate various faults such as minor replica failures. For 
-instance, two existing systems \borg~\cite{borg:eurosys15} and 
-\mesos~\cite{mesos:nsdi11} use \paxos to replicate their controllers and let a 
-leader controller handle all jobs. If this controller goes down, \paxos elects 
-another leader controller.
+to enforce the same inputs among replicas. An input consensus can achieve as 
+long as a majority of replicas agree, thus SMR can tolerate various faults such 
+as minor replica failures. For instance, two existing systems 
+\borg~\cite{borg:eurosys15} and \mesos~\cite{mesos:nsdi11} use \paxos to 
+replicate their controllers and let a leader controller handle all jobs. If this 
+controller goes down, \paxos elects another leader controller.
 
 % Typically, \paxos assigns a replica as the leader to propose 
 % consensus requests, and the other replicas agree or reject requests. 
@@ -82,10 +81,11 @@ verify~\cite{demeter:sosp11}.
 
 Second, running a \paxos-enabled application in a 
 cluster management system could be problematic because the system is unaware 
-of replication logic. For instance, if an application submits three replicas of 
+of replication logic. For instance, if an application submits three copies of 
 the same job to the system, the system may happen to schedule all three 
-replicas on the same machine. Then, a hardware failure in this machine will 
-turn down all replicas. 
+copies on the same machine because it does not know that these copies 
+belong to the same job. Then, a hardware failure in this machine will turn down 
+all copies. 
 % Integrating \paxos to an application requires 
 % strong \paxos expertise for the application developers
 
