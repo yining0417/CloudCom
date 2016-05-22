@@ -82,9 +82,10 @@ verify~\cite{demeter:sosp11}.
 
 Second, running a \paxos-enabled application in a 
 cluster management system could be problematic because the system is unaware 
-of replication logic. For instance, if the system happens to schedule all 
-the replicas of the same job on the same machine, then a single-point failure 
-of this machine will turn down all replicas. 
+of replication logic. For instance, if an application submits three replicas of 
+the same job to the system, the system may happen to schedule all three 
+replicas on the same machine. Then, a hardware failure in this machine will 
+turn down all replicas. 
 % Integrating \paxos to an application requires 
 % strong \paxos expertise for the application developers
 
