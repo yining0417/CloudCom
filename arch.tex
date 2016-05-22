@@ -159,7 +159,7 @@ its trade-off on reliability versus resource consumption (\S\ref{sec:discuss}).
 \xxx's deployment model is similar to a typical cluster management system's 
 (\eg,~\cite{borg:eurosys15,mesos:nsdi11}). \xxx has a replicas of three to five 
 controllers, with each connects with the others using high-speed RDMA network. A 
-controller is elected by \paxos a the leading controller, which propose 
+controller is elected by \paxos as the leading controller, which propose 
 consensus requests to execute jobs. The other controllers are standby 
 controllers which agree on or reject consensus requests. A number of slave 
 machines act as computational resources that hold applications' running jobs. 
