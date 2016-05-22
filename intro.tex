@@ -28,10 +28,10 @@ events~\cite{facebook:outage}.
 Although recent advances on applying cluster management systems are exciting, 
 existing systems are still difficult to meet the high requirements of 
 critical applications because these systems do not provide high-availability to 
-applications. Specifically, existing systems typically replicate their job 
-controllers which accept jobs, allocate computational resources, and reschedule 
-jobs on exceptional cases. However, the applications themselves are not 
-replicated: if an application crashes or a computational resource goes down 
+applications. Typically, existing systems replicate their job 
+controllers which accept job requests, allocate computational resources, and 
+reschedule jobs on exceptional cases. However, the applications themselves are 
+not replicated: if an application crashes or a computational resource goes down 
 (\eg, hardware errors), these systems have to reschedule or recompute jobs, 
 leaving an arbitrary unavailable time window for these applications.
 % A possible key reason of this problem is that these systems are 
