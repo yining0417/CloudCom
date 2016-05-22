@@ -9,13 +9,13 @@ management systems~\cite{borg:eurosys15,mesos:nsdi11,tupperware,yarn:socc13,
 autopilot:sosp07,quincy:sosp09,apollo:osdi14,fuxi:vldb14} 
 incorporate more and more applications. Applications not only include typical 
 batch frameworks, but also \emph{critical} applications such as trading, fraud 
-detection, health care, social-networking and military applications. These 
+detection, health care, social-networking, and military applications. These 
 applications naturally require high-availability and low performance overhead in 
 deployments. For instance, a high-frequency trading application tends to be 
 highly-available during its operation hours, and adding merely hundreds of \us 
 to its response time means big money lost~\cite{nosql:finance}. Moreover, minor 
-machine failures in social-networking applications have also turned down the 
-whole application site.
+machine failures in social-networking applications have turned down the 
+whole application site for many times~\cite{facebook:outage}.
 
 % This 
 % paper considers an application \emph{critical} if it has high requirements on 
