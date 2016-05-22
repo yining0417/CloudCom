@@ -181,10 +181,11 @@ shaded (and in blue). To illustrate how \xxx works in an application
 perspective, this figure shows two applications, Hadoop and MPI. Each 
 application has a \emph{replica strength} (\v{R}) to denote the level of 
 fault-tolerance it demands. This value is either 1 or equals the number of 
-replicas of controllers in \xxx. By default, each application has \v{\v{R}=1}, 
-which means that this application does not need replication. For such a default 
-setting, \xxx runs the job as is without replication, like a typical cluster 
-management system (\eg, Mesos).
+replicas of controllers in \xxx.
+
+By default, each application has \v{\v{R}=1}, which means that this application 
+does not need replication. For such a default setting, \xxx runs the job as is 
+without replication, like a typical cluster management system (\eg, Mesos).
 
 In this figure, Hadoop's \v{R} is 3, which means that it wants to replica each 
 of its job in three replicas for high-availability. Suppose Hadoop submits two 
@@ -201,15 +202,6 @@ Standby controllers ignore the results unless the same mechanism is triggered.
 
 \subsection{Workflow on Scheduling Jobs} \label{sec:workflow}
 
-\begin{figure}[t]
-% \vspace{.20in}
-\centering
-\includegraphics[width=.47\textwidth]{figures/flow}
-\vspace{-.2in}
-\caption{{\em The \xxx Workflow on Scheduling Jobs.}} \label{fig:workflow}
-\vspace{.05in}
-\end{figure}
-
 Figure~\ref{fig:workflow} shows \xxx's workflow on scheduling jobs with four 
 steps. This workflow is similar to that in Mesos except the second and fourth 
 steps. These two steps \xxx abstract away the replication logic in its resource 
@@ -223,6 +215,15 @@ step, instead of reporting available resources, \xxx divides the amount of
 resources by each application's \v{R} value and then reports to the 
 application. This is to reserve enough resources for \xxx to replicate the same 
 job with \v{R} copies.
+
+\begin{figure}[t]
+% \vspace{.20in}
+\centering
+\includegraphics[width=.47\textwidth]{figures/flow}
+\vspace{-.2in}
+\caption{{\em The \xxx Workflow on Scheduling Jobs.}} \label{fig:workflow}
+\vspace{.05in}
+\end{figure}
 
 In the third step, an application scheduler submits jobs to the leader 
 controller. The leader controller then invokes a consensus on this job by 
