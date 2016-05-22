@@ -79,8 +79,8 @@ approach has two major issues. First, \paxos is notoriously difficult
 to understand~\cite{raft:usenix14}, implement~\cite{paxos:practical}, and 
 verify~\cite{demeter:sosp11}.
 
-Second, running a \paxos-enabled application in a 
-cluster management system could be problematic because the system is unaware 
+Second, running a \paxos-enabled application with a 
+cluster management system can be problematic because the system is unaware 
 of replication logic. For instance, if an application submits three copies of 
 the same job to the system, the system may happen to schedule all three 
 copies on the same machine (although it should schedule them on 
