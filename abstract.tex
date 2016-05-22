@@ -12,7 +12,7 @@ high-availability and low performance overhead in deployments. Existing systems
 typically replicate their job controllers so that these controllers are 
 highly-available and thus they can handle applications failures. However, 
 applications themselves are still often a single point of failure, leaving 
-arbitrary unavailabile time windows for themselves.
+arbitrary unavailable time windows for themselves.
 
 % P1.1: fault-tolerance. paxos may help, but didn't meet the latency 
 % requirements.
@@ -29,8 +29,8 @@ replication protocol that leverages RDMA (Remote Direct Memory Access). \xxx
 runs replicas of the same job with a replicas of controllers, and 
 controllers agree on job requests efficiently with this protocol.
 Evaluation shows that \xxx has low performance overhead in 
-both throughput and resonse time compared to an application's 
-unreplicated executions.
+both throughput and response time compared to an application's 
+unreplicated execution.
 % A happy side-effect in \xxx is that it 
 % addresses a pervasive latency-tail challenge via its fault-tolerance 
 % architecture. 
