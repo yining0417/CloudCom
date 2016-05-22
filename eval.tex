@@ -6,8 +6,9 @@ protocol~\cite{falcon:github} for general applications. We evaluated this
 protocol with \redis~\cite{redis}, a popular key-value store. We chose \redis 
 because it complies with a social-networking platform setting. For instance, 
 Twitter uses \mesos as its scheduler and runs \redis as its core key-value 
-store. Key-value stores are also widely used 
-in critical, financial applications~\cite{nosql:finance,nosql:racs14}.
+store. Key-value stores are also widely used in critical, financial 
+applications~\cite{nosql:finance,nosql:racs14}. In our evaluation, \xxx 
+transparently supported \redis without the need of modifying \redis's code. 
 
 % Evaluation machine and workloads.
 Our evaluation used three Dell R430 servers as SMR replicas. Each server has 
@@ -28,12 +29,40 @@ To perform a stress testing on \xxx's input consensus protocol, we chose
 operations. We chose such a significant portions of writes because SET 
 operation contains more bytes than a GET.
 
-In our evaluation, we did not need to modify \redis's code and it ran with 
-\xxx's replication protocol. Figure~\ref{fig:tput} shows \xxx's throughput and 
+We spawned up to 32 concurrent connections, and then we measured both response 
+time and throughput. We also measured \xxx's bare consensus latency. All 
+evaluation results were done with a replica group size of three except the 
+scalability evaluation (\S\ref{sec:scalability}). Each performance data point 
+in the evaluation is taken from the mean value of 10 repeated executions.
+
+The rest of this section focuses on these questions:
+
+\begin{tightenum}
+
+\item[\S\ref{sec:overhead}:] What is \xxx's performance compared to the 
+unreplicated executions? What is the consensus latency of \xxx's \paxos 
+protocol?
+
+\item[\S\ref{sec:compare}:] What is \xxx's performance compared to existing 
+SMR systems?
+
+
+% \item[\S\ref{sec:scalability}:] How scalable is \xxx on different replica group 
+% sizes?
+
+\end{tightenum}
+
+\subsection{Performance Overhead} \label{sec:overhead}
+
+Figure~\ref{fig:tput} shows \xxx's throughput and 
 Figure~\ref{fig:latency} response time. We varied the number of concurrent 
 client connections for each server program by from one to 32 threads. Overall, 
 compared to \redis's unreplicated executions, \xxx merely incurred a mean 
 throughput overhead of \tputoverhead.
+
+As the number of threads increases, \redis's unreplicated executions 
+got a performance improvement. \xxx scaled almost as well as the unreplicated 
+executions.
 
 \begin{figure}[h]
 \centering
@@ -64,6 +93,54 @@ latency for these calls were 9.9 \us because consensus were done by RDMA WRITEs
 across the leader and standby masters. These initial results suggest that \xxx 
 has the potential to provide a fast \paxos replication service to general 
 applications with low overhead. 
+
+\subsection{Comparison with Traditional SMR Systems} \label{sec:compare}
+
+We compared \xxx with the \calvin database system~\cite{calvin:sigmod12} 
+because \calvin's input consensus uses \zookeeper~\cite{zookeeper}, one of the 
+most widely used coordination service built on TCP/IP. To conduct a fair 
+comparison, we ran \calvin's own transactional database server in \xxx as the 
+server program, and we compared throughputs and the consensus latency with 
+\calvin's consensus protocol \zookeeper.
+
+As shown in Table~\ref{tab:compare}, \calvin's \zookeeper replication achieved 
+19.9K transactions/s with a 511.9 \us consensus latency. \xxx achieved 17.6K 
+transactions/s with a 12.5 \us consensus latency. The throughput in \calvin 
+was 13.1\% higher than that in \xxx because \calvin puts transactions in a 
+batch with a 10 \ms timeout, it then invokes \zookeeper for consensus on 
+this batch. The average number of bytes in \calvin's batches is 18.8KB, and 
+the average number of input bytes in each \xxx consensus (one for each \recv 
+call) is 93 bytes. Batching helps \calvin achieve good throughput. \xxx 
+currently has not incorporated a batching technique because its latency is 
+already reasonable (\S\ref{sec:overhead}).
+
+Notably, \xxx's consensus latency was 40.1X faster than \zookeeper's mainly due 
+to \xxx's RDMA-accelerated consensus protocol, although we ran \calvin's 
+\zookeeper consensus on IPoIB. A prior SMR evaluation~\cite{dare:hpdc15} also 
+reports a similar 320 \us consensus latency in \zookeeper. Two other recent SMR 
+systems Crane~\cite{crane:sosp15} and Rex~\cite{rex:eurosys14} may incur 
+similar consensus latency as \zookeeper's because all their consensus protocols 
+are based on TCP/IP.
+
+Overall, this \xxx-\calvin comparison suggests \xxx's \paxos protocol may be 
+leveraged to speedup the SMR services in existing cluster management systems 
+(\eg, \mesos currently uses \zookeeper).
+
+\begin{table}[t]
+\footnotesize
+\centering
+% \vspace{-.2in}
+\begin{tabular}{lrr}
+{\bf Performance metric} & {\bf \zookeeper} & {\bf \xxx}\\
+\hline\\[-2.3ex]
+Throughput (requests/s) & 19,925   & 17,614 \\
+Consensus latency (\us) & 511.9  & 12.5\\
+\end{tabular}
+\vspace{-.1in}
+\caption{{\em Comparison with \calvin's \zookeeper replication.}} 
+\vspace{-.2in}
+\label{tab:compare}
+\end{table}
 
 % Results: tput, latency.
 
