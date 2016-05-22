@@ -150,8 +150,9 @@ one-sided RDMA write operation as a ``WRITE".
 % Our model. Multiple writer multiple reader.
 \section{\xxx Overview} \label{sec:overview}
 
-This section first introduces \xxx's architecture design, and then its workflow 
-on scheduling tasks with replication.
+This section first introduces \xxx's architecture design (\S\ref{sec:arch}), 
+its workflow on scheduling tasks with replication (\S\ref{sec:workflow}), and 
+its trade-off on reliability vesus resource consumption (\S\ref{sec:discuss}).
 
 % TBD. 
 
@@ -240,6 +241,27 @@ machine has available resource to hold this task.
 % But critical applications, resource is often not a bottleneck compared to 
 % response time and availability.
 
+\subsection{Discussion} \label{sec:discuss}
+
+The main goal of \xxx is to provide high-availability to critical applications 
+running in clusters. On one hand, clusters are included more and more computing 
+resources (\eg, machines), where failures of these resources and applications 
+are already commonplace~\cite{facebook:failures}. On the other hand, 
+high requirements on response times and availability become more and more 
+important to critical applications. For instance, Both NYSE and Nasdaq have 
+experienced outage of their whole site~\cite{nyse:crash} or specific IPO 
+events~\cite{facebook:ipo:crash} due to minor machine errors.  Even social 
+networking applications like Facebook has strong fault-tolerance requirements, 
+because minor machine failures have turned down the whole Facebook site for 
+several times in the last few years~\cite{facebook:failures}, costing huge 
+money lost. 
+
+Therefore, \xxx's design favors more on availability and performance 
+(low consensus latency). It's design tends to use \v{R} times of resources 
+compared to traditional applications. We argue that this extra resource 
+utilizations are acceptable for critical applications, because if they have high 
+demand on availability and response times, they can often tolerate costs on 
+computing resources (\eg, trading and medical platforms).
 
 
 \section{Tail-tolerance Design} \label{sec:tail}
