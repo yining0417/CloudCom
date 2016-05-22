@@ -46,10 +46,10 @@ consensus protocol (\eg,
 \paxos~\cite{paxos:practical,paxos,paxos:simple,paxos:complex,epaxos:sosp13}) 
 to enforce the same inputs among replicas. An input consensus can achieve as 
 long as a majority of replicas agree, thus SMR can tolerate various faults such 
-as minor replica failures. For instance, two existing systems 
-\borg~\cite{borg:eurosys15} and \mesos~\cite{mesos:nsdi11} use \paxos to 
-replicate their controllers and let a leader controller handle all jobs. If this 
-controller goes down, \paxos elects another leader controller.
+as minor replica failures. For instance, 
+\mesos~\cite{borg:eurosys15,mesos:nsdi11} uses \paxos to replicate their 
+controllers and assigns a leader controller to handle all jobs. If this 
+controller goes down, \paxos elects a new leader.
 
 % Typically, \paxos assigns a replica as the leader to propose 
 % consensus requests, and the other replicas agree or reject requests. 
