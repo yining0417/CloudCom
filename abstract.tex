@@ -6,13 +6,13 @@
 Driven by the increasing computational demands, cluster management systems 
 (\eg, \mesos) are already pervasive for deploying many applications. 
 Unfortunately, despite much effort, existing systems are still difficult to 
-support critical applications (\eg, trading, medical, and military services) 
-because these applications naturally demand high-availability and small 
-deployment performance overhead. Existing systems typically replicate their 
-task controllers in order to tolerate single-point 
-failures of this controller and to reschedule applications from their failures. 
-However, the applications themselves are still often a single point of failure, 
-which inevitably hurt availability.
+meet the high requirements of critical applications (\eg, trading, medical, and 
+military applications), because these applications naturally require 
+high-availability and low performance overhead in deployments. Existing systems 
+typically replicate their job controllers so that these controllers are 
+highly-available and thus they can handle applications failures. However, 
+applications themselves are still often a single point of failure, leaving 
+arbitrary unavailabile time windows for themselves.
 
 % P1.1: fault-tolerance. paxos may help, but didn't meet the latency 
 % requirements.
@@ -22,14 +22,15 @@ which inevitably hurt availability.
 % enjoy high availability, no needed to implement reliability by themselves. 
 % can also address the slow tail problem. feasibility study in two % rdma paxos 
 % systems.
-This paper proposes \xxx, a cluster management system design that automatically 
-provides high-availability to general applications. \xxx's key to achieve fast 
-fault-tolerance is a fast \paxos replication protocol that leverages RDMA 
-(Remote Direct Memory Access). \xxx runs replicas of the same application with 
-a set of controllers, where controllers agree on computational requests 
-efficiently with this protocol. Initial evaluation results show that \xxx's 
-protocol has low latency overhead compared to the applications' unreplicated 
-executions.
+This paper proposes the design of \xxx, a cluster management system that 
+automatically provides high-availability to general applications. \xxx's key to 
+make applications achieve high-availability efficiently is a fast \paxos 
+replication protocol that leverages RDMA (Remote Direct Memory Access). \xxx 
+runs replicas of the same job with a replicas of controllers, and 
+controllers agree on job requests efficiently with this protocol.
+Evaluation shows that \xxx has low performance overhead in 
+both throughput and resonse time compared to an application's 
+unreplicated executions.
 % A happy side-effect in \xxx is that it 
 % addresses a pervasive latency-tail challenge via its fault-tolerance 
 % architecture. 
