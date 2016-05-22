@@ -4,22 +4,24 @@
 % detection, aviation, medical, military. But existing systems can not meet the 
 % high latency and availability requriements of these applications.
 Driven the the drastically increasing computational demands and the volumns of 
-data, more and more applications are being pushed to deploy in cluster 
-managemement systems~\cite{mesos,borg,helix,yarn} in order to harness the 
-computational resources in clusters. These applications not only include typical 
-big-data frameworks (\eg,~\cite{spark}), but also critical applications such as 
+data, cluster managemement systems (\eg, Mesos~\cite{mesos:nsdi11}) are 
+incorporating more and more applications (\eg, Spark~\cite{spark:nsdi11} and 
+\redis~\cite{redis}) in order to harness the computational resources in 
+clusters for these applications. Applications not only include typical batch 
+frameworks (\eg, Hadoop~\cite{hadoop}), but also critical applications such as 
 trading platforms, fraud detection systems, health care systems, and military 
 systems. We consider an application \emph{critical} if its high requirements on 
 availability and response time. For example, a high-frequency trading platform 
-tends to be highly-availabile during the stock operation hours, and adding a 
-few hundred \us to the platform's response time means huge money lost.
+tends to be highly-availabile during the stock operation hours, and adding a few 
+hundred \us to the platform's response time means huge money lost.
 
 Unfortunately, despite recent advances in building and applying cluster 
-managemement systems~\cite{mesos,borg,helix,yarn}, these systems are still 
-difficult to meet the high requirements of critical applications because these 
-systems do not provide high-availability to the applications. Specifically, to 
-make the systems themselves highly-availabile, existing systems typically 
-replicate their controller component which accepts tasks, allocate 
+managemement systems~\cite{borg:eurosys15,mesos:nsdi11,tupperware,yarn:socc13,
+autopilot:sosp07,quincy:sosp09,apollo:osdi14,fuxi:vldb14}, these systems are 
+still difficult to meet the high requirements of critical applications because 
+these systems do not provide high-availability to the applications. 
+Specifically, to make the systems themselves highly-availabile, existing systems 
+typically replicate their controller component which accepts tasks, allocate 
 computational resources, and (re)schedule tasks on availabile resources. 
 However, the applications themselves are not replicated: if an application 
 crashes or a computational resource goes down (\eg, hardware errors), these 
