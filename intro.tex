@@ -7,15 +7,15 @@ Driven by the drastically increasing computational demands and the volumes of
 data, cluster 
 management systems~\cite{borg:eurosys15,mesos:nsdi11,tupperware,yarn:socc13,
 autopilot:sosp07,quincy:sosp09,apollo:osdi14,fuxi:vldb14} 
-incorporate more and more applications. Applications not only include typical 
-batch frameworks, but also \emph{critical} applications such as trading, fraud 
-detection, health care, social-networking, and military applications. These 
-applications naturally require high-availability and low performance overhead in 
-deployments. For instance, a high-frequency trading application tends to be 
-highly-available during its operation hours, and adding merely hundreds of \us 
-to its response time means big money lost~\cite{nosql:finance}. Moreover, minor 
-machine errors in a social-networking application have turned down the 
-whole application site~\cite{facebook:outage}.
+incorporate more and more applications. Many applications, including trading, 
+fraud detection, health care, social-networking, and military applications, are 
+\emph{critical}, because applications naturally require high-availability and 
+low performance overhead in deployments. For instance, a high-frequency trading 
+application tends to be highly-available during its operation hours, and adding 
+merely hundreds of \us to its response time means big money 
+lost~\cite{nosql:finance}. Another instance is social-networking: minor machine 
+errors in Facebook cluster have led to several whole-site outage 
+events~\cite{facebook:outage}.
 
 % This 
 % paper considers an application \emph{critical} if it has high requirements on 
@@ -25,15 +25,15 @@ whole application site~\cite{facebook:outage}.
 % management systems~\cite{borg:eurosys15,mesos:nsdi11,tupperware,yarn:socc13,
 % autopilot:sosp07,quincy:sosp09,apollo:osdi14,fuxi:vldb14}. 
 
-Unfortunately, despite much effort, existing systems are still difficult to 
-meet the high requirements of critical applications because these systems do 
-not provide high-availability to applications. Specifically, existing 
-systems typically replicate their job controllers which accept jobs, 
-allocate computational resources, and reschedule jobs on exceptional cases. 
-However, the applications themselves are not replicated: if an application 
-crashes or a computational resource goes down (\eg, hardware errors), these 
-systems have to reschedule or recompute jobs, leaving an arbitrary 
-unavailable time window for these applications.
+Although recent advances on applying cluster management systems are exciting, 
+existing systems are still difficult to meet the high requirements of 
+critical applications because these systems do not provide high-availability to 
+applications. Specifically, existing systems typically replicate their job 
+controllers which accept jobs, allocate computational resources, and reschedule 
+jobs on exceptional cases. However, the applications themselves are not 
+replicated: if an application crashes or a computational resource goes down 
+(\eg, hardware errors), these systems have to reschedule or recompute jobs, 
+leaving an arbitrary unavailable time window for these applications.
 % A possible key reason of this problem is that these systems are 
 % initially designed for big-data engines which already considered fault recovery 
 % (but, not availability).
