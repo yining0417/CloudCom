@@ -96,6 +96,22 @@ applications with low overhead.
 
 \subsection{Comparison with Traditional SMR Systems} \label{sec:compare}
 
+\begin{table}[h]
+\footnotesize
+\centering
+% \vspace{-.2in}
+\begin{tabular}{lrr}
+{\bf Performance metric} & {\bf \zookeeper} & {\bf \xxx}\\
+\hline\\[-2.3ex]
+Throughput (requests/s) & 19,925   & 17,614 \\
+Consensus latency (\us) & 511.9  & 12.5\\
+\end{tabular}
+% \vspace{-.1in}
+\caption{{\em Comparison with \calvin's \zookeeper replication.}} 
+% \vspace{-.2in}
+\label{tab:compare}
+\end{table}
+
 We compared \xxx with the \calvin database system~\cite{calvin:sigmod12} 
 because \calvin's input consensus uses \zookeeper~\cite{zookeeper}, one of the 
 most widely used coordination service built on TCP/IP. To conduct a fair 
@@ -126,21 +142,7 @@ Overall, this \xxx-\calvin comparison suggests \xxx's \paxos protocol may be
 leveraged to speedup the SMR services in existing cluster management systems 
 (\eg, \mesos currently uses \zookeeper).
 
-\begin{table}[t]
-\footnotesize
-\centering
-% \vspace{-.2in}
-\begin{tabular}{lrr}
-{\bf Performance metric} & {\bf \zookeeper} & {\bf \xxx}\\
-\hline\\[-2.3ex]
-Throughput (requests/s) & 19,925   & 17,614 \\
-Consensus latency (\us) & 511.9  & 12.5\\
-\end{tabular}
-\vspace{-.1in}
-\caption{{\em Comparison with \calvin's \zookeeper replication.}} 
-\vspace{-.2in}
-\label{tab:compare}
-\end{table}
+
 
 % Results: tput, latency.
 
