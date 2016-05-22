@@ -49,7 +49,7 @@ replicas. An input consensus can achieve as long as a majority of replicas
 agree, thus SMR can tolerate various faults such as minor replica failures. For 
 instance, two existing systems \borg~\cite{borg:eurosys15} and 
 \mesos~\cite{mesos:nsdi11} use \paxos to replicate their controllers and let a 
-leading controller to handle all jobs. If this controller fails, \paxos elects 
+leader controller to handle all jobs. If this controller fails, \paxos elects 
 another leader controller.
 
 % Typically, \paxos assigns a replica as the leader to propose 
@@ -58,9 +58,10 @@ another leader controller.
 
 However, \paxos's consensus is notoriously difficult to be fast. 
 To agree on an input, traditional consensus protocols invoke at least one 
-message round-trip between two replicas. Given that a \v{ping} in Ethernet 
-takes hundreds of \us, a program running in an SMR system with three replicas 
-must wait at least this time before processing an input. 
+message round-trip between two replicas. A \v{ping} in Ethernet 
+takes hundreds of \us. This is probably why existing 
+systems only use \paxos to elect a leader, not to agree on inputs (\ie, job 
+requests).
 
 % P3: RDMA, new opportunity. Two RDMA systems.
 Fortunately, Remote Direct Access Memory (RDMA) becomes commonplace in 
