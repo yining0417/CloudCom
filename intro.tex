@@ -75,14 +75,14 @@ RDMA-enabled \paxos implementation~\cite{dare:hpdc15} reported
 $\sim$15 \us in consensus latency.
 
 A naive approach to achieve high-availability for critical applications could 
-be integrating \paxos within every application. However, doing so has two major
-issues. First, \paxos is notoriously difficult 
+be integrating \paxos within every application. However, this integration 
+approach has two major issues. First, \paxos is notoriously difficult 
 to understand~\cite{raft:usenix14}, implement~\cite{paxos:practical}, and 
 verify~\cite{demeter:sosp11}.
 
 Second, running a \paxos-enabled application in a 
 cluster management system could be problematic because the system is unaware 
-of the replication logic. For instance, if the system happens to schedule all 
+of replication logic. For instance, if the system happens to schedule all 
 the replicas of the same job on the same machine, then a single-point failure 
 of this machine will turn down all replicas. 
 % Integrating \paxos to an application requires 
@@ -101,16 +101,17 @@ cluster management system that automatically provides high-availability to
 general applications. \xxx maintains replicas of controllers with a RDMA-enabled 
 \paxos protocol~\cite{falcon:github}. Unlike existing systems which let only the 
 leader controller schedule jobs, \xxx runs replicas of the same job using the 
-replicas of controllers, and \xxx let controllers agree on job requests 
+replicas of controllers, and \xxx lets controllers agree on job requests 
 efficiently with this protocol. 
 
-To avoid the two aforementioned issues, \xxx chooses to integrate \paxos in the 
-cluster system, not in applications. Doing so has two benefits. First, \xxx's 
-\paxos acts a single, general SMR service to applications: we can just 
-leverage existing verification tools~\cite{modist:nsdi09,demeter:sosp11} to 
-make sure this \paxos protocol is robust and correct, and then we can benefit 
-many applications. Second, now \xxx's own scheduler can handle the 
-replication logic and do careful, replication-aware scheduling for jobs.
+To avoid the two aforementioned integration issues, \xxx chooses to integrate 
+\paxos in the cluster system, not in applications. Doing so has two benefits. 
+First, \xxx's \paxos acts as a single, general SMR service to applications. We 
+can just leverage existing verification 
+tools~\cite{modist:nsdi09,demeter:sosp11} to make sure that this \paxos 
+protocol is robust and correct, and then we can benefit many applications. 
+Second, now \xxx's own scheduler can handle the replication logic and do 
+careful, replication-aware scheduling for jobs.
 
 %  In \xxx, a 
 % replicas of controllers run a critical application's same task on diverse 
@@ -127,11 +128,11 @@ transparently without modifications.
 
 \xxx's \mesos-\paxos integration forms a mutual beneficial 
 eco-system: by replicating jobs with \paxos, 
-\xxx ensures that minor failures in a job does not affect its other replicated 
+\xxx ensures that minor failures in a job does not affect other replicated 
 jobs to compute results efficiently. By leveraging \mesos's resource allocation 
-and isolation features, \xxx can run diverse applications on the same physical 
-machine, reducing much of the hardware cost in traditional replication 
-techniques.
+and isolation features, \xxx can run different jobs' replicas on the same 
+physical machine, reducing much of the extra hardware cost in traditional 
+replication techniques.
 
 % P5: Applications enjoy better latency and fault-tolerance.
 
