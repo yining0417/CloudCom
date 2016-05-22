@@ -26,13 +26,13 @@ storage if it agrees on this request. Durability ensures that even if the
 leader or backups fail and restart, they can still retrieve the requests from 
 local stable storage and re-execute them.
 
-The second feature is safety. As long as a quorum (typically, majority) of 
-replicas agree on this input (\ie, this input is \emph{committed}), \paxos 
-guarantees that all replicas consistently agree to process this input. If a 
-replica sees that an input consensus has been reached, this consensus must have 
-really been reached by at least a majority of replicas. Safety ensures that if 
-a consensus has not really been reached, no replica will ``think" that this 
-consensus has been reached.
+The second feature is safety. As long as a majority of replicas agree on this 
+input (\ie, this input is \emph{committed}), \paxos guarantees that all 
+replicas consistently agree to process this input. If a replica sees that an 
+input consensus has been reached, this consensus must have really been reached 
+by at least a majority of replicas. Safety ensures that if a consensus has not 
+really been reached, no replica will ``think" that a consensus has been 
+reached.
 
 Durability and safety make replicas consistently agree on each input and 
 tolerate various faults, including machine failures and network errors. As 
