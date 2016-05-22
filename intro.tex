@@ -49,7 +49,7 @@ replicas. An input consensus can achieve as long as a majority of replicas
 agree, thus SMR can tolerate various faults such as minor replica failures. For 
 instance, two existing systems \borg~\cite{borg:eurosys15} and 
 \mesos~\cite{mesos:nsdi11} use \paxos to replicate their controllers and let a 
-leader controller handle all jobs. If this controller fails, \paxos elects 
+leader controller handle all jobs. If this controller goes down, \paxos elects 
 another leader controller.
 
 % Typically, \paxos assigns a replica as the leader to propose 
@@ -101,8 +101,8 @@ cluster management system that automatically provides high-availability to
 general applications. \xxx maintains replicas of controllers with a new 
 RDMA-enabled \paxos protocol~\cite{falcon:github}. Unlike existing systems which 
 let only the leader controller schedule jobs, \xxx runs replicas of the same job 
-using the replicas of controllers: it lets each controller schedule a copy of 
-the same job after this job has reached consensus among controllers. 
+using the replicas of controllers: after controllers agree on a new job, \xxx 
+lets each controller schedule an independent copy of this job.
 
 To avoid the two aforementioned integration issues, \xxx chooses to integrate 
 \paxos in the cluster system, not in applications. Doing so has two benefits. 
