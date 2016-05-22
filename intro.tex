@@ -98,11 +98,11 @@ of this machine will turn down all replicas.
 This paper proposes the design of \xxx,\footnote{We name our system after the 
 ancient Chinese three-legged tripod, a reliable, multi-purpose container.} a 
 cluster management system that automatically provides high-availability to 
-general applications. \xxx maintains replicas of controllers with a RDMA-enabled 
-\paxos protocol~\cite{falcon:github}. Unlike existing systems which let only the 
-leader controller schedule jobs, \xxx runs replicas of the same job using the 
-replicas of controllers, and \xxx lets controllers agree on job requests 
-efficiently with this protocol. 
+general applications. \xxx maintains replicas of controllers with a new 
+RDMA-enabled \paxos protocol~\cite{falcon:github}. Unlike existing systems which 
+let only the leader controller schedule jobs, \xxx runs replicas of the same job 
+using the replicas of controllers: it lets each controller schedule a copy of 
+the same job after this job has reached consensus among controllers. 
 
 To avoid the two aforementioned integration issues, \xxx chooses to integrate 
 \paxos in the cluster system, not in applications. Doing so has two benefits. 
@@ -131,7 +131,7 @@ eco-system: by replicating jobs with \paxos,
 \xxx ensures that minor failures in a job does not affect other replicated 
 jobs to compute results efficiently. By leveraging \mesos's resource allocation 
 and isolation features, \xxx can run different jobs' replicas on the same 
-physical machine, reducing much of the extra hardware cost in traditional 
+physical machine, reducing much of the hardware cost in traditional 
 \paxos approaches~\cite{crane:sosp15,rex:eurosys14}.
 
 % P5: Applications enjoy better latency and fault-tolerance.
@@ -182,6 +182,11 @@ SMR protocol~\cite{calvin:sigmod12} which runs on TCP/IP.
 % P9: Feasibility study.
 
 % P10: rest of the paper.
+Our major conceptual contribution is \xxx, the first cluster management 
+system design that provides high-availability to general applications. Our 
+engineering contribution includes a fast, general RDMA-enabled \paxos protocol, 
+with its source code available at~\cite{falcon:github}.
+
 The remaining of this paper is organized as follows. \S\ref{sec:background} 
 introduces background on \paxos and RDMA. \S\ref{sec:overview} gives an 
 overview of our \xxx design. \S\ref{sec:tail} describes \xxx's design on 
