@@ -159,14 +159,14 @@ its trade-off on reliability vesus resource consumption (\S\ref{sec:discuss}).
 \subsection{Architecture} \label{sec:arch}
 
 \xxx's deployment model is similar to a typical cluster management system's 
-(\eg,~\cite{borg,mesos}). \xxx has a replicas of three to five controllers, 
-with each connects with the others using high-speed RDMA network. A controller 
-is elected by \paxos a the leading controller, which propose consensus requests 
-to execute tasks. The other controllers are standby controllers which agree on 
-or reject consensus requests. A number of slave machines act as computational 
-resources that hold applications' running tasks. Controllers and slaves connect 
-with either RDMA or TCP/IP. Application schedulers submit tasks to the leader 
-controller.
+(\eg,~\cite{borg:eurosys15,mesos:nsdi11}). \xxx has a replicas of three to five 
+controllers, with each connects with the others using high-speed RDMA network. A 
+controller is elected by \paxos a the leading controller, which propose 
+consensus requests to execute tasks. The other controllers are standby 
+controllers which agree on or reject consensus requests. A number of slave 
+machines act as computational resources that hold applications' running tasks. 
+Controllers and slaves connect with either RDMA or TCP/IP. Application 
+schedulers submit tasks to the leader controller.
 
 \begin{figure}[t]
 \vspace{.20in}

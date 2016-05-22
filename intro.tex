@@ -5,7 +5,7 @@
 % high latency and availability requriements of these applications.
 Driven the the drastically increasing computational demands and the volumns of 
 data, cluster managemement systems (\eg, Mesos~\cite{mesos:nsdi11}) are 
-incorporating more and more applications (\eg, Spark~\cite{spark:nsdi11} and 
+incorporating more and more applications (\eg, Spark~\cite{spark:nsdi12} and 
 \redis~\cite{redis}) in order to harness the computational resources in 
 clusters for these applications. Applications not only include typical batch 
 frameworks (\eg, Hadoop~\cite{hadoop}), but also critical applications such as 
@@ -39,8 +39,8 @@ same program on a number of replicas and uses a distributed consensus protocol
 to enforce the same inputs among 
 replicas. An input consensus can achieve as long as a majority of replicas 
 agree, thus SMR can tolerate various faults such as minor replica failures. For 
-instance, two existing systems \borg~\cite{borg} and \mesos~\cite{borg} use 
-\paxos to replicate their controllers.
+instance, two existing systems \borg~\cite{borg:eurosys15} and 
+\mesos~\cite{mesos:nsdi11} use \paxos to replicate their controllers.
 
 % Typically, \paxos assigns a replica as the leader to propose 
 % consensus requests, and the other replicas agree or reject requests. 
@@ -93,7 +93,7 @@ applications. Second, now \xxx's own scheduler can handle the replication logic
 and schedule replicas of the same task on diverse physical machines.
 
 \xxx achieves fast fault-tolerance with RDMA-enabled 
-\paxos protocols~\cite{dare:hpdc15,falcon:github}. \xxx supports both normal 
+\paxos protocols~\cite{dare:hpdc15, falcon:github}. \xxx supports both normal 
 applications (\ie, non-critical) and critical ones. In \xxx, a replicas of 
 controllers run a critical application's same task on diverse physical 
 machines, and controllers use a fast \paxos protocol to agree on computational 
@@ -101,14 +101,14 @@ requests.
 
 % Benefits.
 In an implementation level, \xxx proposes to integrate a RDMA-enabled \paxos 
-protocol with \mesos~\cite{mesos}, a widely used cluster managemement system. 
-This integration forms a mutual beneficial eco-system\footnote{We name our 
-system after the ancient Chinese three-legged tripod, a reliable, multi-purpose 
-container.}: by replicating tasks with \paxos, \xxx ensures that minor failures 
-in a task does not affect the other tasks to compute reply efficiently. By 
-leveraging \mesos's resource allocation and isolation feature, \xxx can run 
-diverse applications on the same physical machine, saving much of the phyiscal 
-hardware cost in typical \paxos.
+protocol with \mesos~\cite{mesos:nsdi11}, a widely used cluster managemement 
+system. This integration forms a mutual beneficial eco-system\footnote{We name 
+our system after the ancient Chinese three-legged tripod, a reliable, 
+multi-purpose container.}: by replicating tasks with \paxos, \xxx ensures that 
+minor failures in a task does not affect the other tasks to compute reply 
+efficiently. By leveraging \mesos's resource allocation and isolation feature, 
+\xxx can run diverse applications on the same physical machine, saving much of 
+the phyiscal hardware cost in typical \paxos.
 
 % P5: Applications enjoy better latency and fault-tolerance.
 
@@ -122,7 +122,7 @@ hardware cost in typical \paxos.
 % architecture. 
 
 In addition to fault-tolerance, \xxx's design can also mitigate the 
-tail-tolerance problem (or straggler)~\cite{tail:scale} in cluster computing. 
+tail-tolerance problem (or straggler)~\cite{tail:cacm13} in cluster computing. 
 The tail of latency distribution problem is pervasive for decades: since a 
 job request consists of tasks on diverse machines, the response of this 
 job is often bounded by the slowest task. Although \xxx is not the first work 
