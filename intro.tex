@@ -3,8 +3,8 @@
 % P1: lots of applications require various big data frameworks. Trading, fraud 
 % detection, aviation, medical, military. But existing systems can not meet the 
 % high latency and availability requriements of these applications.
-Driven the the drastically increasing computational demands and the volumns of 
-data, cluster managemement systems (\eg, Mesos~\cite{mesos:nsdi11}) are 
+Driven the the drastically increasing computational demands and the volumes of 
+data, cluster management systems (\eg, \mesos~\cite{mesos:nsdi11}) are 
 incorporating more and more applications (\eg, Spark~\cite{spark:nsdi12} and 
 \redis~\cite{redis}) in order to harness the computational resources in 
 clusters for these applications. Applications not only include typical batch 
@@ -12,20 +12,20 @@ frameworks (\eg, Hadoop~\cite{hadoop}), but also critical applications such as
 trading platforms, fraud detection systems, health care systems, and military 
 systems. We consider an application \emph{critical} if its high requirements on 
 availability and response time. For example, a high-frequency trading platform 
-tends to be highly-availabile during the stock operation hours, and adding a few 
+tends to be highly-available during the stock operation hours, and adding a few 
 hundred \us to the platform's response time means huge money lost.
 
 Unfortunately, despite recent advances in building and applying cluster 
-managemement systems~\cite{borg:eurosys15,mesos:nsdi11,tupperware,yarn:socc13,
+management systems~\cite{borg:eurosys15,mesos:nsdi11,tupperware,yarn:socc13,
 autopilot:sosp07,quincy:sosp09,apollo:osdi14,fuxi:vldb14}, these systems are 
 still difficult to meet the high requirements of critical applications because 
 these systems do not provide high-availability to the applications. 
-Specifically, to make the systems themselves highly-availabile, existing systems 
+Specifically, to make the systems themselves highly-available, existing systems 
 typically replicate their controller component which accepts tasks, allocate 
-computational resources, and (re)schedule tasks on availabile resources. 
+computational resources, and (re)schedule tasks on available resources. 
 However, the applications themselves are not replicated: if an application 
 crashes or a computational resource goes down (\eg, hardware errors), these 
-systems have to reschedule the tasks, leaving an arbitral unavailable time 
+systems have to reschedule the tasks, leaving an arbitrary unavailable time 
 window for these applications. A possible key reason of this problem is that 
 these systems are initially designed for big-data engines which already 
 considered fault recovery (but, not availability).
@@ -68,7 +68,7 @@ applications could be integrating \paxos within each application. However,
 doing so faces two issues. First, \paxos is notoriously difficult to 
 understand~\cite{raft:usenix14}, implement~\cite{paxos:practical}, and 
 verify~\cite{demeter:sosp11}. Second, running a \paxos-enabled application in a 
-cluster managemement system could be problematic because the system is unaware 
+cluster management system could be problematic because the system is unaware 
 of the. For instance, if the system schedules all the replicas of the same 
 task on the same machine, then a single-point failure on this machine 
 will turn down all replicas. 
@@ -101,14 +101,14 @@ requests.
 
 % Benefits.
 In an implementation level, \xxx proposes to integrate a RDMA-enabled \paxos 
-protocol with \mesos~\cite{mesos:nsdi11}, a widely used cluster managemement 
+protocol with \mesos~\cite{mesos:nsdi11}, a widely used cluster management 
 system. This integration forms a mutual beneficial eco-system\footnote{We name 
 our system after the ancient Chinese three-legged tripod, a reliable, 
 multi-purpose container.}: by replicating tasks with \paxos, \xxx ensures that 
 minor failures in a task does not affect the other tasks to compute reply 
 efficiently. By leveraging \mesos's resource allocation and isolation feature, 
 \xxx can run diverse applications on the same physical machine, saving much of 
-the phyiscal hardware cost in typical \paxos.
+the physical hardware cost in typical \paxos.
 
 % P5: Applications enjoy better latency and fault-tolerance.
 
@@ -128,7 +128,7 @@ job request consists of tasks on diverse machines, the response of this
 job is often bounded by the slowest task. Although \xxx is not the first work 
 that presents a replication approach to address the straggler 
 problem~\cite{dolly:nsdi13}, \xxx's tail-tolerance design is built on top of its 
-\paxos replication achitecture for simplicy and generality.
+\paxos replication architecture for simplicity and generality.
 
 % We propose a general approach with 
 % \xxx's fault-tolerance architecture: \xxx collects replicas' output on a request 
