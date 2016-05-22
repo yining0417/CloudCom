@@ -115,17 +115,24 @@ hardware cost in typical \paxos.
 % hard to build.
 
 % P7: Can also address the performance problem: slow tail.
-In addition to fault-tolerance, \xxx's design addresses another tail-tolerance 
-problem~\cite{tail:scale} in cluster computing. The tail of latency 
-distribution problem is pervasive for decades: since a request 
-involves computations on lots of machines, the response of this request is 
-often delayed until the last computation is done. To address this problem, 
-several approaches~\cite{mapreduce,spark,tail:scale} have leveraged replicating 
-specific computions in application logic. We propose a general approach with 
-\xxx's fault-tolerance architecture: \xxx collects replicas' output on a 
-request with its consensus protocol, it then replies to client programs with 
-the fastest replica's result. Therefore, applications can safely ignore this 
-problem and focus on their application logic.
+% A happy side-effect in \xxx is that it 
+% addresses a pervasive latency-tail challenge via its fault-tolerance 
+% architecture. 
+
+In addition to fault-tolerance, \xxx's design can also mitigate the 
+tail-tolerance problem (or straggler)~\cite{tail:scale} in cluster computing. 
+The tail of latency distribution problem is pervasive for decades: since a 
+job request consists of tasks on diverse machines, the response of this 
+job is often bounded by the slowest task. Although \xxx is not the first work 
+that presents a replication approach to address the straggler 
+problem~\cite{dolly:nsdi13}, \xxx's tail-tolerance design is built on top of its 
+\paxos replication achitecture for simplicy and generality.
+
+% We propose a general approach with 
+% \xxx's fault-tolerance architecture: \xxx collects replicas' output on a request 
+% with its consensus protocol, it then replies to client programs with the 
+% fastest replica's result. Therefore, applications can safely ignore this problem 
+% and focus on their application logic.
 
 % P8: in essense, a datacenter OS: handles resource allocation/isolation, 
 % fault-tolerance, and performance for frameworks (applications). Use 

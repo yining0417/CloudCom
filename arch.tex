@@ -266,4 +266,23 @@ computing resources (\eg, trading and medical platforms).
 
 \section{Tail-tolerance Design} \label{sec:tail}
 
-TBD. 
+\xxx's tail tolerance design is based on its \paxos consensus protocol. This 
+design consists of three steps. First, for each job request, both the leader 
+controller and standby controllers schedule the same job and receive output of 
+this job. When each standby controller receives a job output, it 
+uses RDMA WRITEs to write back their job outputs to the leader master's local 
+memory.
+
+Second, the leader master also waits for its own job output and frequently 
+polls from the other replicas' outputs for this job. Third, if the leader finds 
+that standby masters have already written back an output for a job, it sends 
+back the output to the application scheduler and ignores its own job output. 
+This guarantees that application schedulers receive job outputs without being 
+affected by stragglers in minor replicated jobs.
+
+Although \xxx is not the first work that presents a replication approach to 
+address the straggler problem (\eg, Dolly~\cite{dolly:nsdi13}), \xxx's 
+tail-tolerance design has two practical benefits. First, \xxx's design is 
+simple and general to applications, because it is built on top of its \paxos 
+replication achitecture without extra replication logic. Second, the standby 
+masters' output writeback are fast through RDMA writes. 
