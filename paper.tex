@@ -26,7 +26,6 @@
 \usepackage{flushend}
 \usepackage{hhline}
 \usepackage{authblk}
-\usepackage[boxed, ruled, noline, noend]{algorithm2e}
 \newcommand{\doi}{10.1145/2797022.2797033}
 
 
@@ -49,12 +48,11 @@ Permission to make digital or hard copies of all or part of this work for person
  
  \vspace{\baselineskip}\noindent
 %  Copyright is held by the Owner/Author(s).\\
- \textit{Submitted to APSys '16, Aug 4-5, 2016, Hong Kong, China}.\\
-%  2015 ACM. ISBN 978-1-4503-3554-6/15/07\$15.00.
+ \textit{APSys '15, July 27-28, 2015, Tokyo, Japan}.\\
+ 2015 ACM. ISBN 978-1-4503-3554-6/15/07\$15.00.
  
-%  \noindent
-%  http://dx.doi.org/\doi
- }
+ \noindent
+ http://dx.doi.org/\doi}
  }
  \end{picture}
  \end{center}
@@ -88,10 +86,9 @@ Permission to make digital or hard copies of all or part of this work for person
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %     macro
 
-\newcommand{\xxx}{\mbox{\textsc{Tripod}}\xspace}
+\newcommand{\xxx}{\mbox{\textsc{RepFrame}}\xspace}
 \newcommand{\paxos}[0]{\textsc{Paxos}\xspace}
-\newcommand{\mytitle}[0]{\textbf {\xxx: An Efficient, Highly-available Cluster 
-Management System}}
+\newcommand{\mytitle}[0]{\textbf {\xxx: An Efficient and Transparent Framework for Dynamic Program Analysis}}
 \newcommand{\mykeywords}[0]{State Machine Replication, Fault Tolerance, Stable Multithreading,
   Software Reliability}
 
@@ -100,10 +97,7 @@ Management System}}
 
 \usepackage[square,comma,numbers,sort]{natbib}
 \usepackage{hypernat}
-% \usepackage{hyperref}
-\usepackage{url}
-\usepackage{breakurl} 
-\usepackage[breaklinks]{hyperref}
+\usepackage{hyperref}
 
 %% fill in pdf info here
 \hypersetup{%
@@ -116,7 +110,6 @@ pdfstartview={FitH},
 urlcolor=cyan,
 pdfpagelabels=true,
 pdfdisplaydoctitle=true,
-breaklinks=true,
 }%
 
 %\usepackage{breakurl}
@@ -163,19 +156,19 @@ breaklinks=true,
 \newcommand{\dmt}[0]{DMT\xspace}
 \newcommand{\smt}[0]{StableMT\xspace}
 \newcommand{\smr}[0]{SMR\xspace}
-\newcommand{\us}[0]{\(\mu\text{s}\)\xspace}
-\newcommand{\ms}[0]{ms\xspace}
 %\newcommand{\tsmr}[0]{TSMR\xspace}
 
+\newcommand{\us}[0]{\(\mu\text{s}\)\xspace}
+\newcommand{\ms}[0]{ms\xspace}
+\newcommand{\borg}[0]{\textsc{Borg}\xspace}
+\newcommand{\calvin}[0]{\textsc{Calvin}\xspace}
+\newcommand{\mesos}[0]{\textsc{Mesos}\xspace}
 \newcommand{\repbox}{\mbox{\textsc{Crane}}\xspace}
 \newcommand{\racepro}[0]{\textsc{RacePro}\xspace}
 \newcommand{\criu}[0]{\textsc{CRIU}\xspace}
 \newcommand{\tern}[0]{\textsc{Tern}\xspace}
 \newcommand{\peregrine}[0]{\textsc{Peregrine}\xspace}
 \newcommand{\parrot}[0]{\textsc{Parrot}\xspace}
-\newcommand{\calvin}[0]{\textsc{Calvin}\xspace}
-\newcommand{\mesos}[0]{\textsc{Mesos}\xspace}
-\newcommand{\borg}[0]{\textsc{Borg}\xspace}
 \newcommand{\grace}[0]{Grace\xspace}
 \newcommand{\coredet}[0]{\textsc{CoreDet}\xspace}
 \newcommand{\kendo}[0]{Kendo\xspace}
@@ -329,21 +322,9 @@ breaklinks=true,
 
 \input{intro}
 \input{arch}
-% \input{impl}
 \input{eval}
 \input{related}
 \input{conclusion}
-% \input{background}
-% \input{overview}
-% \input{interface}
-% \input{consensus}
-% \input{impl}
-% \input{discussion}
-% \input{eval}
-% \input{related}
-% \input{conclusion}
-% \input{ack}
-
 \end{sloppypar}
 
 % uncomment to tweak with bib spacing
