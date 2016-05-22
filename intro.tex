@@ -26,11 +26,11 @@ lost~\cite{nosql:finance}.
 Unfortunately, despite much effort, these systems are still difficult to meet 
 the high requirements of critical applications because these systems do not 
 provide high-availability to the applications. Specifically, existing systems 
-typically replicate their job controller component which accepts tasks, allocate 
-computational resources, and (re)schedule tasks on available resources. However, 
+typically replicate their job controller component which accepts jobs, allocate 
+computational resources, and (re)schedule jobs on available resources. However, 
 the applications themselves are not replicated: if an application crashes or a 
 computational resource goes down (\eg, hardware errors), these systems have to 
-reschedule the tasks, leaving an arbitrary unavailable time window for these 
+reschedule the jobs, leaving an arbitrary unavailable time window for these 
 applications.
 % A possible key reason of this problem is that these systems are 
 % initially designed for big-data engines which already considered fault recovery 
@@ -114,10 +114,10 @@ cluster management system. This integration forms a mutual beneficial
 eco-system\footnote{We name 
 our system after the ancient Chinese three-legged tripod, a reliable, 
 multi-purpose container.}: by replicating tasks with \paxos, \xxx ensures that 
-minor failures in a task does not affect the other tasks to compute results 
-efficiently. By leveraging \mesos's resource allocation and isolation feature, 
-\xxx can run diverse applications on the same physical machine, saving much of 
-the physical hardware cost in traditional replication techniques.
+minor failures in a job does not affect its replicated jobs to compute 
+results efficiently. By leveraging \mesos's resource allocation and isolation 
+feature, \xxx can run diverse applications on the same physical machine, saving 
+much of the physical hardware cost in traditional replication techniques.
 
 % P5: Applications enjoy better latency and fault-tolerance.
 
