@@ -156,10 +156,10 @@ program's inbound socket calls (\eg, \recv) and agrees on the received inputs
 in these calls across replicas of the same program. To emulate a typical 
 Twitter deployment, we ran this protocol with \redis, a popular key-value store 
 that Twitter uses, and we ran \redis's own benchmark workload. Evaluation 
-showed that, compared to \redis's unreplicated execution, this protocol 
-incurred merely \latencyoverhead\% overhead on response time and 
-\tputoverhead\% overhead on throughput. This protocol was 40.1X faster 
-than \zookeeper's SMR protocol~\cite{calvin:sigmod12} which runs on TCP/IP.
+showed that, compared to \redis's unreplicated execution, \xxx
+incurred merely a \tputoverhead\% overhead in throughput and \latencyoverhead\% 
+in response time. This protocol was 40.1X faster than \zookeeper's SMR 
+protocol~\cite{calvin:sigmod12} which runs on TCP/IP.
 % These initial evaluation results suggest that 
 % \xxx can achieve reasonable performance overhead on critical applications.
 
