@@ -143,8 +143,11 @@ similar consensus latency as \zookeeper's because all their consensus protocols
 are based on TCP/IP.
 
 This comparison shows that \xxx's \paxos protocol can be leveraged to speedup 
-the SMR services in existing cluster management systems (\eg, \mesos currently 
-uses \zookeeper).
+the SMR services in existing cluster management systems. For instance, \mesos 
+currently uses \zookeeper to elect the leader controller. We are working on 
+integrating this protocol with \mesos: we not only use this protocol to elect 
+the leader controller, but we also use it to agree on job requests among 
+controllers.
 
 
 
