@@ -22,15 +22,15 @@ time means big money lost~\cite{nosql:finance}.
 % management systems~\cite{borg:eurosys15,mesos:nsdi11,tupperware,yarn:socc13,
 % autopilot:sosp07,quincy:sosp09,apollo:osdi14,fuxi:vldb14}. 
 
-Unfortunately, despite much effort, these systems are still difficult to meet 
-the high requirements of critical applications because these systems do not 
-provide high-availability to the applications. Specifically, existing systems 
-typically replicate their job controller component which accepts jobs, allocate 
-computational resources, and (re)schedule jobs on available resources. However, 
-the applications themselves are not replicated: if an application crashes or a 
-computational resource goes down (\eg, hardware errors), these systems have to 
-reschedule the jobs, leaving an arbitrary unavailable time window for these 
-applications.
+Unfortunately, despite much effort, existing systems are still difficult to 
+meet the high requirements of critical applications because these systems do 
+not provide high-availability to applications. Specifically, existing 
+systems typically replicate their job controllers which accept jobs, 
+allocate computational resources, and reschedule jobs on exceptional cases. 
+However, the applications themselves are not replicated: if an application 
+crashes or a computational resource goes down (\eg, hardware errors), these 
+systems have to reschedule or recompute jobs, leaving an arbitrary 
+unavailable time window for these applications.
 % A possible key reason of this problem is that these systems are 
 % initially designed for big-data engines which already considered fault recovery 
 % (but, not availability).
@@ -45,7 +45,9 @@ to enforce the same inputs among
 replicas. An input consensus can achieve as long as a majority of replicas 
 agree, thus SMR can tolerate various faults such as minor replica failures. For 
 instance, two existing systems \borg~\cite{borg:eurosys15} and 
-\mesos~\cite{mesos:nsdi11} use \paxos to replicate their controllers.
+\mesos~\cite{mesos:nsdi11} use \paxos to replicate their controllers and let a 
+leading controller to handle all jobs. If this controller fails, \paxos elects 
+another leader controller.
 
 % Typically, \paxos assigns a replica as the leader to propose 
 % consensus requests, and the other replicas agree or reject requests. 
@@ -58,17 +60,18 @@ takes hundreds of \us, a program running in an SMR system with three replicas
 must wait at least this time before processing an input. 
 
 % P3: RDMA, new opportunity. Two RDMA systems.
-Recently, Remote Direct Access Memory (RDMA) becomes commonplace in datacenters 
-because of the decreasing prices of RDMA hardware. RDMA allows a process to 
-directly write to the user space memory of a remote process, completely 
-bypassing the remote OS kernel or CPU (the so called ``one-sided" operations). 
-An evaluation~\cite{pilaf:usenix14} shows that such a write round-trip takes 
-only $\sim$3 \us in the Infiniband architecture~\cite{infiniband}. Two recent 
-RDMA-enabled \paxos implementations~\cite{dare:hpdc15,falcon:github} reported 
+Fortunately, Remote Direct Access Memory (RDMA) becomes commonplace in 
+datacenters because of the decreasing prices of RDMA hardware. RDMA allows a 
+process to directly write to the user space memory of a remote process, 
+completely bypassing the remote OS kernel or CPU (the so called ``one-sided" 
+operations). An evaluation~\cite{pilaf:usenix14} shows that such a write 
+round-trip takes only $\sim$3 \us in the Infiniband 
+architecture~\cite{infiniband}. A recent 
+RDMA-enabled \paxos implementation~\cite{dare:hpdc15} reported 
 $\sim$15 \us in consensus latency.
 
 A naive approach to achieve high-availability for critical applications could 
-be integrating \paxos within every application. However, doing so has two 
+be integrating \paxos within every application. However, doing so has two major
 issues. First, \paxos is notoriously difficult 
 to understand~\cite{raft:usenix14}, implement~\cite{paxos:practical}, and 
 verify~\cite{demeter:sosp11}.
@@ -88,11 +91,16 @@ of this machine will turn down all replicas.
 
 % P4: We present a new fast, highly-available computing platform by building a 
 % eco system with Mesos and RDMA SMR systems.
-This paper proposes the design of \xxx, a cluster management system that 
-automatically provides high-availability to general applications. \xxx makes 
-replicas of controllers agree on job requests efficiently with 
-RDMA-enabled \paxos protocols~\cite{dare:hpdc15, falcon:github}. To avoid the 
-two aforementioned issues, \xxx chooses to integrate \paxos in the 
+This paper proposes the design of \xxx,\footnote{We name our system after the 
+ancient Chinese three-legged tripod, a reliable, multi-purpose container.} a 
+cluster management system that automatically provides high-availability to 
+general applications. \xxx maintains replicas of controllers with a RDMA-enabled 
+\paxos protocol~\cite{falcon:github}. Unlike existing systems which let only the 
+leader controller schedule jobs, \xxx runs replicas of the same job using the 
+replicas of controllers, and \xxx let controllers agree on job requests 
+efficiently with this protocol. 
+
+To avoid the two aforementioned issues, \xxx chooses to integrate \paxos in the 
 cluster system, not in applications. Doing so has two benefits. First, \xxx's 
 \paxos acts a single, general SMR service to applications: we can just 
 leverage existing verification tools~\cite{modist:nsdi09,demeter:sosp11} to 
@@ -107,16 +115,19 @@ replication logic and do careful, replication-aware scheduling for jobs.
 % requests. 
 
 % Benefits.
-In an implementation level, \xxx integrates a RDMA-enabled \paxos 
-protocol~\cite{falcon:github} with \mesos~\cite{mesos:nsdi11}, a widely used 
-cluster management system. This integration forms a mutual beneficial 
-eco-system\footnote{We name 
-our system after the ancient Chinese three-legged tripod, a reliable, 
-multi-purpose container.}: by replicating jobs with \paxos, \xxx ensures that 
-minor failures in a job does not affect its replicated jobs to compute 
-results efficiently. By leveraging \mesos's resource allocation and isolation 
-feature, \xxx can run diverse applications on the same physical machine, saving 
-much of the physical hardware cost in traditional replication techniques.
+In an implementation level, \xxx integrates \mesos~\cite{mesos:nsdi11}, a widely 
+used cluster management system, with a new RDMA-enabled \paxos 
+protocol~\cite{falcon:github}. Compared to a prior RDMA-enabled \paxos 
+protocol~\cite{dare:hpdc15}, our new protocol can support general programs 
+transparently without modifications.
+
+\xxx's \mesos-\paxos integration forms a mutual beneficial 
+eco-system: by replicating jobs with \paxos, 
+\xxx ensures that minor failures in a job does not affect its replicated jobs to 
+compute results efficiently. By leveraging \mesos's resource allocation and 
+isolation feature, \xxx can run diverse applications on the same physical 
+machine, saving much of the physical hardware cost in traditional replication 
+techniques.
 
 % P5: Applications enjoy better latency and fault-tolerance.
 
