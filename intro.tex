@@ -31,7 +31,8 @@ capturing the entire executions state of the VM at relatively high frequency so 
 be reflected to the backup machine nearly instantly. But it suffers from two problems. The first one 
 is significant service interruption. The second one is poor network performance.
 
-% P4: Our key insight is that a consensus protocol (e.g. Paxos) to enforce the same input on the service software among
+% P4: Our key insight is that there is no need to replicate the whole system.
+% A consensus protocol (e.g. Paxos) to enforce the same input on the service software among
 % the replicas is enough to ensure fault-tolerance.
 % Here, the input refers to the network interaction from client to the service on the primary machine.
 
@@ -47,7 +48,7 @@ message round-trip between two replicas. Fortunately, Remote Direct Access Memor
 % P6: We present a fast, fault-tolerant system.
 % We intercept at the networking level and invoke RDMA-based Paxos protocol.
 
-% P7: benefits: fast (short response time), service is highly available (VM does not need to be suspended) and general (requiring no modification on the service software) 
+% P7: benefits: fast (short response time), service is always available (VM does not need to be suspended) and general (requiring no modification on the service software) 
 
 % P8: We also tackle nondeterminism - output check protocol
 
