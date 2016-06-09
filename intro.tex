@@ -1,197 +1,56 @@
 \section{Introduction} \label{sec:intro}
 
-% P1: lots of applications require various big data frameworks. Trading, fraud 
-% detection, aviation, medical, military. But existing systems can not meet the 
-% high latency and availability requriements of these applications.
-Driven by the drastically increasing computational demands and the volumes of 
-data, cluster 
-management systems~\cite{borg:eurosys15,mesos:nsdi11,tupperware,yarn:socc13,
-autopilot:sosp07,quincy:sosp09,apollo:osdi14,fuxi:vldb14} 
-incorporate more and more applications. Many applications, including trading, 
-fraud detection, health care, social-networking, and military applications, are 
-\emph{critical}, because these applications naturally require high-availability 
-and low performance overhead in deployments. For instance, a high-frequency 
-trading application tends to be highly-available during its operation hours, and 
-adding merely hundreds of \us to its response time means big money 
-lost~\cite{nosql:finance}. Another instance is social-networking: minor machine 
-errors in Facebook cluster have led to several whole-site outage 
-events~\cite{facebook:outage}.
+% P1: virtualization is good and desire for fault tolerance in virtualized environment is pervasive.
+By simplifying provisioning and allowing multiple servers to be consolidated on a 
+small number of physical hosts, virtualization has made low- and middle-end systems 
+popular than ever. Nevertheless, the benefits of consolidation come with a hidden cost 
+in the form of increased exposure to hardware failure. 
 
-% This 
-% paper considers an application \emph{critical} if it has high requirements on 
-% availability and response time. 
+% P2: primary-backup based replication of virtual machines is an attractive technique 
+% to ensure fault tolerance in virtualized environments
+% two existing approaches:  log-replay is highly architecture-specific and slow for multi-processor
 
-% There are already enormous advances in building and applying cluster 
-% management systems~\cite{borg:eurosys15,mesos:nsdi11,tupperware,yarn:socc13,
-% autopilot:sosp07,quincy:sosp09,apollo:osdi14,fuxi:vldb14}. 
+% requiring that the system have a comprehensive understanding of the instruction set being executed and the sources of external events
+% reproducing the exact order in which CPU cores access the shared memory
 
-Although recent advances on applying cluster management systems are exciting, 
-existing systems are still difficult to meet the high requirements of 
-critical applications because these systems do not provide high-availability to 
-applications. Typically, existing systems replicate their job 
-controllers which accept job requests, allocate computational resources, and 
-reschedule jobs on exceptional cases. However, the applications themselves are 
-not replicated: if an application crashes or a computational resource goes down 
-(\eg, hardware errors), these systems have to reschedule or recompute jobs, 
-leaving an arbitrary unavailable time window for these applications.
-% A possible key reason of this problem is that these systems are 
-% initially designed for big-data engines which already considered fault recovery 
-% (but, not availability).
+Replication at the Virtual Machine Monitor Layer (VMM) is a promising technique to 
+ensure fault tolerance in virtualized environments. It offers seamless failover for the 
+complete service state, including everything from the service software to the operating system. 
+Currently there are two approaches to primary-backup based replication of virtual machines.
+log-replay records input and non-deterministic events of the primary machine 
+and have them deterministically replayed on the backup machine to replicate the primary's state 
+in case the primary node fails. However, deterministic replay is highly architecture-specific and 
+introduces unacceptable performance degradation when applied in multi-core systems.
 
-% P2: SMR a promising approach, but slow.
-State machine replication (SMR)~\cite{paxos} is a promising approach 
-to address the availability problem of critical applications. SMR runs the 
-same program on a number of physical machines (replicas) and uses a distributed 
-consensus protocol (\eg, 
-\paxos~\cite{paxos:practical,paxos,paxos:simple,paxos:complex,epaxos:sosp13}) 
-to enforce the same inputs among replicas. An input consensus can achieve as 
-long as a majority of replicas agree, thus SMR can tolerate various faults such 
-as minor replica failures. For instance, 
-\mesos~\cite{borg:eurosys15,mesos:nsdi11} uses \paxos to replicate their 
-controllers and assigns a leader controller to handle all jobs. If this 
-controller goes down, \paxos elects a new leader.
+% P3: the other approach is checkpoint-recovery based replication of virtual machines
+% significant and frequent service downtime
+% output commit - consistency requirement. But it comes with degraded network performance.
+% Unacceptable for online services where clients expect reasonable bandwidth and short response times from the server machines
+On the other hand, Checkpoint-recovery based replication of virtual machines is delivered by 
+capturing the entire executions state of the VM at relatively high frequency so that changes can 
+be reflected to the backup machine nearly instantly. But it suffers from two problems. The first one 
+is significant service interruption. The second one is poor network performance.
 
-% Typically, \paxos assigns a replica as the leader to propose 
-% consensus requests, and the other replicas agree or reject requests. 
+% P4: Our key insight is that a consensus protocol (e.g. Paxos) to enforce the same input on the service software between 
+% the primary machine and the backup nodes is enough to ensure fault-tolerance.
+% Here, the input refers to the network interaction from client to the service on the primary machine.
+
+% Note: limitation: cannot handle non-deterministic events.
 
 
-However, \paxos's consensus is notoriously difficult to be fast. 
+% P5: However, traditional Paxos is slow
+% Fortunately, RDMA opens new opportunity for mitigating consensus latency
+However, Paxos consensus is notoriously difficult to be fast. 
 To agree on an input, traditional consensus protocols invoke at least one 
-message round-trip between two replicas. A \v{ping} in Ethernet 
-takes hundreds of \us. This is probably why existing 
-systems only use \paxos to elect a leader controller, not to agree on inputs 
-(\ie, job requests).
+message round-trip between two replicas. Fortunately, Remote Direct Access Memory (RDMA) opens new opportunity.
 
-% P3: RDMA, new opportunity. Two RDMA systems.
-Fortunately, Remote Direct Access Memory (RDMA) becomes commonplace in 
-datacenters because of the decreasing prices of RDMA hardware. RDMA allows a 
-process to directly write to the user space memory of a remote process, 
-completely bypassing the remote OS kernel or CPU (the so called ``one-sided" 
-operations). An evaluation~\cite{pilaf:usenix14} shows that such a write 
-round-trip takes only $\sim$3 \us in the Infiniband 
-architecture~\cite{infiniband}. A recent 
-RDMA-enabled \paxos implementation~\cite{dare:hpdc15} reported 
-$\sim$15 \us in consensus latency.
+% P6: We present a fast, fault-tolerant system.
+% We intercept at the networking level and invoke RDMA-based Paxos protocol.
 
-A naive approach to achieve high-availability for critical applications could 
-be integrating \paxos within every application. However, this integration 
-approach has two major issues. First, \paxos is notoriously difficult 
-to understand~\cite{raft:usenix14}, implement~\cite{paxos:practical}, and 
-verify~\cite{demeter:sosp11}.
+% P7: benefits: fast (short response time), service is highly available (VM does not need to be suspended) and general (requiring no modification on the service software) 
 
-Second, running a \paxos-enabled application with a 
-cluster management system can be problematic because the system is unaware 
-of replication logic. For instance, if an application submits three copies of 
-the same job to the system, the system may happen to schedule all three 
-copies on the same machine (although it should schedule them on 
-different machines to tolerate machine failures).
-% Integrating \paxos to an application requires 
-% strong \paxos expertise for the application developers
+% P8: We also tackle nondeterminism - output check protocol
 
-% As a common 
-% RDMA practice, to ensure that such a write successfully resides in the 
-% memory of a remote process, the local process should wait until the remote NIC 
-% (network interface card) sends an ACK to the local host's NIC. 
+% P9: tail-tolerance
 
-% P4: We present a new fast, highly-available computing platform by building a 
-% eco system with Mesos and RDMA SMR systems.
-This paper proposes the design of \xxx,\footnote{We name our system after the 
-ancient Chinese three-legged tripod, a reliable, multi-purpose container.} a 
-cluster management system that automatically provides high-availability to 
-general applications. \xxx maintains replicas of controllers with a new 
-RDMA-enabled \paxos protocol~\cite{falcon:github}. Unlike existing systems which 
-let only the leader controller schedule jobs, \xxx runs replicas of the same job 
-using the replicas of controllers: after controllers agree on a new job, \xxx 
-lets each controller schedule an independent copy of this job.
-
-To avoid the two aforementioned integration issues, \xxx chooses to integrate 
-\paxos in the cluster system, not in applications. Doing so has two benefits. 
-First, \xxx's \paxos acts as a single, general SMR service to applications. We 
-can just leverage existing verification 
-tools~\cite{modist:nsdi09,demeter:sosp11} to make sure that this \paxos 
-protocol is robust and correct, and then we can benefit many applications. 
-Second, now \xxx's own scheduler can handle the replication logic and do 
-careful, replication-aware scheduling for jobs.
-
-%  In \xxx, a 
-% replicas of controllers run a critical application's same task on diverse 
-% physical machines, and controllers use a fast \paxos protocol to agree on 
-% computational 
-% requests. 
-
-% Benefits.
-In an implementation level, \xxx integrates \mesos~\cite{mesos:nsdi11}, a widely 
-used cluster management system, with a new RDMA-enabled \paxos 
-protocol~\cite{falcon:github}. Compared to a prior RDMA-enabled \paxos 
-protocol~\cite{dare:hpdc15}, our new protocol can support general programs 
-transparently without modifications.
-
-\xxx's \mesos-\paxos integration forms a mutual beneficial 
-eco-system: by replicating jobs with \paxos, 
-\xxx ensures that minor failures in a job do not affect other replicas of 
-this job to compute results efficiently. By leveraging \mesos's resource 
-allocation and isolation features, \xxx can run different jobs' replicas on the 
-same physical machine, reducing much of hardware cost in traditional 
-\paxos approaches~\cite{crane:sosp15,rex:eurosys14}.
-
-% P5: Applications enjoy better latency and fault-tolerance.
-
-% P6: Benefit, now frameworks can focus on their own logic, no longer need 
-% fault-toelrance module. Fault-tolerance requires expert knowledge, really 
-% hard to build.
-
-% P7: Can also address the performance problem: slow tail.
-% A happy side-effect in \xxx is that it 
-% addresses a pervasive latency-tail challenge via its fault-tolerance 
-% architecture. 
-
-In addition to fault-tolerance, \xxx also provides a tail-tolerance 
-feature for cluster computing. The tail-of-latency distribution 
-problem~\cite{tail:cacm13} (or straggler) is pervasive: because a 
-job request consists of tasks running on diverse machines, the response time of 
-this job is often bounded by the slowest task. Although \xxx is not the first 
-work that presents a replication approach to address the straggler 
-problem~\cite{dolly:nsdi13}, \xxx provides this feature in a simple and general 
-way on top of its \paxos replication architecture.
-
-% We propose a general approach with 
-% \xxx's fault-tolerance architecture: \xxx collects replicas' output on a request 
-% with its consensus protocol, it then replies to client programs with the 
-% fastest replica's result. Therefore, applications can safely ignore this problem 
-% and focus on their application logic.
-
-% P8: in essense, a datacenter OS: handles resource allocation/isolation, 
-% fault-tolerance, and performance for frameworks (applications). Use 
-% replication to bstract away % physical machine details; frameworks now only 
-% see computing resources, safely ignore other things such as physical 
-% machines, fault-tolerance, and tails.
-As part of \xxx's development, we have implemented an RDMA-enabled \paxos 
-protocol~\cite{falcon:github} in Linux. This protocol intercepts a general 
-program's inbound socket calls (\eg, \recv) and agrees on the received inputs 
-in these calls across replicas of the same program.
-
-To emulate a typical social-networking application, we ran this protocol with 
-\redis~\cite{redis}, a popular key-value store used by Twitter. Evaluation 
-showed that, compared to \redis's unreplicated execution, \xxx incurred merely a 
-\tputoverhead overhead in throughput and \latencyoverhead in response time. 
-This protocol was 40.1X faster than a \zookeeper-based
-SMR protocol~\cite{calvin:sigmod12} which runs on TCP/IP.
-% These initial evaluation results suggest that 
-% \xxx can achieve reasonable performance overhead on critical applications.
-
-% P9: Feasibility study.
-
-% P10: rest of the paper.
-Our major conceptual contribution is \xxx, the first cluster management 
-system design that provides high-availability to general applications. Our 
-engineering contribution includes a fast, general RDMA-enabled \paxos protocol, 
-with its source code available at~\cite{falcon:github}.
-
-The remaining of this paper is organized as follows. \S\ref{sec:background} 
-introduces background on \paxos and RDMA. \S\ref{sec:overview} gives an 
-overview of our \xxx design. \S\ref{sec:tail} describes \xxx's design on 
-tail-tolerance. \S\ref{sec:eval} presents evaluation results, 
-\S\ref{sec:related} discusses related work, and \S\ref{sec:conclusion} 
-concludes.   
-
-
+% P10: rest of the paper
