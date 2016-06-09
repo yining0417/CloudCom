@@ -1,10 +1,14 @@
 \section{Introduction} \label{sec:intro}
 
-% P1: virtualization is good and desire for fault tolerance in virtualized environment is pervasive.
+% P1: virtualization is good
 By simplifying provisioning and allowing multiple servers to be consolidated on a 
 small number of physical hosts, virtualization has made low- and middle-end systems 
 popular than ever. Nevertheless, the benefits of consolidation come with a hidden cost 
 in the form of increased exposure to hardware failure. 
+
+% P2: existing approaches
+Although existing approaches are still not able to efficiently and reliably to provide fault-tolerance 
+in virtualized environment.
 
 % P2: primary-backup based replication of virtual machines is an attractive technique 
 % to ensure fault tolerance in virtualized environments
@@ -45,13 +49,11 @@ However, Paxos consensus is notoriously difficult to be fast.
 To agree on an input, traditional consensus protocols invoke at least one 
 message round-trip between two replicas. Fortunately, Remote Direct Access Memory (RDMA) opens new opportunity.
 
+% P6: Paxos is usually integrated with applciations. 
+
 % P6: We present a fast, fault-tolerant system.
 % We intercept at the networking level and invoke RDMA-based Paxos protocol.
 
-% P7: benefits: fast (short response time), service is always available (VM does not need to be suspended) and general (requiring no modification on the service software) 
-
-% P8: We also tackle nondeterminism - output check protocol
-
-% P9: tail-tolerance
+% P7: benefits: fast (short response time), service is always available (VM does not need to be suspended)
 
 % P10: rest of the paper
