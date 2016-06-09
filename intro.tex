@@ -31,8 +31,8 @@ capturing the entire executions state of the VM at relatively high frequency so 
 be reflected to the backup machine nearly instantly. But it suffers from two problems. The first one 
 is significant service interruption. The second one is poor network performance.
 
-% P4: Our key insight is that a consensus protocol (e.g. Paxos) to enforce the same input on the service software between 
-% the primary machine and the backup nodes is enough to ensure fault-tolerance.
+% P4: Our key insight is that a consensus protocol (e.g. Paxos) to enforce the same input on the service software among
+% the replicas is enough to ensure fault-tolerance.
 % Here, the input refers to the network interaction from client to the service on the primary machine.
 
 % Note: limitation: cannot handle non-deterministic events.
