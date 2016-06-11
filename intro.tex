@@ -13,20 +13,25 @@ environment at low overhead. One typical technique is primary-backup based repli
 virtual machines, including checkpoint-recovery based virtual machine replication and log-replay.
 
 % P3: log-replay is highly architecture-specific and slow for multi-processor
+
+% requiring that the system have a comprehensive understanding of the instruction set being executed and the sources of external events
+% reproducing the exact order in which CPU cores access the shared memory
+
 Log-replay records input and non-deterministic events of the primary machine 
 and have them deterministically replayed on the backup machine to replicate the primary's state 
 in case the primary node fails. However, deterministic replay is highly architecture-specific and 
 introduces unacceptable performance degradation when applied in multi-core systems.
 
-% requiring that the system have a comprehensive understanding of the instruction set being executed and the sources of external events
-% reproducing the exact order in which CPU cores access the shared memory
-
 % P4: Checkpoint-recovery based replication of virtual machines, it suffers from two problems
 % 1. significant VM downtimes
-% 2. network delay. unacceptable for online services where clients expect short response times from the server machines
+% 2. network delay.
 Checkpoint-recovery based replication of virtual machines is the other commonly used solution. 
 It captures the entire execution state of the running VM at relatively high frequency so that changes 
-can be reflected to the backup machine nearly instantly. However, it suffers from two problems.
+can be reflected to the backup machine nearly instantly. However, it suffers from two problems. 
+The first one is network delay. In order to address the output commit problem~\cite{strom1987volatile}, 
+output of the running VM needs be held back until the primary host receives the acknowledgement of 
+the corresponding update from the backup host. Apart from that, VM downtimes incurred by the 
+checkpoint mechanism can be significant.
 
 % P4: Our key insight is that instead of capturing snapshots of the running VM and propagating changes frequently, 
 % enforcing the same ordering over network interaction from outside the VM at all nodes is sufficient to ensure fault tolerance
@@ -47,6 +52,4 @@ message round-trip between two replicas. Fortunately, Remote Direct Access Memor
 % P8: We present a fast, fault-tolerant system.
 % We intercept at the networking level and invoke RDMA-based Paxos protocol.
 
-% P9: benefits: fast (short response time), service is always available (VM does not need to be suspended)
-
-% P10: rest of the paper
+% P9: rest of the paper
