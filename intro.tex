@@ -11,6 +11,8 @@ form of increased exposure to hardware failure.
 % There is no consistency problem
 % One of the biggest additional components that must be designed is the mechanism for starting a backup VM in the same state as a primary VM
 % This mechanism will also be used when restarting a backup VM after a failure has occurred
+% To answer Heming's question: old leader and new leader get to an inconsistent state
+% After recovery, the old leader should be started in the state as the new leader before participating
 
 % 6.824 2016 mit
 % What if the network between primary/backup fails?
