@@ -28,7 +28,7 @@ introduces unacceptable performance degradation when applied in multi-core syste
 Checkpoint-recovery based replication of virtual machines is the other commonly used solution. 
 It captures the entire execution state of the running VM at relatively high frequency so that changes 
 can be reflected to the backup machine nearly instantly. However, it suffers from two problems. 
-The first one is network delay. In order to address the output commit problem~\cite{mediatomb}, 
+The first one is network delay. In order to address the output commit problem~\cite{strom1987volatile}, 
 output of the running VM needs be held back until the primary host receives the acknowledgement of 
 the corresponding update from the backup host. Apart from that, VM downtimes incurred by the 
 checkpoint mechanism can be significant.
