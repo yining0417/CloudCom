@@ -12,6 +12,19 @@ form of increased exposure to hardware failure.
 % One of the biggest additional components that must be designed is the mechanism for starting a backup VM in the same state as a primary VM
 % This mechanism will also be used when restarting a backup VM after a failure has occurred
 
+% 6.824 2016 mit
+% What if the network between primary/backup fails?
+%  -Primary is still running
+%  -Backup becomes a new primary
+%  -Two primaries at the same time!
+% one can avoid split brain using a single "master"
+% master computer decides whether replica A or replica B is the primary
+%   there's just one master, so it never disagrees with itself
+% clients talk to the master
+% this is probably what VMware FT does (atomic test-and-set in shared disk)
+% but what if the master fails?
+%   it's a "single point of failure" -- not so good
+
 There has been a tremendous progress in accommodating virtual machines with high availability, 
 but existing works are still unable to ensure fault-tolerance in virtualized environment at 
 low overhead. One typical technique is primary-backup based replication of virtual machines, 
