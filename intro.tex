@@ -1,41 +1,52 @@
 \section{Introduction} \label{sec:intro}
 
 % P1: virtualization is good
-By simplifying provisioning and allowing multiple servers to be consolidated on a 
-small number of physical hosts, virtualization has made low- and middle-end systems 
-popular than ever. Nevertheless, the benefits of consolidation come with a hidden cost 
-in the form of increased exposure to hardware failure. 
+By simplifying provisioning and allowing multiple servers to be consolidated on a small 
+number of physical hosts, virtualization has made low- and middle-end systems popular 
+than ever. Nevertheless, the benefits of consolidation come with a hidden cost in the 
+form of increased exposure to hardware failure. 
 
 % P2: However, previous approaches still fail to efficiently provide fault-tolerance in virtualized environment
-Although recent advances in accommodating virtual machines with high availability 
-are encouraging, existing works are still unable to ensure fault-tolerance in virtualized 
-environment at low overhead. One typical technique is primary-backup based replication of 
-virtual machines, including checkpoint-recovery based virtual machine replication and log-replay.
+There has been a tremendous progress in accommodating virtual machines with high availability, 
+but existing works are still unable to ensure fault-tolerance in virtualized environment at 
+low overhead. One typical technique is primary-backup based replication of virtual machines, 
+including checkpoint-recovery based virtual machine replication and log-replay.
 
 % P3: log-replay is highly architecture-specific and slow for multi-processor
 
 % requiring that the system have a comprehensive understanding of the instruction set being executed and the sources of external events
 % reproducing the exact order in which CPU cores access the shared memory
 
-Log-replay records input and non-deterministic events of the primary machine 
-and have them deterministically replayed on the backup machine to replicate the primary's state 
-in case the primary node fails. However, deterministic replay is highly architecture-specific and 
+Log-replay records input and non-deterministic events of the primary machine and have them 
+deterministically replayed on the backup machine to replicate the primary's state in case 
+the primary node fails. However, deterministic replay is highly architecture-specific and 
 introduces unacceptable performance degradation when applied in multi-core systems.
 
 % P4: Checkpoint-recovery based replication of virtual machines, it suffers from two problems
-% 1. significant VM downtimes
-% 2. network delay.
+% 1. network delay
+% 2. significant VM downtimes
 Checkpoint-recovery based replication of virtual machines is the other commonly used solution. 
-It captures the entire execution state of the running VM at relatively high frequency so that changes 
-can be reflected to the backup machine nearly instantly. However, it suffers from two problems. 
-The first one is network delay. In order to address the output commit problem~\cite{strom1987volatile}, 
-output of the running VM needs be held back until the primary host receives the acknowledgement of 
-the corresponding update from the backup host. Apart from that, VM downtimes incurred by the 
-checkpoint mechanism can be significant.
+It captures the entire execution state of the running VM at relatively high frequency so that 
+changes can be reflected to the backup machine nearly instantly. However, it suffers from two 
+problems. The first one is network delay. In order to address the output commit 
+problem~\cite{strom1987volatile}, output of the running VM needs be held back until the primary 
+host receives the acknowledgement of the corresponding update from the backup host. Apart from 
+that, VM downtimes incurred by the checkpoint mechanism can be significant.
 
 % P4: Our key insight is that instead of capturing snapshots of the running VM and propagating changes frequently, 
 % enforcing the same ordering over network interaction from outside the VM at all nodes is sufficient to ensure fault tolerance
 % Paxos, a consensus protocol, can help us achieve this
+
+To address the aforementioned problems, this paper presents REPVM, an SMR system that provides 
+fault-tolerance in virtualized environment effciently.
+Fortunately, Paxos, 
+Thus, instead of 
+enforcing the same ordering over network interaction from outside the VM at all nodes is 
+sufficient fault tolerance. However, to achieve this goal, we have to address two practical 
+challenges. First, Second, since Paxos is notoriously difficult to understand and implement, 
+integrating Paxos within every service application is . To relieve the application programmer 
+of the burden of structuring the application as a deterministic state machine, we need to 
+enable state machine replication at the VM level rather than the application level.
 
 % Note: limitation: cannot handle non-deterministic events.
 
