@@ -1,0 +1,25 @@
+% Remember to use the lgrind style
+
+\Head{}
+\File{example.cpp}{2016}{6}{11}{14:34}{566}
+\index{main}\Proc{main}\L{\LB{\K{void}_\V{main}(\K{int}_\V{argc},_\K{char}_*\V{argv}[\,])_\{}}
+\L{\LB{}\Tab{2}{\K{int}_\V{done}_=_\N{0};_\C{}//_Be_1_when_receives_a_kill_signal.\CE{}}}
+\L{\LB{}\Tab{2}{\K{int}_\V{nworkers}_=_\V{atoi}(\V{argv}[\N{1}]);}}
+\L{\LB{}\Tab{2}{\V{pthread\_create}(.\,.\,.,_\V{NULL},_\V{listener},_\V{NULL});}}
+\L{\LB{}\Tab{2}{\K{for}_(\V{i}_=_\N{0};_\V{i}_\<_\V{nworkers};_++\V{i})}}
+\L{\LB{}\Tab{4}{\V{pthread\_create}(.\,.\,.,_\V{NULL},_\V{worker},_\V{NULL});}}
+\L{\LB{}\Tab{2}{.\,.\,.;_\C{}//_Wait_for_threads_to_exit.\CE{}}}
+\L{\LB{\}}}
+\index{listener}\Proc{listener}\L{\LB{\K{void}_*\V{listener}(\K{void}_*\V{arg})_\{}}
+\L{\LB{}\Tab{2}{.\,.\,.;_\C{}//_Call_bind()_and_listen().\CE{}}}
+\L{\LB{}\Tab{2}{\K{while}_(!\V{done}_\&\&_\V{poll}(.\,.\,.))_\{}}
+\L{\LB{}\Tab{6}{\K{int}_\V{sock}_=_\V{accept}(.\,.\,.);}}
+\L{\LB{}\Tab{6}{\V{worklist}.\V{add}(\V{sock});}}
+\L{\LB{}\Tab{2}{\}}}
+\L{\LB{\}}}
+\index{worker}\Proc{worker}\L{\LB{\K{void}_*\V{worker}(\K{void}_*\V{arg})_\{}}
+\L{\LB{}\Tab{2}{\K{while}(!\V{done}_\&\&_\K{int}_\V{sock}_=_\V{worklist}.\V{get}())_\{}}
+\L{\LB{}\Tab{4}{\V{recv}(\V{sock},_\V{buf},_.\,.\,.);}}
+\L{\LB{}\Tab{4}{\V{process\_req}(\V{buf});}}
+\L{\LB{}\Tab{2}{\}_}}
+\L{\LB{\}}}

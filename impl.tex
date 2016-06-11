@@ -1,14 +1,14 @@
-% \section{Implementation} \label{sec:impl}
+ \section{Implementation} \label{sec:impl}
 
-% This section first introduces the implementation details of \xxx's \paxos 
-Syscall interception in Xen Hypervisor
-A syscall aikms at providing userland processes a way to request services 
+\subsection{Syscall interception in Xen Hypervisor}\label{sec:interception}
+
+A syscall aims at providing userland processes a way to request services 
 from the kernel. This includes access storage operations, memory and network 
-access, etc. Typical calls are \open, \close, \read... 
+access, etc. Typical calls are open, close, \recv... 
 
 One way to perform a syscall is to use software interrupts. It consists of 
 four steps: (1) User process copies the syscall number to execute in the CPU register 
-\%EAX; (2) Execute int 0x80 to generate interrupt 0x80; (3) System calls handling 
+EAX; (2) Execute int 0x80 to generate interrupt 0x80; (3) System calls handling 
 routine executed in ring 0; (4) Return the result to the user process.
 
 In order to intercept syscalls within the Xen Hypervisor itself, the first thing to do 

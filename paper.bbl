@@ -1,0 +1,250 @@
+\begin{thebibliography}{10}
+
+\bibitem{infiniband}
+{An Introduction to the InfiniBand Architecture}.
+\newblock \url{http://buyya.com/superstorage/chap42.pdf}.
+
+\bibitem{roce}
+{Mellanox Products: RDMA over Converged Ethernet (RoCE)}.
+\newblock \url{http://www.mellanox.com/page/products_dyn?product_family=79}.
+
+\bibitem{iwrap}
+{RDMA – iWARP}.
+\newblock \url{http://www.chelsio.com/nic/rdma-iwarp/}.
+
+\bibitem{datacenter:os}
+{Why the data center needs an operating system}.
+\newblock \url{ cloud.berkeley.edu/data/dcos.pptx}.
+
+\bibitem{tupperware}
+{Tupperware}.
+\newblock \url{ https://www.youtube.com/watch?v=C_WuUgTqgOc}, 2014.
+
+\bibitem{apollo:osdi14}
+E.~Boutin, J.~Ekanayake, W.~Lin, B.~Shi, J.~Zhou, Z.~Qian, M.~Wu, and L.~Zhou.
+\newblock Apollo: Scalable and coordinated scheduling for cloud-scale
+  computing.
+\newblock In {\em Proceedings of the 11th USENIX Conference on Operating
+  Systems Design and Implementation}, OSDI'14, pages 285--300, Berkeley, CA,
+  USA, 2014. USENIX Association.
+
+\bibitem{chubby:osdi}
+M.~Burrows.
+\newblock The chubby lock service for loosely-coupled distributed systems.
+\newblock In {\em Proceedings of the Seventh Symposium on Operating Systems
+  Design and Implementation (OSDI '06)}, pages 335--350, 2006.
+
+\bibitem{paxos:live}
+T.~D. Chandra, R.~Griesemer, and J.~Redstone.
+\newblock Paxos made live: An engineering perspective.
+\newblock In {\em Proceedings of the Twenty-sixth Annual ACM Symposium on
+  Principles of Distributed Computing (PODC '07)}, Aug. 2007.
+
+\bibitem{spanner:osdi12}
+J.~C. Corbett, J.~Dean, M.~Epstein, A.~Fikes, C.~Frost, J.~J. Furman,
+  S.~Ghemawat, A.~Gubarev, C.~Heiser, P.~Hochschild, W.~Hsieh, S.~Kanthak,
+  E.~Kogan, H.~Li, A.~Lloyd, S.~Melnik, D.~Mwaura, D.~Nagle, S.~Quinlan,
+  R.~Rao, L.~Rolig, Y.~Saito, M.~Szymaniak, C.~Taylor, R.~Wang, and
+  D.~Woodford.
+\newblock Spanner: Google's globally-distributed database.
+\newblock Oct. 2012.
+
+\bibitem{farm:nsdi14}
+A.~Dragojevi\'{c}, D.~Narayanan, O.~Hodson, and M.~Castro.
+\newblock Farm: Fast remote memory.
+\newblock In {\em Proceedings of the 11th USENIX Conference on Networked
+  Systems Design and Implementation}, NSDI'14, 2014.
+
+\bibitem{farm:sosp15}
+A.~Dragojevi\'{c}, D.~Narayanan, E.~B. Nightingale, M.~Renzelmann, A.~Shamis,
+  A.~Badam, and M.~Castro.
+\newblock No compromises: Distributed transactions with consistency,
+  availability, and performance.
+\newblock In {\em Proceedings of the 25th ACM Symposium on Operating Systems
+  Principles (SOSP '15)}, Oct. 2015.
+
+\bibitem{openmpi}
+M.~P.~I. Forum.
+\newblock Open mpi: Open source high performance computing, Sept. 2009.
+
+\bibitem{scatter:sosp11}
+L.~Glendenning, I.~Beschastnikh, A.~Krishnamurthy, and T.~Anderson.
+\newblock Scalable consistency in scatter.
+\newblock In {\em Proceedings of the 23rd ACM Symposium on Operating Systems
+  Principles (SOSP '11)}, Oct. 2011.
+
+\bibitem{demeter:sosp11}
+H.~Guo, M.~Wu, L.~Zhou, G.~Hu, J.~Yang, and L.~Zhang.
+\newblock Practical software model checking via dynamic interface reduction.
+\newblock In {\em Proceedings of the 23rd ACM Symposium on Operating Systems
+  Principles (SOSP '11)}, pages 265--278, Oct. 2011.
+
+\bibitem{hadoop}
+{Hadoop}.
+\newblock \url{http://hadoop.apache.org/core/}.
+
+\bibitem{mesos:nsdi11}
+B.~Hindman, A.~Konwinski, M.~Zaharia, A.~Ghodsi, A.~D. Joseph, R.~Katz,
+  S.~Shenker, and I.~Stoica.
+\newblock Mesos: A platform for fine-grained resource sharing in the data
+  center.
+\newblock In {\em Proceedings of the 8th USENIX conference on Networked Systems
+  Design and Implementation}, NSDI'11, Berkeley, CA, USA, 2011. USENIX
+  Association.
+
+\bibitem{autopilot:sosp07}
+M.~Isard.
+\newblock Autopilot: Automatic data center management.
+\newblock {\em SIGOPS Oper. Syst. Rev.}, 41(2):60--67, Apr. 2007.
+
+\bibitem{dryad}
+M.~Isard, M.~Budiu, Y.~Yu, A.~Birrell, and D.~Fetterly.
+\newblock Dryad: distributed data-parallel programs from sequential building
+  blocks.
+\newblock In {\em EuroSys '07: Proceedings of the Second ACM SIGOPS/EuroSys
+  European Conference on Computer Systems 2007}, pages 59--72, 2007.
+
+\bibitem{quincy:sosp09}
+M.~Isard, V.~Prabhakaran, J.~Currey, U.~Wieder, K.~Talwar, and A.~Goldberg.
+\newblock Quincy: Fair scheduling for distributed computing clusters.
+\newblock In {\em Proceedings of the ACM SIGOPS 22Nd Symposium on Operating
+  Systems Principles}, SOSP '09, pages 261--276, New York, NY, USA, 2009. ACM.
+
+\bibitem{memcached:rdma}
+J.~Jose, H.~Subramoni, K.~Kandalla, M.~Wasi-ur Rahman, H.~Wang, S.~Narravula,
+  and D.~K. Panda.
+\newblock Scalable memcached design for infiniband clusters using hybrid
+  transports.
+\newblock In {\em Proceedings of the 2012 12th IEEE/ACM International Symposium
+  on Cluster, Cloud and Grid Computing (Ccgrid 2012)}, CCGRID '12, 2012.
+
+\bibitem{herd:sigcomm14}
+A.~Kalia, M.~Kaminsky, and D.~G. Andersen.
+\newblock Using rdma efficiently for key-value services.
+\newblock Aug. 2014.
+
+\bibitem{manos:hotdep10}
+M.~Kapritsos and F.~P. Junqueira.
+\newblock Scalable agreement: Toward ordering as a service.
+\newblock In {\em Proceedings of the Sixth International Conference on Hot
+  Topics in System Dependability}, HotDep'10, 2010.
+
+\bibitem{paxos:simple}
+L.~Lamport.
+\newblock Paxos made simple.
+\newblock
+  \url{http://research.microsoft.com/en-us/um/people/lamport/pubs/paxos-simple.pdf}.
+
+\bibitem{paxos}
+L.~Lamport.
+\newblock The part-time parliament.
+\newblock {\em ACM Trans. Comput. Syst.}, 16(2):133--169, 1998.
+
+\bibitem{paxos:fast}
+L.~Lamport.
+\newblock Fast paxos.
+\newblock Fast Paxos, Aug. 2006.
+
+\bibitem{mencius:osdi08}
+Y.~Mao, F.~P. Junqueira, and K.~Marzullo.
+\newblock Mencius: building efficient replicated state machines for wans.
+\newblock In {\em Proceedings of the 8th USENIX conference on Operating systems
+  design and implementation}, volume~8, pages 369--384, 2008.
+
+\bibitem{paxos:practical}
+D.~Mazieres.
+\newblock Paxos made practical.
+\newblock Technical report, Technical report, 2007. http://www. scs. stanford.
+  edu/dm/home/papers, 2007.
+
+\bibitem{ellis:thesis}
+E.~Michael.
+\newblock {\em Scaling Leader-Based Protocols for State Machine Replication}.
+\newblock PhD thesis, University of Texas at Austin, 2015.
+
+\bibitem{pilaf:usenix14}
+C.~Mitchell, Y.~Geng, and J.~Li.
+\newblock Using one-sided rdma reads to build a fast, cpu-efficient key-value
+  store.
+\newblock In {\em Proceedings of the USENIX Annual Technical Conference (USENIX
+  '14)}, June 2013.
+
+\bibitem{epaxos:sosp13}
+I.~Moraru, D.~G. Andersen, and M.~Kaminsky.
+\newblock There is more consensus in egalitarian parliaments.
+\newblock In {\em Proceedings of the 13th ACM Symposium on Operating Systems
+  Principles (SOSP '91)}, Nov. 2013.
+
+\bibitem{raft:usenix14}
+D.~Ongaro and J.~Ousterhout.
+\newblock In search of an understandable consensus algorithm.
+\newblock In {\em Proceedings of the USENIX Annual Technical Conference (USENIX
+  '14)}, June 2014.
+
+\bibitem{dare:hpdc15}
+M.~Poke and T.~Hoefler.
+\newblock Dare: High-performance state machine replication on rdma networks.
+\newblock In {\em Proceedings of the 24th International Symposium on
+  High-Performance Parallel and Distributed Computing}, HPDC '15, 2015.
+
+\bibitem{redis}
+\url{http://redis.io/}.
+
+\bibitem{strom1987volatile}
+R.~E. Strom, D.~F. Bacon, and S.~Yemini.
+\newblock {\em Volatile logging in n-fault-tolerant distributed systems}.
+\newblock IBM Thomas J. Watson Research Division, 1987.
+
+\bibitem{paxos:complex}
+R.~Van~Renesse and D.~Altinbuken.
+\newblock Paxos made moderately complex.
+\newblock {\em ACM Computing Surveys (CSUR)}, 47(3):42:1--42:36, 2015.
+
+\bibitem{yarn:socc13}
+V.~K. Vavilapalli, A.~C. Murthy, C.~Douglas, S.~Agarwal, M.~Konar, R.~Evans,
+  T.~Graves, J.~Lowe, H.~Shah, S.~Seth, B.~Saha, C.~Curino, O.~O'Malley,
+  S.~Radia, B.~Reed, and E.~Baldeschwieler.
+\newblock Apache hadoop yarn: Yet another resource negotiator.
+\newblock In {\em Proceedings of the 4th Annual Symposium on Cloud Computing},
+  SOCC '13, pages 5:1--5:16, New York, NY, USA, 2013. ACM.
+
+\bibitem{borg:eurosys15}
+A.~Verma, L.~Pedrosa, M.~Korupolu, D.~Oppenheimer, E.~Tune, and J.~Wilkes.
+\newblock Large-scale cluster management at google with borg.
+\newblock In {\em Proceedings of the Tenth European Conference on Computer
+  Systems}, EuroSys '15, pages 18:1--18:17, New York, NY, USA, 2015. ACM.
+
+\bibitem{drtm:sosp15}
+X.~Wei, J.~Shi, Y.~Chen, R.~Chen, and H.~Chen.
+\newblock Fast in-memory transaction processing using rdma and htm.
+\newblock In {\em Proceedings of the 25th ACM Symposium on Operating Systems
+  Principles (SOSP '15)}, SOSP '15, Oct. 2015.
+
+\bibitem{gibson:nfs}
+G.~G. Wittawat~Tantisiriroj.
+\newblock Network file system (nfs) in high performance networks.
+\newblock Technical Report CMU-PDLSVD08-02, Carnegie Mellon University, Jan.
+  2008.
+
+\bibitem{modist:nsdi09}
+J.~Yang, T.~Chen, M.~Wu, Z.~Xu, X.~Liu, H.~Lin, M.~Yang, F.~Long, L.~Zhang, and
+  L.~Zhou.
+\newblock {MODIST}: Transparent model checking of unmodified distributed
+  systems.
+\newblock In {\em Proceedings of the Sixth Symposium on Networked Systems
+  Design and Implementation (NSDI '09)}, pages 213--228, Apr. 2009.
+
+\bibitem{matei:hotcloud11}
+M.~Zaharia, B.~Hindman, A.~Konwinski, A.~Ghodsi, A.~D. Joesph, R.~Katz,
+  S.~Shenker, and I.~Stoica.
+\newblock The datacenter needs an operating system.
+\newblock In {\em Proceedings of the 3rd USENIX Conference on Hot Topics in
+  Cloud Computing}, 2011.
+
+\bibitem{fuxi:vldb14}
+Z.~Zhang, C.~Li, Y.~Tao, R.~Yang, H.~Tang, and J.~Xu.
+\newblock Fuxi: A fault-tolerant resource management and job scheduling system
+  at internet scale.
+\newblock {\em Proc. VLDB Endow.}, 7(13):1393--1404, Aug. 2014.
+
+\end{thebibliography}
