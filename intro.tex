@@ -7,9 +7,10 @@ popular than ever. Nevertheless, the benefits of consolidation come with a hidde
 in the form of increased exposure to hardware failure. 
 
 % P2: However, previous approaches still fail to efficiently provide fault-tolerance in virtualized environment
-Although recent advances in accommodating virtual machines with high availability are encouraging, 
-existing works are still unable to ensure fault-tolerance in virtualized environment at low overhead. 
-Currently there are two major techniques to provide fault tolerance.
+Although recent advances in accommodating virtual machines with high availability 
+are encouraging, existing works are still unable to ensure fault-tolerance in virtualized 
+environment at low overhead. One typical technique is primary-backup based replication of 
+virtual machines, including checkpoint-recovery based virtual machine replication and log-replay.
 
 % P3: log-replay is highly architecture-specific and slow for multi-processor
 Log-replay records input and non-deterministic events of the primary machine 
