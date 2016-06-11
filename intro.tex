@@ -7,6 +7,11 @@ than ever. Nevertheless, the benefits of consolidation come with a hidden cost i
 form of increased exposure to hardware failure. 
 
 % P2: However, previous approaches still fail to efficiently provide fault-tolerance in virtualized environment
+
+% There is no consistency problem
+% One of the biggest additional components that must be designed is the mechanism for starting a backup VM in the same state as a primary VM
+% This mechanism will also be used when restarting a backup VM after a failure has occurred
+
 There has been a tremendous progress in accommodating virtual machines with high availability, 
 but existing works are still unable to ensure fault-tolerance in virtualized environment at 
 low overhead. One typical technique is primary-backup based replication of virtual machines, 
@@ -14,7 +19,7 @@ including checkpoint-recovery based virtual machine replication and log-replay.
 
 % P3: log-replay is highly architecture-specific and slow for multi-processor
 
-% requiring that the system have a comprehensive understanding of the instruction set being executed and the sources of external events
+% requiring that the system have a comprehensive understanding of the instruction set being executed and the sources of external events.
 % reproducing the exact order in which CPU cores access the shared memory
 
 Log-replay records input and non-deterministic events of the primary machine and have them 
