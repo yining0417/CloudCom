@@ -26,10 +26,7 @@ introduces unacceptable performance degradation when applied in multi-core syste
 % 2. network delay. unacceptable for online services where clients expect short response times from the server machines
 Checkpoint-recovery based replication of virtual machines is the other commonly used solution. 
 It captures the entire execution state of the running VM at relatively high frequency so that changes 
-can be reflected to the backup machine nearly instantly. However, it suffers from two problems. 
-The first one is the network delay. In order to address output commit problem~\cite{strom1987volatile}, output of the running VM
-needs to be held back until the primary receives the acknowledgement of the corresponding update from 
-from the backup host. Apart from that, VM downtimes incurred by the checkpoint mechanism can be significant.
+can be reflected to the backup machine nearly instantly. However, it suffers from two problems.
 
 % P4: Our key insight is that instead of capturing snapshots of the running VM and propagating changes frequently, 
 % enforcing the same ordering over network interaction from outside the VM at all nodes is sufficient to ensure fault tolerance
@@ -50,4 +47,6 @@ message round-trip between two replicas. Fortunately, Remote Direct Access Memor
 % P8: We present a fast, fault-tolerant system.
 % We intercept at the networking level and invoke RDMA-based Paxos protocol.
 
-% P9: rest of the paper
+% P9: benefits: fast (short response time), service is always available (VM does not need to be suspended)
+
+% P10: rest of the paper
