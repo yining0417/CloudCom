@@ -6,54 +6,46 @@ small number of physical hosts, virtualization has made low- and middle-end syst
 popular than ever. Nevertheless, the benefits of consolidation come with a hidden cost 
 in the form of increased exposure to hardware failure. 
 
-% P2: existing approaches
-Although existing approaches are still not able to efficiently and reliably to provide fault-tolerance 
-in virtualized environment.
+% P2: However, previous approaches still fail to efficiently provide fault-tolerance in virtualized environment
+Although recent advances in accommodating virtual machines with high availability are encouraging, 
+existing works are still unable to ensure fault-tolerance in virtualized environment at low overhead. 
+Currently there are two major techniques to provide fault tolerance.
 
-% P2: primary-backup based replication of virtual machines is an attractive technique 
-% to ensure fault tolerance in virtualized environments
-% two existing approaches:  log-replay is highly architecture-specific and slow for multi-processor
-
-% requiring that the system have a comprehensive understanding of the instruction set being executed and the sources of external events
-% reproducing the exact order in which CPU cores access the shared memory
-
-Replication at the Virtual Machine Monitor Layer (VMM) is a promising technique to 
-ensure fault tolerance in virtualized environments. It offers seamless failover for the 
-complete service state, including everything from the service software to the operating system. 
-Currently there are two approaches to primary-backup based replication of virtual machines.
-log-replay records input and non-deterministic events of the primary machine 
+% P3: log-replay is highly architecture-specific and slow for multi-processor
+Log-replay records input and non-deterministic events of the primary machine 
 and have them deterministically replayed on the backup machine to replicate the primary's state 
 in case the primary node fails. However, deterministic replay is highly architecture-specific and 
 introduces unacceptable performance degradation when applied in multi-core systems.
 
-% P3: the other approach is checkpoint-recovery based replication of virtual machines
-% significant and frequent service downtime
-% output commit - consistency requirement. But it comes with degraded network performance.
-% Unacceptable for online services where clients expect reasonable bandwidth and short response times from the server machines
-On the other hand, Checkpoint-recovery based replication of virtual machines is delivered by 
-capturing the entire executions state of the VM at relatively high frequency so that changes can 
-be reflected to the backup machine nearly instantly. But it suffers from two problems. The first one 
-is significant service interruption. The second one is poor network performance.
+% requiring that the system have a comprehensive understanding of the instruction set being executed and the sources of external events
+% reproducing the exact order in which CPU cores access the shared memory
 
-% P4: Our key insight is that there is no need to replicate the whole system.
-% A consensus protocol (e.g. Paxos) to enforce the same input on the service software among
-% the replicas is enough to ensure fault-tolerance.
-% Here, the input refers to the network interaction from client to the service on the primary machine.
+% P4: Checkpoint-recovery based replication of virtual machines, it suffers from two problems
+% 1. significant VM downtimes
+% 2. network delay. unacceptable for online services where clients expect short response times from the server machines
+Checkpoint-recovery based replication of virtual machines is the other commonly used solution. 
+It captures the entire execution state of the running VM at relatively high frequency so that changes 
+can be reflected to the backup machine nearly instantly. However, it suffers from two problems.
+
+% P4: Our key insight is that instead of capturing snapshots of the running VM and propagating changes frequently, 
+% enforcing the same ordering over network interaction from outside the VM at all nodes is sufficient to ensure fault tolerance
+% Paxos, a consensus protocol, can help us achieve this
 
 % Note: limitation: cannot handle non-deterministic events.
 
 
-% P5: However, traditional Paxos is slow
+% P6: However, traditional Paxos is slow
 % Fortunately, RDMA opens new opportunity for mitigating consensus latency
 However, Paxos consensus is notoriously difficult to be fast. 
 To agree on an input, traditional consensus protocols invoke at least one 
 message round-trip between two replicas. Fortunately, Remote Direct Access Memory (RDMA) opens new opportunity.
 
-% P6: Paxos is usually integrated with applciations. 
+% P7: Besides, integrate Paxos within each application is notoriously difficult because it is difficult to understand and implement.
+% We choose to intercept the network syscalls within the hypervisor.
 
-% P6: We present a fast, fault-tolerant system.
+% P8: We present a fast, fault-tolerant system.
 % We intercept at the networking level and invoke RDMA-based Paxos protocol.
 
-% P7: benefits: fast (short response time), service is always available (VM does not need to be suspended)
+% P9: benefits: fast (short response time), service is always available (VM does not need to be suspended)
 
 % P10: rest of the paper
