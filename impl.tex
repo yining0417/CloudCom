@@ -3,7 +3,7 @@
 \subsection{Syscall interception in Xen Hypervisor}\label{sec:interception}
 A syscall aims at providing userland processes a way to request services 
 from the kernel. This includes access storage operations, memory and network 
-access, etc. Typical calls are open, close, \read... 
+access, etc. Typical calls are open, close, read... 
 
 One way to perform a syscall is to use software interrupts. It consists of 
 four steps: (1) User process copies the syscall number to execute in the CPU register 
