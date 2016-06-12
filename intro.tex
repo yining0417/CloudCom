@@ -59,10 +59,16 @@ problems. SMR runs replicas of the program and invokes a distributed consensus p
 to ensure the same sequence of input requests for replicas, as long as a quorum (typically a majority) 
 of the replicas agree on the input request sequence.
 However, 
-Fortunately, Remote Direct Access Memory (RDMA) becomes 
-To address the aforementioned problems, this paper presents \xxx, an SMR system that provides 
-fault-tolerance in virtualized environment effciently.
-Unfortunately, doing so remains quite challenging. First, 
+
+
+However, doing so remains quite challenging. First, \paxos is no notoriously is slow because 
+it requires three message delays.
+
+Fortunately, Remote Direct Memory Access (RDMA)-capable networks have dropped in price and made 
+substantial inroads into datacenters. It allows one computer to directly access the memory of 
+a remote computer without involving the operating system at any host. This enables zero-copy 
+transfers, reducing latency and CPU overhead.
+
 Second, to leverage existing SMR systems such as ZooKeeper, developes often have to shoehorn their 
 programs into the narrowly defined state machine interfaces provided by these SMR systems. An SMR 
 system often has to settle for a specific state and transitional interface because it cannot 
@@ -70,13 +76,13 @@ anticipate all the possibilities. Orchestrating a server program into such a nar
 only requires intrusive and error-prone modifications to the program's structure and code, but also 
 disrupts the SMR system itself at times.
 
-This paper presents \xxx, an SMR system that provides fault-tolerance in virtualized environment 
-at low overhead. Within each replica, \xxx interposes on the network syscalls to keep replicas in 
-sync. Specifically, it considers each incoming network system call from outside the VM an input 
-request, and runs a RDMA-based \paxos consensus protocol to ensure that a quorum of the replicas sees 
-the same exact sequence of the incoming network syscalls. To tackle nondeterminism, \xxx intercepts 
-the outgoing syscalls in the hypervisor and invokes an efficient network output checking protocol to 
-detect divergence of execution states.
+This paper presents \xxx, a reliable high-performance SMR system that provides fault-tolerance 
+in virtualized environment. Within each replica, \xxx interposes on the network syscalls to keep 
+replicas in sync. Specifically, it considers each incoming network system call from outside the VM 
+an input request, and runs a RDMA-based \paxos consensus protocol to ensure that a quorum of the 
+replicas sees the same exact sequence of the incoming network syscalls. To tackle nondeterminism, 
+\xxx intercepts the outgoing syscalls in the hypervisor and invokes an efficient network output 
+checking protocol to detect divergence of execution states.
 
 Thus, instead of 
 enforcing the same ordering over network interaction from outside the VM at all nodes is 
