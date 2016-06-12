@@ -57,13 +57,10 @@ that, VM downtimes incurred by the checkpoint mechanism can be significant.
 State Machine Replication (SMR) is a powerful fault-tolerance concept to address the aformentioned 
 problems. SMR runs replicas of the program and invokes a distributed consensus protocol (typically \paxos) 
 to ensure the same sequence of input requests for replicas, as long as a quorum (typically a majority) 
-of the replicas agree on the input request sequence.
-However, 
+of the replicas agree on the input request sequence. However, doing so remains quite challenging. 
 
-
-However, doing so remains quite challenging. First, \paxos is no notoriously is slow because each 
-decision takes at least three message delays between when a replica proposes a command and when 
-some replica learns which command has been chosen.
+First, \paxos is no notoriously is slow because each decision takes at least three message delays 
+between when a replica proposes a command and when some replica learns which command has been chosen.
 
 Fortunately, Remote Direct Memory Access (RDMA)-capable networks have dropped in price and made 
 substantial inroads into datacenters. It allows one computer to directly access the memory of 
@@ -76,6 +73,10 @@ system often has to settle for a specific state and transitional interface becau
 anticipate all the possibilities. Orchestrating a server program into such a narrow interface not 
 only requires intrusive and error-prone modifications to the program's structure and code, but also 
 disrupts the SMR system itself at times.
+
+Third, to address nondeterminisim, SMR systems either reply on deterministic multithreading and replay 
+approach or manually annotate all shared states to detect divergence of execution states. These 
+approaches lack automation or may incur high performance overhead.
 
 This paper presents \xxx, a reliable high-performance SMR system that provides fault-tolerance 
 in virtualized environment. Within each replica, \xxx interposes on the network syscalls to keep 
@@ -95,17 +96,8 @@ enable state machine replication at the VM level rather than the application lev
 
 % Note: limitation: cannot handle non-deterministic events.
 
-
-% P6: However, traditional Paxos is slow
-% Fortunately, RDMA opens new opportunity for mitigating consensus latency
 However, Paxos consensus is notoriously difficult to be fast. 
 To agree on an input, traditional consensus protocols invoke at least one 
 message round-trip between two replicas. Fortunately, Remote Direct Access Memory (RDMA) opens new opportunity.
-
-% P7: Besides, integrate Paxos within each application is notoriously difficult because it is difficult to understand and implement.
-% We choose to intercept the network syscalls within the hypervisor.
-
-% P8: We present a fast, fault-tolerant system.
-% We intercept at the networking level and invoke RDMA-based Paxos protocol.
 
 % P9: rest of the paper
