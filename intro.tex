@@ -73,15 +73,15 @@ disrupts the SMR system itself at times.
 This paper presents REPVM, an SMR system that provides fault-tolerance in virtualized environment 
 at low overhead. Within each replica, REPVM interposes on the network syscalls to keep replicas in 
 sync. Specifically, it considers each incoming networking system call from outside the VM an input 
-request, and runs a PAXOS consensus protocol to ensure that a quorum of the replicas sees the same 
+request, and runs a RDMA-based \paxos consensus protocol to ensure that a quorum of the replicas sees the same 
 exact sequence of the incoming socket calls. To tackle nondeterminism, REPVM intercepts the outgoing 
-syscalls in the Xen hypervisor and invokes an efficient network output checking protocl to detect 
+syscalls in the hypervisor and invokes an efficient network output checking protocl to detect 
 divergence of execution states.
 
 Thus, instead of 
 enforcing the same ordering over network interaction from outside the VM at all nodes is 
 sufficient fault tolerance. However, to achieve this goal, we have to address two practical 
-challenges. First, Second, since Paxos is notoriously difficult to understand and implement, 
+challenges. First, Second, since \paxos is notoriously difficult to understand and implement, 
 integrating Paxos within every service application is . To relieve the application programmer 
 of the burden of structuring the application as a deterministic state machine, we need to 
 enable state machine replication at the VM level rather than the application level.
