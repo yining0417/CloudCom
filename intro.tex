@@ -75,8 +75,8 @@ only requires intrusive and error-prone modifications to the program's structure
 disrupts the SMR system itself at times.
 
 Third, to address nondeterminisim, SMR systems either reply on deterministic multithreading and replay 
-approach or manually annotate all shared states to detect divergence of execution states. These 
-approaches lack automation or may incur high performance overhead.
+approach~\cite{rex:eurosys14} or manually annotate all shared states to detect divergence of execution 
+states~\cite{eve:osdi12}. These approaches lack automation or may incur high performance overhead.
 
 This paper presents \xxx, a reliable high-performance SMR system that provides fault-tolerance 
 in virtualized environment. Within each replica, \xxx interposes on the network syscalls to keep 
