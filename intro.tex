@@ -6,11 +6,8 @@ number of physical hosts, virtualization has made low- and middle-end systems po
 than ever. Nevertheless, the benefits of consolidation come with a hidden cost in the 
 form of increased exposure to hardware failure. 
 
-% P2: However, previous approaches still fail to efficiently provide fault-tolerance in virtualized environment
+% P2: However, previous approaches still fail to efficiently and reliably provide fault-tolerance in virtualized environment
 
-% There is no consistency problem
-% One of the biggest additional components that must be designed is the mechanism for starting a backup VM in the same state as a primary VM
-% This mechanism will also be used when restarting a backup VM after a failure has occurred
 % To answer Heming's question: old leader and new leader get to an inconsistent state
 % After recovery, the old leader should be started in the state as the new leader before participating
 
@@ -28,9 +25,10 @@ form of increased exposure to hardware failure.
 %   it's a "single point of failure" -- not so good
 
 There has been a tremendous progress in accommodating virtual machines with high availability, 
-but existing works are still unable to ensure fault-tolerance in virtualized environment at 
-low overhead. One typical technique is primary-backup based replication of virtual machines, 
-including checkpoint-recovery based virtual machine replication and log-replay.
+but existing works are still unable to ensure fault-tolerance in virtualized environment efficiently and reliably. 
+One well-known technique is primary-backup based replication of virtual machines, where only the primary 
+server executes all operations issued by the client and propagets to the backups the changes in the state. However, 
+it suffers from two problems. First, 
 
 % P3: log-replay is highly architecture-specific and slow for multi-processor
 
@@ -56,10 +54,30 @@ that, VM downtimes incurred by the checkpoint mechanism can be significant.
 % P4: Our key insight is that instead of capturing snapshots of the running VM and propagating changes frequently, 
 % enforcing the same ordering over network interaction from outside the VM at all nodes is sufficient to ensure fault tolerance
 % Paxos, a consensus protocol, can help us achieve this
-
+State Machine Replication (SMR) is a powerful fault-tolerance concept to address the aformentioned 
+problems. SMR runs replicas of the program and invokes a distributed consensus protocol (typically PAXOS) 
+to ensure the same sequence of input requests for replicas, as long as a quorum (typically a majority) 
+of the replicas agree on the input request sequence.
+However, 
+Fortunately, Remote Direct Access Memory (RDMA) becomes 
 To address the aforementioned problems, this paper presents REPVM, an SMR system that provides 
 fault-tolerance in virtualized environment effciently.
-Fortunately, Paxos, 
+Unfortunately, doing so remains quite challenging. First, 
+Second, to leverage existing SMR systems such as ZooKeeper, developes often have to shoehorn their 
+programs into the narrowly defined state machine interfaces provided by these SMR systems. An SMR 
+system often has to settle for a specific state and transitional interface because it cannot 
+anticipate all the possibilities. Orchestrating a server program into such a narrow interface not 
+only requires intrusive and error-prone modifications to the program's structure and code, but also 
+disrupts the SMR system itself at times.
+
+This paper presents REPVM, an SMR system that provides fault-tolerance in virtualized environment 
+at low overhead. Within each replica, REPVM interposes on the network syscalls to keep replicas in 
+sync. Specifically, it considers each incoming networking system call from outside the VM an input 
+request, and runs a PAXOS consensus protocol to ensure that a quorum of the replicas sees the same 
+exact sequence of the incoming socket calls. To tackle nondeterminism, REPVM intercepts the outgoing 
+syscalls in the Xen hypervisor and invokes an efficient network output checking protocl to detect 
+divergence of execution states.
+
 Thus, instead of 
 enforcing the same ordering over network interaction from outside the VM at all nodes is 
 sufficient fault tolerance. However, to achieve this goal, we have to address two practical 
