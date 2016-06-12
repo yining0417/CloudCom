@@ -58,7 +58,7 @@ State Machine Replication (SMR) is a powerful fault-tolerance concept to address
 drawbacks of primary-backup based replication. SMR runs replicas of the program and invokes a 
 distributed consensus protocol (typically \paxos) to ensure the same sequence of input requests 
 for replicas, as long as a quorum (typically a majority) of the replicas agree on the input 
-request sequence. However, doing so remains quite challenging. 
+request sequence. Leveraging SMR. we have to address three practical challenges. 
 
 First, \paxos is no notoriously is slow because each decision takes at least three message delays 
 between when a replica proposes a command and when some replica learns which command has been chosen.
@@ -75,7 +75,7 @@ anticipate all the possibilities. Orchestrating a server program into such a nar
 only requires intrusive and error-prone modifications to the program's structure and code, but also 
 disrupts the SMR system itself at times.
 
-Third, to address nondeterminisim, SMR systems either reply on deterministic multithreading and replay 
+Third, to deal with nondeterminisim, SMR systems either reply on deterministic multithreading and replay 
 approach~\cite{rex:eurosys14} or manually annotate all shared states to detect divergence of execution 
 states~\cite{eve:osdi12}. These approaches lack automation or may incur high performance overhead.
 
@@ -87,4 +87,4 @@ replicas sees the same exact sequence of the incoming network syscalls. To tackl
 \xxx intercepts the outgoing syscalls in the hypervisor and invokes an efficient network output 
 checking protocol to detect divergence of execution states.
 
-% P9: rest of the paper
+The remainder of the paper is organized as follows.
