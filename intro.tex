@@ -55,7 +55,7 @@ that, VM downtimes incurred by the checkpoint mechanism can be significant.
 % enforcing the same ordering over network interaction from outside the VM at all nodes is sufficient to ensure fault tolerance
 % Paxos, a consensus protocol, can help us achieve this
 State Machine Replication (SMR) is a powerful fault-tolerance concept to address the aformentioned 
-problems. SMR runs replicas of the program and invokes a distributed consensus protocol (typically PAXOS) 
+problems. SMR runs replicas of the program and invokes a distributed consensus protocol (typically \paxos) 
 to ensure the same sequence of input requests for replicas, as long as a quorum (typically a majority) 
 of the replicas agree on the input request sequence.
 However, 
@@ -72,11 +72,11 @@ disrupts the SMR system itself at times.
 
 This paper presents \xxx, an SMR system that provides fault-tolerance in virtualized environment 
 at low overhead. Within each replica, \xxx interposes on the network syscalls to keep replicas in 
-sync. Specifically, it considers each incoming networking system call from outside the VM an input 
-request, and runs a RDMA-based \paxos consensus protocol to ensure that a quorum of the replicas sees the same 
-exact sequence of the incoming socket calls. To tackle nondeterminism, \xxx intercepts the outgoing 
-syscalls in the hypervisor and invokes an efficient network output checking protocl to detect 
-divergence of execution states.
+sync. Specifically, it considers each incoming network system call from outside the VM an input 
+request, and runs a RDMA-based \paxos consensus protocol to ensure that a quorum of the replicas sees 
+the same exact sequence of the incoming network syscalls. To tackle nondeterminism, \xxx intercepts 
+the outgoing syscalls in the hypervisor and invokes an efficient network output checking protocol to 
+detect divergence of execution states.
 
 Thus, instead of 
 enforcing the same ordering over network interaction from outside the VM at all nodes is 
