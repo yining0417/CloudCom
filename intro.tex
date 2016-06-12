@@ -60,7 +60,7 @@ to ensure the same sequence of input requests for replicas, as long as a quorum 
 of the replicas agree on the input request sequence.
 However, 
 Fortunately, Remote Direct Access Memory (RDMA) becomes 
-To address the aforementioned problems, this paper presents REPVM, an SMR system that provides 
+To address the aforementioned problems, this paper presents \xxx, an SMR system that provides 
 fault-tolerance in virtualized environment effciently.
 Unfortunately, doing so remains quite challenging. First, 
 Second, to leverage existing SMR systems such as ZooKeeper, developes often have to shoehorn their 
@@ -70,11 +70,11 @@ anticipate all the possibilities. Orchestrating a server program into such a nar
 only requires intrusive and error-prone modifications to the program's structure and code, but also 
 disrupts the SMR system itself at times.
 
-This paper presents REPVM, an SMR system that provides fault-tolerance in virtualized environment 
-at low overhead. Within each replica, REPVM interposes on the network syscalls to keep replicas in 
+This paper presents \xxx, an SMR system that provides fault-tolerance in virtualized environment 
+at low overhead. Within each replica, \xxx interposes on the network syscalls to keep replicas in 
 sync. Specifically, it considers each incoming networking system call from outside the VM an input 
 request, and runs a RDMA-based \paxos consensus protocol to ensure that a quorum of the replicas sees the same 
-exact sequence of the incoming socket calls. To tackle nondeterminism, REPVM intercepts the outgoing 
+exact sequence of the incoming socket calls. To tackle nondeterminism, \xxx intercepts the outgoing 
 syscalls in the hypervisor and invokes an efficient network output checking protocl to detect 
 divergence of execution states.
 
