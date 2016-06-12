@@ -86,18 +86,4 @@ replicas sees the same exact sequence of the incoming network syscalls. To tackl
 \xxx intercepts the outgoing syscalls in the hypervisor and invokes an efficient network output 
 checking protocol to detect divergence of execution states.
 
-Thus, instead of 
-enforcing the same ordering over network interaction from outside the VM at all nodes is 
-sufficient fault tolerance. However, to achieve this goal, we have to address two practical 
-challenges. First, Second, since \paxos is notoriously difficult to understand and implement, 
-integrating Paxos within every service application is . To relieve the application programmer 
-of the burden of structuring the application as a deterministic state machine, we need to 
-enable state machine replication at the VM level rather than the application level.
-
-% Note: limitation: cannot handle non-deterministic events.
-
-However, Paxos consensus is notoriously difficult to be fast. 
-To agree on an input, traditional consensus protocols invoke at least one 
-message round-trip between two replicas. Fortunately, Remote Direct Access Memory (RDMA) opens new opportunity.
-
 % P9: rest of the paper
