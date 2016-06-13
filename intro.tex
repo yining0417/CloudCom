@@ -1,26 +1,40 @@
 \section{Introduction} \label{sec:intro}
 
 % P1: virtualization is good
-By simplifying provisioning and allowing multiple servers to be consolidated on a 
-small number of physical hosts, virtualization is widely used in computing environments 
+By allowing multiple servers to be consolidated on a small number of physical hosts 
+and simplifying provisioning, virtualization is widely used in computing environments 
 of various kinds and scales.
 
 % P2: However, previous approaches still fail to efficiently and reliably provide fault-tolerance in virtualized environment
-Nevertheless, sever consolidation exacerbates the consequence of unexpected host failures. 
+% checkpoint-recovery based replication suffers from two problems
+% 1. performance degradation due to the large amount of state that needs to be synchronized between the primary and the backup machines
+% 2. significant VM downtimes
+Nevertheless, server consolidation exacerbates the consequence of unexpected host failures. 
 When VMs are consolidated, failure of a single host may bring down mutiple VMs on the host 
 and all applications running thereon, resulting in an unacceptable aggregate loss. 
 To accommdote virtual machines with high availability, various approaches have been 
 proposed to replicate VMs between hosts continuously throughout VM's execution, but 
 they are still unable to ensure fault-tolerance in virtualized environments efficiently 
-and reliably. One typical approach is checkpoint-recovery based replication of virtual 
+and reliably. One typical technique is checkpoint-recovery based replication of virtual 
 machines. It captures the entire execution state of the running VM at relatively 
 high frequency so that changes can be reflected to the backup machine nearly instantly. 
 However, it suffers from two problems. The main one is the amount of data that needs to be 
 copied from the primary to the backup, which can, in some cases, seriously affect the performance. 
 Apart from that, VM downtimes incurred by the checkpoint mechanism can be significant.
 
-Deterministic replay is the other attractive technique which can address the aforementioned 
-drawbacks of checkpoint-recovery based replication. The idea is to 
+% P3: log replay is the other approach which can address some of the drawbacks of checkpoint-recovery based replication
+% 
+% single point of failure
+% slow for multi-processor
+On the other hand, derterministic replay is an attractive technique which can address the 
+aforementioned drawbacks of checkpoint-recovery based replication: primary and backup execute 
+the same sequence of instructions, with non-deterministic events injected exactly at the same 
+point into both replicas. However, in the existing works, derterministic replay suffers from 
+"single point of failure" in order to avoid split brain.
+Paxos, a consensus protocol. 
+On the other hand, 
+
+First, 
 Fortunately, two majority replication schemes (e.g., \paxos) can cpoe this problem. However, to 
 leverage \paxos remains challenging. First, 
 % To answer Heming's question: old leader and new leader get to an inconsistent state
@@ -39,12 +53,6 @@ leverage \paxos remains challenging. First,
 % but what if the master fails?
 %   it's a "single point of failure" -- not so good
 
-There has been a tremendous progress in accommodating virtual machines with high availability, 
-but existing works are still unable to ensure fault-tolerance in virtualized environment efficiently and reliably. 
-One well-known technique is primary-backup based replication of virtual machines, where only the primary 
-server executes all operations issued by the client and propagets to the backups the changes in the state. However, 
-it suffers from two problems.
-
 % P3: log-replay is highly architecture-specific and slow for multi-processor
 
 % requiring that the system have a comprehensive understanding of the instruction set being executed and the sources of external events.
@@ -59,19 +67,8 @@ introduces unacceptable performance degradation when applied in multi-core syste
 % 1. network delay, but Paxos requires at least 3 message delays
 % 2. significant VM downtimes
 % 3. large amount of state that needs to be synchronized between the primary and the backup machines
-Checkpoint-recovery based replication of virtual machines is the other commonly used solution. 
-It captures the entire execution state of the running VM at relatively high frequency so that 
-changes can be reflected to the backup machine nearly instantly. However, it suffers from two 
-problems. The main one is the amount of data that needs to be copied from the primary to the 
-backup, which can, in some cases, seriously affect the performance. Apart from that, VM 
-downtimes incurred by the checkpoint mechanism can be significant.
 
 % P4: Our key insight is to enforce the same ordering over network interaction at all nodes
-State Machine Replication (SMR) is a powerful fault-tolerance concept to address the aforementioned 
-drawbacks of primary-backup based replication. SMR runs replicas of the program and invokes a 
-distributed consensus protocol (typically \paxos) to ensure the same sequence of input requests 
-for replicas, as long as a quorum (typically a majority) of the replicas agree on the input 
-request sequence. Leveraging SMR. we have to address three practical challenges. 
 
 First, \paxos is no notoriously is slow because each decision takes at least three message delays 
 between when a replica proposes a command and when some replica learns which command has been chosen.
@@ -80,24 +77,16 @@ Fortunately, Remote Direct Memory Access (RDMA)-capable networks have dropped in
 substantial inroads into datacenters. It allows one computer to directly access the memory of 
 a remote computer without involving the operating system at any host. This enables zero-copy 
 transfers, reducing latency and CPU overhead.
+Another obstcle is the fact that its adaption to multi-core CPU environment is cumbersome, because 
+it requires determining and reproducing the exact order in which CPU cores access the shared memory.
 
-Second, to leverage existing SMR systems such as ZooKeeper, developes often have to shoehorn their 
-programs into the narrowly defined state machine interfaces provided by these SMR systems. An SMR 
-system often has to settle for a specific state and transitional interface because it cannot 
-anticipate all the possibilities. Orchestrating a server program into such a narrow interface not 
-only requires intrusive and error-prone modifications to the program's structure and code, but also 
-disrupts the SMR system itself at times.
-
-Third, to deal with nondeterminisim, SMR systems either reply on deterministic multithreading and replay 
-approach~\cite{rex:eurosys14} or manually annotate all shared states to detect divergence of execution 
-states~\cite{eve:osdi12}. These approaches lack automation or may incur high performance overhead.
-
+% FT for server program inside the VM
 This paper presents \xxx, a reliable high-performance SMR system that provides fault-tolerance 
 in virtualized environment. Within each replica, \xxx interposes on the network syscalls to keep 
-replicas in sync. Specifically, it considers each incoming network system call from outside the VM 
-an input request, and runs a RDMA-based \paxos consensus protocol to ensure that a quorum of the 
-replicas sees the same exact sequence of the incoming network syscalls. To tackle nondeterminism, 
-\xxx intercepts the outgoing syscalls in the hypervisor and invokes an efficient network output 
-checking protocol to detect divergence of execution states.
+replicas in sync. Specifically, it considers each incoming network system call  an input request, 
+and runs a RDMA-based \paxos consensus protocol to ensure that a quorum of the replicas sees the 
+same exact sequence of the incoming network syscalls. To tackle nondeterminism, \xxx intercepts 
+the outgoing syscalls in the hypervisor and invokes an efficient network output checking protocol 
+to detect divergence of execution states.
 
 The remainder of the paper is organized as follows.
