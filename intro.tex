@@ -1,13 +1,28 @@
 \section{Introduction} \label{sec:intro}
 
 % P1: virtualization is good
-By simplifying provisioning and allowing multiple servers to be consolidated on a small 
-number of physical hosts, virtualization has made low- and middle-end systems popular 
-than ever. Nevertheless, the benefits of consolidation come with a hidden cost in the 
-form of increased exposure to hardware failure. 
+By simplifying provisioning and allowing multiple servers to be consolidated on a 
+small number of physical hosts, virtualization is widely used in computing environments 
+of various kinds and scales.
 
 % P2: However, previous approaches still fail to efficiently and reliably provide fault-tolerance in virtualized environment
+Nevertheless, sever consolidation exacerbates the consequence of unexpected host failures. 
+When VMs are consolidated, failure of a single host may bring down mutiple VMs on the host 
+and all applications running thereon, resulting in an unacceptable aggregate loss. 
+To accommdote virtual machines with high availability, various approaches have been 
+proposed to replicate VMs between hosts continuously throughout VM's execution, but 
+they are still unable to ensure fault-tolerance in virtualized environments efficiently 
+and reliably. One typical approach is checkpoint-recovery based replication of virtual 
+machines. It captures the entire execution state of the running VM at relatively 
+high frequency so that changes can be reflected to the backup machine nearly instantly. 
+However, it suffers from two problems. The main one is the amount of data that needs to be 
+copied from the primary to the backup, which can, in some cases, seriously affect the performance. 
+Apart from that, VM downtimes incurred by the checkpoint mechanism can be significant.
 
+Deterministic replay is the other attractive technique which can address the aforementioned 
+drawbacks of checkpoint-recovery based replication. The idea is to 
+Fortunately, two majority replication schemes (e.g., \paxos) can cpoe this problem. However, to 
+leverage \paxos remains challenging. First, 
 % To answer Heming's question: old leader and new leader get to an inconsistent state
 % After recovery, the old leader should be started in the state as the new leader before participating
 
@@ -28,7 +43,7 @@ There has been a tremendous progress in accommodating virtual machines with high
 but existing works are still unable to ensure fault-tolerance in virtualized environment efficiently and reliably. 
 One well-known technique is primary-backup based replication of virtual machines, where only the primary 
 server executes all operations issued by the client and propagets to the backups the changes in the state. However, 
-it suffers from two problems. First, 
+it suffers from two problems.
 
 % P3: log-replay is highly architecture-specific and slow for multi-processor
 
