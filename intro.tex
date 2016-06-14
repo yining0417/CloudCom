@@ -19,25 +19,15 @@ they are still unable to ensure fault-tolerance in virtualized environments effi
 and reliably. One typical technique is checkpoint-recovery based replication of virtual 
 machines. It captures the entire execution state of the running VM at relatively 
 high frequency so that changes can be reflected to the backup machine nearly instantly. 
-However, it suffers from two problems. The main one is the amount of data that needs to be 
-copied from the primary to the backup, which can, in some cases, seriously affect the performance. 
-Apart from that, VM downtimes incurred by the checkpoint mechanism can be significant.
+One disadvantage of the checkpoint-recovery based replication is the amount of data that 
+needs to be copied from the primary to the backup, which can, in some cases, seriously 
+affect the performance. Apart from that, VM downtimes incurred by the checkpoint mechanism 
+can be significant.
 
 % P3: derterministic replay is the other approach which can address some of the drawbacks of checkpoint-recovery based replication
-% 
 % single point of failure
 % slow for multi-processor
-On the other hand, derterministic replay is an attractive technique which can address the 
-aforementioned drawbacks of checkpoint-recovery based replication: primary and backup execute 
-the same sequence of instructions, with non-deterministic events injected exactly at the same 
-point into both replicas. However, in the existing works, derterministic replay suffers from 
-"single point of failure" in order to avoid split brain.
-Paxos, a consensus protocol. 
-On the other hand, 
 
-First, 
-Fortunately, two majority replication schemes (e.g., \paxos) can cpoe this problem. However, to 
-leverage \paxos remains challenging. First, 
 % To answer Heming's question: old leader and new leader get to an inconsistent state
 % After recovery, the old leader should be started in the state as the new leader before participating
 
@@ -59,27 +49,21 @@ leverage \paxos remains challenging. First,
 % In this case, the system could use some other external tiebreaker, such as a third-party server that both servers can talk to.
 % If the servers are part of a cluster, the system could alternatively use a majority algorithm based on cluster membership.
 
-% P3: log-replay is highly architecture-specific and slow for multi-processor
+On the other hand, derterministic replay is an attractive technique which can address the 
+aforementioned drawbacks of checkpoint-recovery based replication: primary and backup execute 
+the same sequence of instructions, with non-deterministic events injected exactly at the same 
+point into both replicas. However, in the existing works, in order to avoid split brain, 
+derterministic replay has to suffer from "single point of failure".
 
-% requiring that the system have a comprehensive understanding of the instruction set being executed and the sources of external events.
-% reproducing the exact order in which CPU cores access the shared memory
+Fortunately, \paxos, a majorty vote algorithm, can be used to prevent the split-brain scenarios 
+across the cluster. Moreover,  \paxos provides another great benefit: it ensures the same sequence 
+of input requests for replicas. But \paxos is notoriously slow because each decision takes at least 
+three message delays between when a replica proposes a command and when some replica learns which 
+command has been chosen.
 
-% P4: Our key insight is to enforce the same ordering over network interaction at all nodes
-
-First, \paxos is notoriously slow because each decision takes at least three message delays between 
-when a replica proposes a command and when some replica learns which command has been chosen.
-
-Fortunately, Remote Direct Memory Access (RDMA)-capable networks have dropped in price and made 
+Luckily, Remote Direct Memory Access (RDMA)-capable networks have dropped in price and made 
 substantial inroads into datacenters. It allows one computer to directly access the memory of 
 a remote computer without involving the operating system at any host. This enables zero-copy 
 transfers, reducing latency and CPU overhead.
-
-This paper presents \xxx, a reliable high-performance SMR system that provides fault-tolerance 
-in virtualized environment. Within each replica, \xxx interposes on the network syscalls to keep 
-replicas in sync. Specifically, it considers each incoming network system call  an input request, 
-and runs a RDMA-based \paxos consensus protocol to ensure that a quorum of the replicas sees the 
-same exact sequence of the incoming network syscalls. To tackle nondeterminism, \xxx intercepts 
-the outgoing syscalls in the hypervisor and invokes an efficient network output checking protocol 
-to detect divergence of execution states.
 
 The remainder of the paper is organized as follows.
