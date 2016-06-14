@@ -9,6 +9,7 @@ of various kinds and scales.
 % checkpoint-recovery based replication suffers from two problems
 % 1. performance degradation due to the large amount of state that needs to be synchronized between the primary and the backup machines
 % 2. significant VM downtimes
+% 3. network delay
 Nevertheless, server consolidation exacerbates the consequence of unexpected host failures. 
 When VMs are consolidated, failure of a single host may bring down mutiple VMs on the host 
 and all applications running thereon, resulting in an unacceptable aggregate loss. 
@@ -22,7 +23,7 @@ However, it suffers from two problems. The main one is the amount of data that n
 copied from the primary to the backup, which can, in some cases, seriously affect the performance. 
 Apart from that, VM downtimes incurred by the checkpoint mechanism can be significant.
 
-% P3: log replay is the other approach which can address some of the drawbacks of checkpoint-recovery based replication
+% P3: derterministic replay is the other approach which can address some of the drawbacks of checkpoint-recovery based replication
 % 
 % single point of failure
 % slow for multi-processor
@@ -52,21 +53,12 @@ leverage \paxos remains challenging. First,
 % this is probably what VMware FT does (atomic test-and-set in shared disk)
 % but what if the master fails?
 %   it's a "single point of failure" -- not so good
+% VMware FT shared disk atomic test-and-set was (apparently) not replicated (one option)
 
 % P3: log-replay is highly architecture-specific and slow for multi-processor
 
 % requiring that the system have a comprehensive understanding of the instruction set being executed and the sources of external events.
 % reproducing the exact order in which CPU cores access the shared memory
-
-Log-replay records input and non-deterministic events of the primary machine and have them 
-deterministically replayed on the backup machine to replicate the primary's state in case 
-the primary node fails. However, deterministic replay is highly architecture-specific and 
-introduces unacceptable performance degradation when applied in multi-core systems.
-
-% P4: Checkpoint-recovery based replication of virtual machines, it suffers from two problems
-% 1. network delay, but Paxos requires at least 3 message delays
-% 2. significant VM downtimes
-% 3. large amount of state that needs to be synchronized between the primary and the backup machines
 
 % P4: Our key insight is to enforce the same ordering over network interaction at all nodes
 
@@ -77,8 +69,6 @@ Fortunately, Remote Direct Memory Access (RDMA)-capable networks have dropped in
 substantial inroads into datacenters. It allows one computer to directly access the memory of 
 a remote computer without involving the operating system at any host. This enables zero-copy 
 transfers, reducing latency and CPU overhead.
-Another obstcle is the fact that its adaption to multi-core CPU environment is cumbersome, because 
-it requires determining and reproducing the exact order in which CPU cores access the shared memory.
 
 % FT for server program inside the VM
 This paper presents \xxx, a reliable high-performance SMR system that provides fault-tolerance 
