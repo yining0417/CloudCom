@@ -19,7 +19,9 @@ and all applications running thereon, resulting in an unacceptable aggregate los
 To accommdote virtual machines with high availability, various approaches have been 
 proposed to replicate VMs between hosts continuously throughout VM's execution, but 
 they are still unable to ensure fault-tolerance in virtualized environments efficiently 
-and reliably. One typical technique is checkpoint-recovery based replication of virtual 
+and reliably. 
+
+One typical technique is checkpoint-recovery based replication of virtual 
 machines. It captures the entire execution state of the running VM at relatively 
 high frequency so that changes can be reflected to the backup machine nearly instantly. 
 One disadvantage of the checkpoint-recovery based replication is the amount of data that 
