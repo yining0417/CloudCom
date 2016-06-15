@@ -24,15 +24,21 @@ SMR runs replicas of the program and invokes a distributed consensus protocol
 (typically \paxos) to ensure the same sequence of input requests for replicas, as long as a 
 quorum (typically a majority) of the replicas agrees on the input request sequence.
 
-However, \paxos is notoriously slow because each decision takes at least 
-three message delays between when a replica proposes a command and when some replica learns which 
-command has been chosen.
+However, \paxos is slow because each decision takes at least three message delays between when 
+a replica proposes a command and when some replica learns which command has been chosen.
 
 Fortunately, Remote Direct Memory Access (RDMA)-capable networks have dropped in price and made 
 substantial inroads into datacenters. RDMA operations allow a machine to read (or write) from a 
 pre-registered memory region of another machine without involving the CPU on the remote side. 
 Compared to traditional message passing, RDMA achieves the smallest round-trip latency 
 (~$\sim$3 \us), highest throughput, and lowest (zero) CPU overhead~\cite{pilaf:usenix14}.
+
+A naive approach for building fault tolerant applications is to integrate the \paxos algorithm 
+into every application. But \paxos is notoriously difficult to implement and understand.
+
+To address nondeterminism, SMR systems either reply on deterministic multithreading and replay 
+approach~\cite{rex:eurosys14} or manually annotate all shared states to detect divergence of execution 
+states~\cite{eve:osdi12}. These approaches suffer from poor automation or high overhead.
 
 % This paper presents \xxx, a software system that provides high availability
 
