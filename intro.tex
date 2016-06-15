@@ -1,37 +1,35 @@
 \section{Introduction} \label{sec:intro}
 
-% replication at the application level?
-% RDMA-Paxos only tackles nondeterminism by output checking protocol
+% implement application fault tolerance at the virtual machine level
 
 % P1: virtualization is good
-By allowing multiple servers to be consolidated on a small number of physical hosts 
-and simplifying provisioning, virtualization is widely used in computing environments 
-of various kinds and scales.
+Server virtualization has emerged as a powerful technique for consolidating servers in 
+data centers. The reduction of the number of physical hosts also contributes to cutting 
+back the power consumptions in the data centers.
 
-% P2: However, previous approaches still fail to efficiently and reliably provide fault-tolerance in virtualized environment
-% checkpoint-recovery based replication suffers from two problems
-% 1. performance degradation due to the large amount of state that needs to be synchronized between the primary and the backup machines
-% 2. significant VM downtimes
-% 3. network delay
 Nevertheless, server consolidation exacerbates the consequence of unexpected host failures. 
 When VMs are consolidated, failure of a single host may bring down mutiple VMs on the host 
 and all applications running thereon, resulting in an unacceptable aggregate loss. 
-To accommdote virtual machines with high availability, various approaches have been 
-proposed to replicate VMs between hosts continuously throughout VM's execution, but 
-they are still unable to ensure fault-tolerance in virtualized environments efficiently 
-and reliably. 
+To bring fault tolerance to , various approaches have been 
+proposed to replicate VMs between hosts continuously throughout VM's execution, but they are
+oriented toward protecting the VM. The challenge is that the VM alone does not guarantee uptime 
+for applications and services. Detecting and remediating VM failure falls short of what is 
+truly vital, detecting and remediating application and service failures.
 
-One typical technique is checkpoint-recovery based replication of virtual 
-machines. It captures the entire execution state of the running VM at relatively 
-high frequency so that changes can be reflected to the backup machine nearly instantly. 
-One disadvantage of the checkpoint-recovery based replication is the amount of data that 
-needs to be copied from the primary to the backup, which can, in some cases, seriously 
-affect the performance. Apart from that, VM downtimes incurred by the checkpoint mechanism 
-can be significant.
+State Machine Replication (SMR) is an attractive approach to addressing the application fault 
+tolerance. SMR runs replicas of the program and invokes a distributed consensus protocol 
+(typically \paxos) to ensure the same sequence of input requests for replicas, as long as a 
+quorum (typically a majority) of the replicas agrees on the input request sequence.
 
-% P3: derterministic replay is the other approach which can address some of the drawbacks of checkpoint-recovery based replication
-% single point of failure
-% slow for multi-processor
+However, \paxos is notoriously slow because each decision takes at least 
+three message delays between when a replica proposes a command and when some replica learns which 
+command has been chosen.
+
+Fortunately, Remote Direct Memory Access (RDMA)-capable networks have dropped in price and made 
+substantial inroads into datacenters. RDMA operations allow a machine to read (or write) from a 
+pre-registered memory region of another machine without involving the CPU on the remote side. 
+Compared to traditional message passing, RDMA achieves the smallest round-trip latency 
+(~$\sim$3 \us), highest throughput, and lowest (zero) CPU overhead.
 
 % To answer Heming's question: old leader and new leader get to an inconsistent state
 % After recovery, the old leader should be started in the state as the new leader before participating
@@ -54,24 +52,7 @@ can be significant.
 % In this case, the system could use some other external tiebreaker, such as a third-party server that both servers can talk to.
 % If the servers are part of a cluster, the system could alternatively use a majority algorithm based on cluster membership.
 
-On the other hand, derterministic replay is an attractive technique which can address the 
-aforementioned drawbacks of checkpoint-recovery based replication: primary and backup execute 
-the same sequence of instructions, with non-deterministic events injected exactly at the same 
-point into both replicas. However, in the existing works, in order to avoid split brain, 
-derterministic replay has to suffer from "single point of failure".
-
-Fortunately, \paxos, a majorty vote algorithm, can be used to prevent the split-brain scenarios 
-across the cluster. Moreover, \paxos provides another great benefit: it ensures the same sequence 
-of input requests for replicas. But \paxos is notoriously slow because each decision takes at least 
-three message delays between when a replica proposes a command and when some replica learns which 
-command has been chosen.
-
-Luckily, Remote Direct Memory Access (RDMA)-capable networks have dropped in price and made 
-substantial inroads into datacenters. It allows one computer to directly access the memory of 
-a remote computer without involving the operating system at any host. This enables zero-copy 
-transfers, reducing latency and CPU overhead.
 
 % This paper presents \xxx, a software system that provides high availability
-% implement application fault tolerance at the virtual machine level
 
 The remainder of the paper is organized as follows.
