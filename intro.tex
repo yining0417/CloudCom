@@ -7,13 +7,17 @@ Server virtualization has emerged as a powerful technique for consolidating serv
 data centers. The reduction of the number of physical hosts also contributes to cutting 
 back the power consumptions in the data centers.
 
-Nevertheless, server consolidation exacerbates the consequence of unexpected host failures. 
-When VMs are consolidated, failure of a single host may bring down mutiple VMs on the host 
-and all applications running thereon, resulting in an unacceptable aggregate loss. 
-To realize fault tolerance in virtualized environments, various approaches , but they are
-oriented toward protecting the VM. The challenge is that the VM alone does not guarantee uptime 
-for applications and services. Detecting and remediating VM failure falls short of what is 
-truly vital, detecting and remediating application and service failures.
+% Symantic proposes a solution, based on VMware products, where the applications are monitored,
+% however this commercial solution applies for a specific list of supported applications, 
+% and does not support HA in a generic way
+
+At the same time, A failure of a hosting server becomes a serious problem in consolidated 
+server systems using virtualization. There has been a tremendous progress in realizing fault 
+tolerance in virtualized environment, but existing approaches still fail to meet the high 
+availability requirements of applications running inside the VMs because they are oriented 
+toward protecting the VM. The VM alone does not provide the availability at the application level. 
+Detecting and remediating VM failure falls short of what is truly vital, detecting and remediating 
+application and service failures.
 
 State Machine Replication (SMR) is an attractive approach to achieving application fault tolerance. 
 SMR runs replicas of the program and invokes a distributed consensus protocol 
@@ -29,28 +33,6 @@ substantial inroads into datacenters. RDMA operations allow a machine to read (o
 pre-registered memory region of another machine without involving the CPU on the remote side. 
 Compared to traditional message passing, RDMA achieves the smallest round-trip latency 
 (~$\sim$3 \us), highest throughput, and lowest (zero) CPU overhead~\cite{pilaf:usenix14}.
-
-% To answer Heming's question: old leader and new leader get to an inconsistent state
-% After recovery, the old leader should be started in the state as the new leader before participating
-
-% 6.824 2016 mit
-% What if the network between primary/backup fails?
-%  -Primary is still running
-%  -Backup becomes a new primary
-%  -Two primaries at the same time!
-% one can avoid split brain using a single "master"
-% master computer decides whether replica A or replica B is the primary
-%   there's just one master, so it never disagrees with itself
-% clients talk to the master
-% this is probably what VMware FT does (atomic test-and-set in shared disk)
-% but what if the master fails?
-%   it's a "single point of failure" -- not so good
-% VMware FT shared disk atomic test-and-set was (apparently) not replicated
-
-% In the non-shared-disk configuration, there may be no shared storage to use for dealing with a split-brain situation.
-% In this case, the system could use some other external tiebreaker, such as a third-party server that both servers can talk to.
-% If the servers are part of a cluster, the system could alternatively use a majority algorithm based on cluster membership.
-
 
 % This paper presents \xxx, a software system that provides high availability
 
