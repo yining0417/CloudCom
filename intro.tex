@@ -10,14 +10,13 @@ back the power consumptions in the data centers.
 Nevertheless, server consolidation exacerbates the consequence of unexpected host failures. 
 When VMs are consolidated, failure of a single host may bring down mutiple VMs on the host 
 and all applications running thereon, resulting in an unacceptable aggregate loss. 
-To bring fault tolerance to , various approaches have been 
-proposed to replicate VMs between hosts continuously throughout VM's execution, but they are
+To realize fault tolerance in virtualized environments, various approaches , but they are
 oriented toward protecting the VM. The challenge is that the VM alone does not guarantee uptime 
 for applications and services. Detecting and remediating VM failure falls short of what is 
 truly vital, detecting and remediating application and service failures.
 
-State Machine Replication (SMR) is an attractive approach to addressing the application fault 
-tolerance. SMR runs replicas of the program and invokes a distributed consensus protocol 
+State Machine Replication (SMR) is an attractive approach to achieving application fault tolerance. 
+SMR runs replicas of the program and invokes a distributed consensus protocol 
 (typically \paxos) to ensure the same sequence of input requests for replicas, as long as a 
 quorum (typically a majority) of the replicas agrees on the input request sequence.
 
