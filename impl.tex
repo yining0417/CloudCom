@@ -1,7 +1,5 @@
  \section{Implementation} \label{sec:impl}
 
-\subsection{Syscall interception in Xen Hypervisor}\label{sec:interception}
-In order to intercept syscalls within the Xen Hypervisor itself, the first thing to 
-do is to disable the Direct Trap optimization that allows the syscalls to bypass the 
-hypervisor. Thus, syscalls are forced through the hypervisor and we will be able to 
-catch them.
+\subsection{KVM network I/O Architecture}\label{sec:architecture}
+KVM Networking I/O Architecture
+We maintain a packet queue to capture outgoing packets.
