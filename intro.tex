@@ -1,7 +1,5 @@
 \section{Introduction} \label{sec:intro}
 
-% implement application fault tolerance at the virtual machine level
-
 % P1: virtualization is good
 Server virtualization has emerged as a powerful technique for consolidating servers in 
 data centers. The reduction of the number of physical hosts also contributes to cutting 
@@ -13,14 +11,14 @@ back the power consumptions in the data centers.
 
 At the same time, the dependability issues such as service availability become a major concern 
 in consolidated server systems using virtualization. There has been a tremendous progress in 
-realizing fault tolerance in virtualized environments, but existing approaches still fail to 
+achieving high availability in virtualized environments, but existing approaches still fail to 
 meet the high availability requirements of applications running in the VM because they are oriented 
 toward protecting the VM. Protecting the VM alone does not guarantee the availability at the 
 application level. Detecting and remediating VM failure falls short of what is truly vital, 
 detecting and remediating application and service failures.
 
-State Machine Replication (SMR) is an attractive approach to achieving application fault tolerance. 
-SMR runs replicas of the program and uses a distributed consensus protocol 
+State Machine Replication (SMR) is an attractive approach to ensuring high availability at the 
+application level. SMR runs replicas of the program and uses a distributed consensus protocol 
 (typically \paxos) to ensure the same sequence of input requests for replicas, as long as a 
 quorum (typically a majority) of the replicas agrees on the input request sequence.
 
@@ -33,7 +31,7 @@ pre-registered memory region of another machine without involving the CPU on the
 Compared to traditional message passing, RDMA achieves the smallest round-trip latency 
 (~$\sim$3 \us), highest throughput, and lowest (zero) CPU overhead~\cite{pilaf:usenix14}.
 
-A naive approach for building fault tolerant applications is to integrate the \paxos algorithm 
+A naive approach for realizing highly available services is to integrate the \paxos algorithm 
 into every application. But \paxos is notoriously difficult to implement and understand.
 
 To address nondeterminism, SMR systems either reply on deterministic multithreading and replay 
