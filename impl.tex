@@ -1,6 +1,8 @@
  \section{Implementation} \label{sec:impl}
 
-\subsection{KVM And Its Network I/O Architecture}\label{sec:architecture}
+This section discusses technical issues regarding our implementation.
+
+\subsection{KVM}\label{sec:kvm}
 We chose the Linux Kernel Virtual Machine (KVM) as the platform of this study.
 Fig 1 shows the typical KVM architecture, with reference to a network related 
 application. As depicted in the picture, when a packet arrives at physical NIC, 
