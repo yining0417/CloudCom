@@ -20,7 +20,7 @@ application level. Detecting and remediating VM failure falls short of what is t
 detecting and remediating application and service failures.
 
 State Machine Replication (SMR) is an attractive approach to achieving application fault tolerance. 
-SMR runs replicas of the program and invokes a distributed consensus protocol 
+SMR runs replicas of the program and uses a distributed consensus protocol 
 (typically \paxos) to ensure the same sequence of input requests for replicas, as long as a 
 quorum (typically a majority) of the replicas agrees on the input request sequence.
 
@@ -42,4 +42,11 @@ states~\cite{eve:osdi12}. These approaches suffer from poor automation or high o
 
 % This paper presents \xxx, a software system that provides high availability
 
-The remainder of the paper is organized as follows.
+This paper presents \xxx, an SMR system that efficiently replicates programs running inside the 
+VM for high availability. Within each replica, \xxx interposes on the network packets to keep 
+replicas in sync. Specifically, it considers each incoming network packet an input request, and runs 
+a \paxos consensus protocol~\cite{paxos:practical} to ensure that a quorum of the replicas sees the 
+same exact sequence of the incoming network packets. To deal with nondeterminism, it maintains a 
+packet queue that captures outgoing packets and invokes the output checking protocol periodically.
+
+The remainder of the paper is organized as follows. Section 5 introduces 
