@@ -13,9 +13,9 @@ At the same time, the dependability issues such as service availability become a
 in consolidated server systems using virtualization. There has been a tremendous progress in 
 achieving high availability in virtualized environments, but existing approaches still fail to 
 meet the high availability requirements of applications running in the VM because they are oriented 
-toward protecting the VM. Protecting the VM alone does not guarantee the availability at the 
-application level. Detecting and remediating VM failure falls short of what is truly vital, 
-detecting and remediating application and service failures.
+toward protecting the VM. Protecting the VM alone does not guarantee uptime for applications and
+services. Detecting and remediating VM failure falls short of what is truly vital, detecting and 
+remediating application and service failures.
 
 State Machine Replication (SMR) is an attractive approach to providing high availability at the 
 application level. SMR runs replicas of the program and uses a distributed consensus protocol 
@@ -32,7 +32,8 @@ Compared to traditional message passing, RDMA achieves the smallest round-trip l
 (~$\sim$3 \us), highest throughput, and lowest (zero) CPU overhead~\cite{pilaf:usenix14}.
 
 A naive approach for realizing highly available services is to integrate the \paxos algorithm 
-into every application. But \paxos is notoriously difficult to implement and understand.
+into every application. But \paxos is notoriously difficult to understand~\cite{raft:usenix14} 
+and implement~\cite{paxos:practical}.
 
 To address nondeterminism, SMR systems either reply on deterministic multithreading and replay 
 approach~\cite{rex:eurosys14} or manually annotate all shared states to detect divergence of execution 
