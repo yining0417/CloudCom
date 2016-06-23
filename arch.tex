@@ -1,14 +1,15 @@
 \section{\xxx Overview} \label{sec:overview}
 
-\subsection{Architecture} \label{sec:arch}
-
-Figure 2 shows \xxx's architecture. It contains three main components.
+Figure 2 shows \xxx's architecture. The replication logic is entirely 
+implemented in qemu-kvm, a KVM tailored version of QEMU. It contains 
+four main components: a \paxos consensus protocol for input coordination, 
+an output checking protocol, a circular in-memory consensus log, and a 
+guard process that handles checkpointing and recovering a server's process 
+state and file system state.
 
 % On receiving a packet, QEMU calls tap_send()
 % On sending a packet, QEMU calls tap_receive()
-
-The replication logic is entirely implemented in qemu-kvm, a KVM tailored version of QEMU.
-We maintain a packet queue to capture outgoing packets.
+% We maintain a packet queue to capture outgoing packets.
 
 \begin{figure}[t]
 % \vspace{.20in}
