@@ -2,10 +2,11 @@
 
 Figure 2 shows \xxx's architecture. The replication logic is entirely 
 implemented in qemu-kvm, a KVM tailored version of QEMU. It contains 
-four main components: a \paxos consensus protocol for input coordination, 
-an output checking protocol, a circular in-memory consensus log, and a 
-guard process that handles checkpointing and recovering a server's process 
-state and file system state.
+two main components: 
+The protocol interposes on \tapsend on receiving a network packet and runs 
+a consensus process on this request. Besides, this component maintains a 
+packet queue to capture outgoing packets by interposing on \taprecv and invokes 
+the output checking protocol periodically.
 
 % On receiving a packet, QEMU calls tap_send()
 % On sending a packet, QEMU calls tap_receive()
