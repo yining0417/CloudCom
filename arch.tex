@@ -11,12 +11,11 @@ maintains a packet queue to capture outgoing packets by interposing on
 The Serviceguard component monitors the overall health of the configured applications. 
 It sends the application heartbeat to the protocol component in the physical 
 host. The Serviceguard uses the application heartbeat as the communication 
-medium to convey the status of the application to the protocol component. 
-In addition, the Serviceguard is also responsible for checkpoint and restore. 
-
-% On receiving a packet, QEMU calls tap_send()
-% On sending a packet, QEMU calls tap_receive()
-% We maintain a packet queue to capture outgoing packets.
+medium to convey the status of the application to the protocol component. If the 
+protocol component does not receive the heartbeat from a particular application within 
+a specified interval, the protocol starts leader election and fails over that application 
+to another physical host. In addition, the Serviceguard is also responsible for checkpoint 
+and restore. 
 
 \begin{figure}[t]
 % \vspace{.20in}
