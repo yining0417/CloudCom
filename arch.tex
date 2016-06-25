@@ -1,12 +1,8 @@
 \section{Design of Architecture} \label{sec:overview}
 
 Figure 2 shows our proposed architecture in KVM virtualized environment. 
-It contains two main components: the Serviceguard and the \smr system \smrsystem .
-
-The \smrsystem component interposes on \tapsend on receiving a network packet 
-and runs a RDMA-based consensus process on this request. Besides, this component 
-maintains a packet queue to capture outgoing packets by interposing on 
-\taprecv and invokes the output checking protocol periodically. 
+It contains two main components: the Serviceguard, a tailored version 
+of QEMU, and the \smr system \smrsystem .
 
 The Serviceguard component monitors the overall health of the configured applications. 
 It sends the application heartbeat to the \smrsystem component in the physical 
