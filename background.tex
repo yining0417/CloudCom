@@ -31,3 +31,9 @@ and so on.
 \end{figure}
 
 \subsection{FALCON} \label{sec:falcon}
+Unlike previous \smr systems which either reply on deterministic multithreading and replay
+approach~\cite{rex:eurosys14} or manually annotate all shared states to detect divergence of 
+execution states~\cite{eve:osdi12}, \smrsystem deals with non-determinism at low overhead 
+automatically. It interposes on the application's outbound network functions to compute an 
+accumulated hash value. The leader occasionally tries to reach an output consensus and 
+collects the corresponding hash values from other nodes.
