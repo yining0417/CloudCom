@@ -35,17 +35,12 @@ A naive approach for realizing highly available services is to integrate the \pa
 into every application. But \paxos is notoriously difficult to understand~\cite{raft:usenix14} 
 and implement~\cite{paxos:practical}.
 
-To address nondeterminism, \smr systems either reply on deterministic multithreading and replay 
-approach~\cite{rex:eurosys14} or manually annotate all shared states to detect divergence of execution 
-states~\cite{eve:osdi12}. These approaches suffer from poor automation or high overhead.
-
-This paper presents \xxx, an efficient \smr system that provides high availability for applications 
-running in virtual machines by leveraging a RDMA-based \paxos protocol, presented in 
-\protocol~\cite{dare:hpdc15}. Within each replica, \xxx interposes on the network packets to keep 
-replicas in sync. Specifically, it considers each incoming network packet an input request, and runs 
-a \paxos consensus protocol~\cite{paxos:practical} to ensure that a quorum of the replicas sees the 
-same exact sequence of the incoming network packets. To deal with nondeterminism, it maintains a packet 
-queue that captures outgoing packets and invokes the output checking protocol periodically.
+In this paper we present an efficient HA solution for the applications running in the virtual machines. 
+Our solution keeps replicas in sync by leveraging the \smr system \smrsystem in the network layer. Each incoming 
+network packet is considered an input request, and the RDMA-based \paxos protocol provided by \smrsystem is invoked 
+to ensure that a quorum of the replicas sees the same exact sequence of the incoming network packets. To 
+deal with nondeterminism, we maintain a packet queue that captures outgoing packets and run the output 
+checking protocol offered by \smrsystem periodically.
 
 The remainder of the paper is organized as follows. In \S\ref{sec:background} we present the background 
 of our work.
