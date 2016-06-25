@@ -17,8 +17,8 @@ toward protecting the VM. Protecting the VM alone does not guarantee uptime for 
 services. Detecting and remediating VM failure falls short of what is truly vital, detecting and 
 remediating application and service failures.
 
-State Machine Replication (SMR) is an attractive approach to achieving high availability at the 
-application level. SMR runs replicas of the program and uses a distributed consensus protocol 
+State Machine Replication (\smr) is an attractive approach to achieving high availability at the 
+application level. \smr runs replicas of the program and uses a distributed consensus protocol 
 (typically \paxos) to ensure the same sequence of input requests for replicas, as long as a 
 quorum (typically a majority) of the replicas agrees on the input request sequence.
 
@@ -35,11 +35,11 @@ A naive approach for realizing highly available services is to integrate the \pa
 into every application. But \paxos is notoriously difficult to understand~\cite{raft:usenix14} 
 and implement~\cite{paxos:practical}.
 
-To address nondeterminism, SMR systems either reply on deterministic multithreading and replay 
+To address nondeterminism, \smr systems either reply on deterministic multithreading and replay 
 approach~\cite{rex:eurosys14} or manually annotate all shared states to detect divergence of execution 
 states~\cite{eve:osdi12}. These approaches suffer from poor automation or high overhead.
 
-This paper presents \xxx, an efficient SMR system that provides high availability for applications 
+This paper presents \xxx, an efficient \smr system that provides high availability for applications 
 running in virtual machines by leveraging a RDMA-based \paxos protocol, presentated 
 in \protocol~\cite{dare:hpdc15}. Within each replica, \xxx interposes on the network packets to keep 
 replicas in sync. Specifically, it considers each incoming network packet an input request, and runs 
