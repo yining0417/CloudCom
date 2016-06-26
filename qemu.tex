@@ -1,4 +1,10 @@
 \section{Tailored QEMU} \label{sec:qemu}
 
 We modified the \taprecv function in QEMU to maintain a packet queue that 
-captures outgoing packets. 
+captures outgoing packets. The network outputs are pushed into the queue 
+and whenever the queue is full, a new hash value is calculated by $h_i=H(h_{i-1}\|H(queue))$
+where $H()$ is a hash function and $||$ stands for concatenation. Such a computation 
+links the hash value to all the previous network outpus. Then, after every \thashcomp  
+hash values are generated, the latest one is passed to \smrsystem and the output 
+checking protocol is invoked. The index of this hash value in the hash chain is 
+consistent across replicas because each replica implements the same mechanism. 
