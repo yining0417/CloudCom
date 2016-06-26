@@ -1,7 +1,6 @@
 \section{Serviceguard} \label{sec:guard}
 
-The Serviceguard is installed on the virtual machine, and provides high availability to
-a configured application running on the virtual machine. It conveys the application 
-health status to \smrsystem in the form of a heartbeat via a private VLAN. If \smrsystem 
-does not receive the heartbeat within a specified interval, it starts the leader election 
-process. 
+The Serviceguard is installed on the virtual machine, and monitors the overall health of 
+the configured applications. It conveys the application health status to \smrsystem in the 
+form of a heartbeat via a private VLAN. If \smrsystem does not receive the heartbeat within 
+a specified interval, it starts the leader election process. 
