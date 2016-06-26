@@ -5,7 +5,7 @@ are still unable to guarantee service-continuity in case of application failure 
 they do not target the availability at the application level, but rather at the VM level.
 
 In this paper we present an high-availability (HA) solution for the applications running in 
-the virtual machines. The key to achieving high availability at the application level efficiently
-in our solution is to leverage an \smr system in the network layer which replicates programs 
-using RDMA. Evaluation on \nprog widely used server programs (\eg, \mysql and \redis) shows that this 
-solution is easy to use and has low overhead.
+the virtual machines. In our solution, the key to achieving high availability at the application 
+level efficiently is to leverage an State Machine Replication system in the network layer which 
+replicates programs using RDMA. Evaluation on \nprog widely used server programs (\eg, \mysql and 
+\redis) shows that this solution is easy to use and has low overhead.
