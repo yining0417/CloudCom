@@ -2,10 +2,11 @@
 
 Figure 2 shows our proposed architecture in KVM virtualization environment. 
 It contains three main components: the Serviceguard, a tailored version 
-of QEMU, and the \smr system \smrsystem.
-
+of QEMU, and the \smr system \smrsystem. 
+Only the primary VM advertises its presence on the network, so all network input come 
+to the primary physical host. 
 The Serviceguard is deployed on the virtual machine, and provides high availability 
-of applications running on virtual machines.
+of applications running on virtual machines. 
 
 \begin{figure}[t]
 % \vspace{.20in}
