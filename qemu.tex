@@ -8,3 +8,7 @@ Such a computation links the hash value to all the previous network outpus. Then
 \thashcomp hash values are generated, the latest one is passed to \smrsystem and the output 
 checking protocol is invoked. The index of this hash value in the hash chain is 
 consistent across replicas because each replica implements the same mechanism. 
+
+Instead of checkpointing a server's process, we modified \smrsystem's checkpoint-recovery 
+component to capture the entire execution state of the running VM. The checkpoint component is 
+invoked every minute on a backup replica. 
