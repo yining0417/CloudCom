@@ -4,13 +4,8 @@ Figure 2 shows our proposed architecture in KVM virtualized environment.
 It contains two main components: the Serviceguard, a tailored version 
 of QEMU, and the \smr system \smrsystem .
 
-The Serviceguard component monitors the overall health of the configured applications. 
-It sends the application heartbeat to the \smrsystem component in the physical 
-host. The Serviceguard uses the application heartbeat as the communication 
-medium to convey the status of the application to \smrsystem. If \smrsystem does not 
-receive the heartbeat from a particular application within a specified interval, 
-the protocol starts leader election and fails over that application to another physical 
-host. In addition, the Serviceguard is responsible for checkpoint and restore. 
+The Serviceguard is deployed on the virtual machine, and provides monitoring 
+capabilities for a configured application running on the virtual machine. 
 
 \begin{figure}[t]
 % \vspace{.20in}
