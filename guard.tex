@@ -3,4 +3,5 @@
 The Serviceguard is installed on the virtual machine, and monitors the overall health of 
 the configured applications. It conveys the application health status to \smrsystem in the 
 form of a heartbeat via a private VLAN. If \smrsystem does not receive the heartbeat within 
-a specified interval, it starts the leader election process. 
+a specified interval on the leader node, it will stop sending heartbeat to the other nodes  
+and a leader election starts. The new leader will take over serving client requests. 
