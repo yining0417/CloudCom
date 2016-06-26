@@ -11,4 +11,5 @@ consistent across replicas because each replica implements the same mechanism.
 
 Instead of checkpointing a server's process, we modified \smrsystem's checkpoint-recovery 
 component to capture the entire execution state of the running VM. The checkpoint component is 
-invoked every minute on a backup replica. 
+invoked every minute on a backup replica. After each checkpoint, the compressed file is dispatched 
+to the other replicas. 
