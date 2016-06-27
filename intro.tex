@@ -36,11 +36,11 @@ into every application. But \paxos is notoriously difficult to understand~\cite{
 and implement~\cite{paxos:practical}.
 
 In this paper we present an efficient HA solution for the applications running in the virtual machines. 
-Our solution keeps replicas in sync by leveraging the \smr system \smrsystem in the network layer. Each incoming 
-network packet is considered an input request, and the RDMA-based \paxos protocol provided by \smrsystem is invoked 
-to ensure that a quorum of the replicas sees the same exact sequence of the incoming network packets. To 
-deal with nondeterminism, we maintain a packet queue that captures outgoing packets and run the output 
-checking protocol offered by \smrsystem periodically.
+Our solution keeps replicas in sync by leveraging the \smr system \smrsystem in the network layer. Each 
+incoming network packet is considered an input request, and the RDMA-based \paxos protocol provided by 
+\smrsystem is invoked to ensure that a quorum of the replicas sees the same exact sequence of the incoming 
+network packets. In the event of a hardware failure or application failure, another backup replica takes 
+over providing the service.
 
 The remainder of the paper is organized as follows. In \S\ref{sec:background} we present the background 
 of our work. We conclude in \S\ref{sec:conclusion}.
