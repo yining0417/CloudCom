@@ -55,7 +55,7 @@ has three steps. In the first step, the leader assigns a global, monotonically i
 viewstamp to this request, stores this request into an entry that is appended to the consensus 
 log, and does a forced write to the local disk. The second step is to replicate the log entry 
 on remote servers using a one-sided RDMA Write operation. Usually when the RDMA NIC (RNIC) 
-completes the netwrok steps associated with the RDMA operation, it pushes a completion event 
+completes the network steps associated with the RDMA operation, it pushes a completion event 
 to the queue pair's associated completion queue (CQ) via a DMA write. Using completion events 
 adds extra overhead. Since \paxos could help handle the reliability issues, \smrsystem takes 
 advantage of unsignaled RDMA write operations, i.e., a completion event will not be pushed for 
