@@ -57,13 +57,11 @@ log, and does a forced write to the local disk. The second step is to replicate 
 on remote servers using a one-sided RDMA Write operation. Usually when the RDMA NIC (RNIC) 
 completes the netwrok steps associated with the RDMA operation, it pushes a completion event 
 to the queue pair's associated completion queue (CQ) via a DMA write. Using completion events 
-adds extra overhead to the RNIC's PCIe bus. Since \paxos could help handle the reliability 
-issues, \smrsystem takes advantage of unsignaled RDMA write operations to reduce that overhead, 
-i.e., a completion event will not be pushed for these operations. In the last step, the leader 
-thread waits for acknowledgments from a majority of nodes.
+adds extra overhead. Since \paxos could help handle the reliability issues, \smrsystem takes 
+advantage of unsignaled RDMA write operations, i.e., a completion event will not be pushed for 
+these operations, to reduce that overhead. In the last step, the leader thread waits for 
+acknowledgments from a majority of nodes.
 
-Unlike previous \smr systems which either reply on deterministic multithreading and replay
-approach~\cite{rex:eurosys14} or manually annotate all shared states~\cite{eve:osdi12}, 
-\smrsystem deals with nondeterminism at low overhead and automatically. It runs an output 
-checking protocol to occasionally detect the inconsistency of the network outputs across replicas. 
-If some nodes need to be rolled back, it loads the latest checkpoint. 
+In addition to the distributed consensus protocol for coordinating the sequence of input requests, 
+\smrsystem also runs an output checking protocol which compares each replica's network outputs 
+occasionally to detect the divergence of execution states.
