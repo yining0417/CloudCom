@@ -43,7 +43,7 @@ and so on.
 
 \smrsystem's deployment model is similar to a typical \smr's. In a \smrsystem-replicated 
 system, a set of $2f+1$ machines (nodes) are set up in a InfiniBand cluster. Once the 
-\smrsystem system starts, one node becomes the primary node which proposes the order of 
+\smrsystem system starts, one node becomes the \emph{primary} node which proposes the order of 
 requests to execute, and the others become backup nodes which follow the primary’s 
 proposals. An arbitrary number of clients in LAN or WAN send network requests to the 
 primary and get responses. If failures occur, the nodes run a leader election to elect 
@@ -51,15 +51,16 @@ a new leader and continue.
 
 On receiving a client network request, it invokes a RDMA-based consensus process on this 
 request to enforce that all replicas see the same sequence of input requests. This process 
-has four steps. The second step is local preparation, including assigning a global, monotonically 
-increasing viewstamp to locate this entry in the consensus log, building a log entry structure 
-for this call, and writing this entry to its local SSD. The third step is to WRITE a log entry to 
-remote backups in parallel. Unlike a previous RDMA-based consensus algorithm which has to wait for
-ACKs from remote NICs, WRITE immediately returns after pushing the entry to its local QP 
-between the leader and each backup, because PAXOS has handled the reliability issues (e.g., packet 
-losses) for WRITEs. The fourth step is the leader thread polling on its reply field in its local 
-log entry for backups’ consensus replies. Once consensus is reached, the leader thread finishes 
-continues with its server application logic. 
+has three steps. In the first step, the leader assigns a global, monotonically increasing 
+viewstamp to this request, stores this request into an entry that is appended to the consensus 
+log, and does a forced write to the local disk. The second step is to replicate the log entry 
+on remote servers using a one-sided RDMA Write operation. Usually when the RDMA NIC (RNIC) 
+completes the netwrok steps associated with the RDMA operation, it pushes a completion event 
+to the queue pair's associated completion queue (CQ) via a DMA write. Using completion events 
+adds extra overhead to the RNIC's PCIe bus. Since \paxos could help handle the reliability 
+issues, \smrsystem takes advantage of unsignaled RDMA write operations to reduce that overhead, 
+i.e., a completion event will not be pushed for these operations. In the last step, the leader 
+thread waits for acknowledgments from a majority of nodes.
 
 Unlike previous \smr systems which either reply on deterministic multithreading and replay
 approach~\cite{rex:eurosys14} or manually annotate all shared states~\cite{eve:osdi12}, 
