@@ -3,5 +3,12 @@
 The Serviceguard is installed on the virtual machine, and monitors the overall health of 
 the configured applications. It conveys the application health status to \smrsystem in the 
 form of a heartbeat via a private VLAN. If \smrsystem does not receive the heartbeat within 
-a specified interval on the leader node, it will stop sending heartbeat to the other nodes  
-and a leader election starts. The new leader will take over serving client requests. 
+a specified interval on the leader node, it will stop sending heartbeats to the other nodes  
+and a leader election starts. The new leader will take over serving client requests. Different 
+from the traditional \paxos leader election process, our solution adds an additional restriction 
+on which servers may be elected leader. We prevent a candidate from winning an election unless 
+all the configured applications running on it are healthy and its log is at least as recent as
+any other log in a majority. Here, which of two logs is more recent is determined by comparing 
+the index and view of the last entries in the logs. If the logs have last entries with different 
+views, then the log with a higher view is more recent. If the logs end with the same view, then 
+the log with a higher index is more recent. 
