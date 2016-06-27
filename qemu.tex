@@ -20,7 +20,6 @@ consistent across replicas because each replica implements the same mechanism.
 %   migrate "exec:gzip -c > STATEFILE.gz" 
 % 2. Load
 
-Instead of checkpointing a server's process, we modified \smrsystem's checkpoint-recovery 
-component to make it capture the entire execution state of the running VM. The checkpoint 
-component is invoked every minute on a backup replica. After each checkpoint, the compressed 
-file is dispatched to the other replicas. 
+The checkpoint componentis invoked every minute on a backup replica. It captures the entire 
+execution state of the running VM. After each checkpoint, the compressed file is dispatched 
+to the other replicas. 
