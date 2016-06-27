@@ -4,7 +4,16 @@
 
 KVM is a more recent hypervisor which embeds virtualization capabilities 
 in Linux kernel using x86 hardware virtualization extensions~\cite{kivity2007kvm}. 
-It is a full virtualization solution, where guests are run unmodified in VMs. 
+It is a full virtualization solution, where guests are run unmodified in VMs. It 
+consists of two modules, namely, kvm.ko module and an architecture dependent 
+kvm-amd.ko or kvm-intel.ko module. Under KVM, each VM is spawned as a regular linux 
+process named KVM and scheduled by the default linux scheduler. 
+
+For using shared I/O hardware, these VMs interact with Qemu emulator in host user 
+space which provides emulated I/O devices for virtual machines. For instance, in 
+the case of network related applications, Qemu provides emulated Network Interface 
+Card (NIC) to VMs and interacts with tun-tap device on the other side. The tap device 
+is connected to physical NIC through a software bridge.
 
 Figure 1 shows the typical KVM architecture, with reference to a network related
 application. 
@@ -32,13 +41,28 @@ and so on.
 
 \subsection{FALCON} \label{sec:falcon}
 
-\smrsystem is an \smr system that replicates general server programs efficiently. On 
-receiving a client network request, it invokes a RDMA-based consensus process on this 
-request to enforce that all replicas see the same sequence of input requests. 
+\smrsystem's deployment model is similar to a typical \smr's. In a \smrsystem-replicated 
+system, a set of $2f+1$ machines (nodes) are set up in a InfiniBand cluster. Once the 
+\smrsystem system starts, one node becomes the primary node which proposes the order of 
+requests to execute, and the others become backup nodes which follow the primary’s 
+proposals. An arbitrary number of clients in LAN or WAN send network requests to the 
+primary and get responses. If failures occur, the nodes run a leader election to elect 
+a new leader and continue.
+
+On receiving a client network request, it invokes a RDMA-based consensus process on this 
+request to enforce that all replicas see the same sequence of input requests. This process 
+has four steps. The second step is local preparation, including assigning a global, monotonically 
+increasing viewstamp to locate this entry in the consensus log, building a log entry structure 
+for this call, and writing this entry to its local SSD. The third step is to WRITE a log entry to 
+remote backups in parallel. Unlike a previous RDMA-based consensus algorithm which has to wait for
+ACKs from remote NICs, WRITE immediately returns after pushing the entry to its local QP 
+between the leader and each backup, because PAXOS has handled the reliability issues (e.g., packet 
+losses) for WRITEs. The fourth step is the leader thread polling on its reply field in its local 
+log entry for backups’ consensus replies. Once consensus is reached, the leader thread finishes 
+continues with its server application logic. 
 
 Unlike previous \smr systems which either reply on deterministic multithreading and replay
 approach~\cite{rex:eurosys14} or manually annotate all shared states~\cite{eve:osdi12}, 
-\smrsystem deals with nondeterminism at low overhead and automatically. It captures the
-network outputs of the program to compute an accumulated hash value. The leader collects
-the corresponding hash values from other nodes occasionally to detect divergence of execution
-states across replicas. 
+\smrsystem deals with nondeterminism at low overhead and automatically. It runs an output 
+checking protocol to occasionally detect the inconsistency of the network outputs across replicas. 
+If some nodes need to be rolled back, it loads the latest checkpoint. 
