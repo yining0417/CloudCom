@@ -20,6 +20,6 @@ consistent across replicas because each replica implements the same mechanism.
 %   migrate "exec:gzip -c > STATEFILE.gz" 
 % 2. Load
 
-The checkpoint componentis invoked every minute on a backup replica. It captures the entire 
+The checkpoint component is invoked every minute on a backup replica. It captures the entire 
 execution state of the running VM. After each checkpoint, the compressed file is dispatched 
 to the other replicas. 
