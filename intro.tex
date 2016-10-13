@@ -1,46 +1,34 @@
-\section{Introduction} \label{sec:intro}
+P1: Vrtualization is good:
+Server consolidation
+	various applications run in VMs, and multiple VMs consolidated in single physical server
 
-% P1: virtualization is good
-Server virtualization has emerged as a powerful technique for consolidating servers in 
-data centers. The reduction of the number of physical hosts also contributes to cutting 
-back the power consumptions in the data centers.
+P2: Fult-tolerance is important:
+	server consolidation exacerbates the consequence of unexpected host failures
+	failure of a single host bring down multiple VMs and all applications running on it
 
-% Symantec proposes a solution, based on VMware products, where the applications are \emph{monitored},
-% however this commercial solution applies for a specific list of supported applications, 
-% and does not support HA in a generic way
+P3: Existing approach to fault-tolerance:
+Core idea: replication
+	Two servers (or more)
+	Each replica keeps state needed for the service
+	If one replica fails, others can continue
 
-At the same time, the dependability issues such as service availability become a major concern 
-in consolidated server systems using virtualization. There has been a tremendous progress in 
-achieving high availability in virtualized environments, but existing approaches still fail to 
-meet the high availability requirements of applications running in the VM because they are oriented 
-toward protecting the VM. Protecting the VM alone does not guarantee uptime for applications and
-services. Detecting and remediating VM failure falls short of what is truly vital, detecting and 
-remediating application and service failures.
+P4: Two main approaches for replication:
+	State transfer
+		“Primary” replica executes the service
+		“Primary” sends [new] state to backups
+	Replicated state machine (RSM)
+		All replicas execute all operations
+		If same start state, same operations, same order, deterministic, then same end state
 
-State Machine Replication (\smr) is an attractive approach to achieving high availability at the 
-application level. \smr runs replicas of the program and uses a distributed consensus protocol 
-(typically \paxos) to ensure the same sequence of input requests for replicas, as long as a 
-quorum (typically a majority) of the replicas agrees on the input request sequence.
+P5: Limitations of each method:
+	State transfer is simpler
+		But state may be large, slow to transfer
+	Replicated state machine (RSM) can be more efficient
+		But complex to get right
+			e.g. order on multi-core, determinism 
 
-However, \paxos is slow because each decision takes at least three message delays between when 
-a replica proposes a command and when some replica learns which command has been chosen.
+P6: Our proposal:
+	A hybrid replication
+		combine both “State transfer” and RSM to benefit each other
 
-Fortunately, Remote Direct Memory Access (RDMA)-capable networks have dropped in price and made 
-substantial inroads into datacenters. RDMA operations allow a machine to read (or write) from a 
-pre-registered memory region of another machine without involving the CPU on the remote side. 
-Compared to traditional message passing, RDMA achieves the smallest round-trip latency 
-(~$\sim$3 \us), highest throughput, and lowest (zero) CPU overhead~\cite{pilaf:usenix14}.
-
-A naive approach for realizing highly available services is to integrate the \paxos algorithm 
-into every application. But \paxos is notoriously difficult to understand~\cite{raft:usenix14} 
-and implement~\cite{paxos:practical}.
-
-In this paper we present an efficient HA solution for the applications running in the virtual machines. 
-Our solution keeps replicas in sync by leveraging the \smr system \smrsystem in the network layer. Each 
-incoming network packet is considered an input request, and the RDMA-based \paxos protocol provided by 
-\smrsystem is invoked to ensure that a quorum of the replicas sees the same exact sequence of the incoming 
-network packets. In the event of a hardware failure or application failure, another backup replica takes 
-over providing the service.
-
-The remainder of the paper is organized as follows. In \S\ref{sec:background} we present the background 
-of our work. We conclude in \S\ref{sec:conclusion}.
+P7: Challenges:
