@@ -1,0 +1,28 @@
+\section{Checking Network Outputs} \label{sec:output}
+
+This section presents \xxx's network outputs checking mechanism for 
+detecting and recovering from replicas' divergence of execution states.
+
+To capture network outputs of the server programs running in the virtual machines, we 
+modified the \taprecv function in QEMU to maintain a packet queue for each application 
+that captures the corresponding outgoing packets. The network outputs are pushed into the 
+queue and whenever the queue is full, a new hash value is calculated by 
+$h_i=H(h_{i-1}\|H(queue))$ where $H()$ is a hash function and $||$ stands for concatenation. 
+Such a computation links the hash value to all the previous network outputs. Then, after 
+every \thashcomp hash values are generated, the latest one is passed to \smrsystem and 
+the output checking protocol is invoked. The index of this hash value in the hash chain is 
+consistent across replicas because each replica implements the same mechanism. 
+
+% To make KVM_GET_DIRTY_LOG operation consistent between replicas
+%  ------------------------   ------------
+% | KVM_GET_DIRTY_LOG entry| | hash entry |
+%  ------------------------   ------------
+
+Once divergence of execution states is detected, we do a light-weight state transfer to 
+handle it. For memory states, we make use of the \emph{dirty page log} facility provided 
+by \kvm. The \kvm kernel subsystem interfaces \emph{KVM\_SET\_USER\_MEMORY\_REGION} and 
+\emph{KVM\_GET\_DIRTY\_LOG} allow the caller to keep track of dirty page state changes 
+for the given virtual machine. KVM\_SET\_USER\_MEMORY\_REGION allows the user to create or 
+modify a guest physical memory slot, and KVM\_GET\_DIRTY\_LOG returns a bitmap with all 
+dirty pages since the last call. With these APIs, we can compare dirty memory pages and 
+sync the different ones only.

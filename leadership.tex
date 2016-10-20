@@ -1,0 +1,24 @@
+\section{Leadership Transfer} \label{sec:leadership}
+
+In some cases, one or more servers may be more suitable to lead the cluster than others. For 
+example, a server with high load would not make a good leader, or in a WAN deplolyment, 
+servers in a primary datacenter may be preferred in order to optimize the latency between clients 
+and the leader. Since \smrsystem needs a server with a sufficiently up-to-date log to become leader, 
+which might not be the most preferred one. Instead, a leader in \xxx can periodically check 
+to see whether one of its available followers would be more suitable, and if so, transfer its 
+leadership to that server.
+To transfer leadership in \xxx, the prior leader sends its log entries to the target server, then 
+the target server runs an election without waiting for an election timeout to elapse. The following 
+steps describe the process in more detail:
+
+\begin{enumerate}
+\item The prior leader stops accepting new client requests.
+\item The prior leader fully updates the target server's log to match its own, using the normal log 
+replication mechanism in \smrsystem.
+\item The prior leader sends a \timeoutnow request to the target server. This request has the same effect as 
+the target server's election time firing: the target server starts a new election.
+\end{enumerate}
+
+Once the target server receives the \timeoutnow request, it is highly likely to start an election before 
+any other server and become leader. At this point, leadership transfer is complete.
+
