@@ -1,0 +1,6 @@
+\section{Input Consensus} \label{sec:input}
+
+In order to provide the server programs running inside the virtual machine the exact same 
+inputs in the same order, we interpose on the \tapsend function in \qemu and invoke the 
+\paxos consensus component of \smrsystem on the received networking packets. Once the 
+consensus process is finished, \qemu continues with its normal execution. 
