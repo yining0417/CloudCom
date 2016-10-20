@@ -1,34 +1,68 @@
-P1: Vrtualization is good:
-Server consolidation
-	various applications run in VMs, and multiple VMs consolidated in single physical server
+\section{Introduction} \label{sec:intro}
 
-P2: Fult-tolerance is important:
-	server consolidation exacerbates the consequence of unexpected host failures
-	failure of a single host bring down multiple VMs and all applications running on it
+% P1: Vrtualization is good:
+% Server consolidation
+%	various applications run in VMs, and multiple VMs consolidated in single physical server
 
-P3: Existing approach to fault-tolerance:
-Core idea: replication
-	Two servers (or more)
-	Each replica keeps state needed for the service
-	If one replica fails, others can continue
+Virtualization is used to create one or more Virtual Machines (VMs) that act like real machines 
+in a physical host. It facilitates flexible partitioning and dynamic allocation of computing 
+resources, and is widely used in computing environments of various kinds and scales.
 
-P4: Two main approaches for replication:
-	State transfer
-		“Primary” replica executes the service
-		“Primary” sends [new] state to backups
-	Replicated state machine (RSM)
-		All replicas execute all operations
-		If same start state, same operations, same order, deterministic, then same end state
+In a virtualized environment, applications run in VMs, and multiple VMs may be consolidated 
+in a single physical server. Server consolidation has in fact been the most common reason for 
+using virtualization~\cite{mcdougall2010virtualization}. It is most useful when applications 
+require a certain of isolation, \eg, isolation of configurations, faults, and so on, yet each 
+of them does not need the full capacity of a single server. Running these applications in 
+separate VMs on a single physical server enhances server utilization and reduces various 
+operational costs, including management cost, power, space, \etc.
 
-P5: Limitations of each method:
-	State transfer is simpler
-		But state may be large, slow to transfer
-	Replicated state machine (RSM) can be more efficient
-		But complex to get right
-			e.g. order on multi-core, determinism 
+% P2: Fault-tolerance is important:
+%	server consolidation exacerbates the consequence of unexpected host failures
+%	failure of a single host bring down multiple VMs and all applications running on it
 
-P6: Our proposal:
-	A hybrid replication
-		combine both “State transfer” and RSM to benefit each other
+However, server consolidation exacerbates the consequence of unexpected host failures.
+When VMs are consolidated, failure of a single host may bring down multiple VMs on the host 
+and all applications running thereon, resulting in an unacceptable aggregate loss.
 
-P7: Challenges:
+As host failures are inevitable, even common in large systems~\cite{vishwanath2010characterizing,
+barroso2013datacenter}, maintaining highly available VMs despite the occurrence of host failure 
+has become a crucial task.
+
+% P3: Existing approach to fault-tolerance:
+% Core idea: replication
+%	Two servers (or more)
+%	Each replica keeps state needed for the service
+%	If one replica fails, others can continue
+A common approach to implementing fault-tolerance is replication, where two or more replicas 
+keep nearly identical state at all times. If one replica fails, others can continue, and in 
+such a way that the failure is hidden to external clients and no data is lost.
+
+% P4: Two main approaches for replication:
+% 	State transfer
+%		“Primary” replica executes the service
+%		“Primary” sends [new] state to backups
+%	State machine replication (SMR)
+%		All replicas execute all operations
+%		If same start state, same operations, same order, deterministic, then same end state
+There are currently two main approaches for replication. The first one is state machine 
+replication (\smr). \smr models the server programs as deterministic state machines that are 
+kept in sync by starting them from the same initial state and ensuring the same input 
+requests in the same order. The second method for replication is referred to as the state transfer 
+approach. It ships changes to all state of the primary, including CPU, memory, and I/O devices, 
+to the backup nearly continuously.
+
+% P5: Limitations of each method:
+%	State transfer is simpler
+%		But state may be large, slow to transfer
+%	State machine replication (SMR) can be more efficient
+%		But complex to get right
+%			e.g. order on multi-core, determinism 
+However, since server programs have some operations that are not deterministic, \smr is complex to get right. 
+On the other hand, in state transfer approach the bandwidth needed to send state, particular 
+changes in memory, can be very large.
+
+% P6: Our proposal:
+%	A hybrid replication
+%		combine both “State transfer” and RSM to benefit each other
+
+To tackle nondeterminism, we incorporate the light-weight state transfer. 
