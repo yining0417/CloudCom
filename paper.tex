@@ -86,8 +86,8 @@ Permission to make digital or hard copies of all or part of this work for person
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %     macro
 
-\newcommand{\xxx}{\mbox{\textsc{REPVM}}\xspace}
-\newcommand{\mytitle}[0]{\textbf {Achieving High Availability at the Application Level in the KVM Virtualization Environment}}
+\newcommand{\xxx}{\mbox{\textsc{XXX}}\xspace}
+\newcommand{\mytitle}[0]{\textbf {Availability in the KVM Virtualization Environment}}
 \newcommand{\mykeywords}[0]{State Machine Replication, High Availability, Virtual Machine,
   Software Reliability}
 
@@ -154,6 +154,8 @@ pdfdisplaydoctitle=true,
 
 \newcommand{\smt}[0]{StableMT\xspace}
 \newcommand{\smr}[0]{SMR\xspace}
+\newcommand{\kvm}[0]{KVM\xspace}
+\newcommand{\qemu}[0]{QEMU\xspace}
 %\newcommand{\tsmr}[0]{TSMR\xspace}
 
 \newcommand{\us}[0]{\(\mu\text{s}\)\xspace}
@@ -161,7 +163,7 @@ pdfdisplaydoctitle=true,
 \newcommand{\paxos}[0]{\textsc{Paxos}\xspace}
 \newcommand{\calvin}[0]{\textsc{Calvin}\xspace}
 \newcommand{\repbox}{\mbox{\textsc{Crane}}\xspace}
-\newcommand{\smrsystem}{\mbox{\textsc{FALCON}}\xspace}
+\newcommand{\smrsystem}{\mbox{\textsc{Falcon}}\xspace}
 \newcommand{\racepro}[0]{\textsc{RacePro}\xspace}
 \newcommand{\criu}[0]{\textsc{CRIU}\xspace}
 \newcommand{\peregrine}[0]{\textsc{Peregrine}\xspace}
@@ -171,6 +173,7 @@ pdfdisplaydoctitle=true,
 \newcommand{\dos}[0]{dOS\xspace}
 \newcommand{\ddos}[0]{DDOS\xspace}
 \newcommand{\ldpreload}[0]{LD\_PRELOAD\xspace}
+\newcommand{\timeoutnow}[0]{$TimeoutNow$\xspace}
 
 \newcommand{\apache}{\v{Apache}\xspace}
 \newcommand{\mongoose}[0]{\v{Mongoose}\xspace}
@@ -201,14 +204,7 @@ pdfdisplaydoctitle=true,
 \newcommand{\cf}{{cf. }}
 
 % Synch and network operations.
-\newcommand{\connect}[0]{\v{connect()}\xspace}
 \newcommand{\send}[0]{\v{send()}\xspace}
-\newcommand{\close}[0]{\v{close()}\xspace}
-\newcommand{\recv}[0]{\v{recv()}\xspace}
-\newcommand{\select}[0]{\v{select()}\xspace}
-\newcommand{\poll}[0]{\v{poll()}\xspace}
-\newcommand{\epollwait}[0]{\v{epoll\_wait()}\xspace}
-\newcommand{\accept}[0]{\v{accept()}\xspace}
 \newcommand{\tapsend}[0]{\v{tap\_send()}\xspace}
 \newcommand{\taprecv}[0]{\v{tap\_receive()}\xspace}
 
@@ -312,8 +308,9 @@ pdfdisplaydoctitle=true,
 \input{intro}
 \input{background}
 \input{arch}
-\input{guard}
-\input{qemu}
+\input{input}
+\input{output}
+\input{leadership}
 \input{eval}
 \input{related}
 \input{conclusion}
