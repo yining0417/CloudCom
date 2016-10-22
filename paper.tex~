@@ -63,7 +63,7 @@ Permission to make digital or hard copies of all or part of this work for person
     \def\thefootnote{\fnsymbol{footnote}}
     \def\@makefnmark{\hbox
         to 0pt{$^{\@thefnmark}$\hss}}
-      \onecolumn[\@maketitle]
+      \twocolumn[\@maketitle]
  \@thanks
   \endgroup
   \setcounter{footnote}{0}

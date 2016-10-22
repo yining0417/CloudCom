@@ -1,0 +1,26 @@
+\begin{thebibliography}{1}
+
+\bibitem{barroso2013datacenter}
+L.~A. Barroso, J.~Clidaras, and U.~H{\"o}lzle.
+\newblock The datacenter as a computer: An introduction to the design of
+  warehouse-scale machines.
+\newblock {\em Synthesis lectures on computer architecture}, 8(3):1--154, 2013.
+
+\bibitem{kivity2007kvm}
+A.~Kivity, Y.~Kamay, D.~Laor, U.~Lublin, and A.~Liguori.
+\newblock kvm: the linux virtual machine monitor.
+\newblock In {\em Proceedings of the Linux symposium}, volume~1, pages
+  225--230, 2007.
+
+\bibitem{mcdougall2010virtualization}
+R.~McDougall and J.~Anderson.
+\newblock Virtualization performance: perspectives and challenges ahead.
+\newblock {\em ACM SIGOPS Operating Systems Review}, 44(4):40--56, 2010.
+
+\bibitem{vishwanath2010characterizing}
+K.~V. Vishwanath and N.~Nagappan.
+\newblock Characterizing cloud computing hardware reliability.
+\newblock In {\em Proceedings of the 1st ACM symposium on Cloud computing},
+  pages 193--204. ACM, 2010.
+
+\end{thebibliography}
